@@ -1,9 +1,58 @@
 import { styled } from "styled-components/native";
+import { colors } from "../../colors";
 
-export const TextInput = styled.TextInput`
-  background-color: rgba(255, 255, 255, 0.15);
-  padding: 15px 7px;
-  border-radius: 4px;
+export const AuthContainer = styled.View`
+  flex: 1;
+  background-color: ${colors.backgroundColor};
+`;
+
+export const AuthTitle = styled.Text`
+  margin-top: 150px;
+  margin-left: 20px;
+  margin-bottom: 50px;
+  color: #fff;
+  font-family: "JostMediumItalic";
+  font-size: 24px;
+`;
+
+export const AuthTextBox = styled.View`
+  padding: 12px 17px;
+  border-radius: 10px;
+  border: 1px solid ${(props) => (props.disabled ? "#F13C3C" : "white")};
+  margin-left: 10px;
+  margin-right: 10px;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
+export const AuthTextInfo = styled.Text`
   color: white;
-  margin-bottom: ${(props) => (props.lastOne ? "15" : 8)}px;
+  font-family: "JostMedium";
+  font-size: 11px;
+  text-decoration-line: underline;
+  margin-bottom: 5px;
+`;
+
+export const AuthButtonContainer = styled.View`
+  margin-right: 10px;
+  margin-bottom: 60px;
+  margin-left: 10px;
+`;
+
+export const AuthTextInput = styled.TextInput`
+  font-family: "JostMediumItalic";
+  font-size: 14px;
+  color: white;
+  width: 250px;
+`;
+
+export const AuthErrorMessage = styled.Text`
+  height: 20px;
+  color: #ff4f4f;
+  font-family: "JostRegular";
+  font-size: 12px;
+  margin-top: 5px;
+  margin-left: 15px;
+  margin-bottom: 10px;
 `;

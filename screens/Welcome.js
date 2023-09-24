@@ -1,9 +1,7 @@
 import React from "react";
-import { TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { colors } from "../colors";
 import AuthButton from "../components/auth/AuthButton";
-import AuthLayout from "../components/auth/AuthLayout";
 
 const Container = styled.View`
   flex: 1;
@@ -29,7 +27,7 @@ const WelcomeMessage = styled.Text`
 `;
 
 export default function Welcome({ navigation }) {
-  const goToCreateAccount = () => navigation.navigate("CreateAccount");
+  const goToSignUp = () => navigation.navigate("SignUpNav");
   const goToLogin = () => navigation.navigate("Login");
   return (
     <Container>
@@ -40,7 +38,7 @@ export default function Welcome({ navigation }) {
         <AuthButton
           text="Sign Up"
           disabled={false}
-          onPress={goToCreateAccount}
+          onPress={goToSignUp}
           isYellow={true}
         />
         <AuthButton
