@@ -2,7 +2,7 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Welcome from "../screens/Welcome";
 import Login from "../screens/Login";
-import CreateAccount from "../screens/CreateAccount";
+import SignUpNav from "./SignUpNav";
 
 const Stack = createStackNavigator();
 
@@ -24,7 +24,11 @@ const LoggedOutNav = () => {
         component={Welcome}
       />
       <Stack.Screen name="Login" component={Login} />
-      <Stack.Screen name="CreateAccount" component={CreateAccount} />
+      <Stack.Screen
+        name="SignUpNav"
+        options={{ headerShown: false }}
+        component={SignUpNav}
+      />
     </Stack.Navigator>
   );
 };

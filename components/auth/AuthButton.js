@@ -4,7 +4,7 @@ import { colors } from "../../colors";
 import { Platform } from "react-native";
 
 const Button = styled.TouchableOpacity`
-  margin-top: 14px;
+  margin-bottom: ${(props) => (props.isYellow ? "14px" : "0px")};
   background-color: ${(props) => (props.isYellow ? colors.yellow : "white")};
   padding: 16px 10px;
   border-radius: 50px;
