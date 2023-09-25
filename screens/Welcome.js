@@ -21,8 +21,6 @@ const WelcomeMessage = styled.Text`
   text-align: center;
   font-family: "JostMediumItalic";
   font-size: 24px;
-  font-style: italic;
-  font-weight: 500;
   margin-top: 130px;
 `;
 
