@@ -16,11 +16,12 @@ export const AuthTitle = styled.Text`
 `;
 
 export const AuthTextBox = styled.View`
-  padding: 12px 17px;
+  padding: ${(props) => (props.login ? "18px" : "12px")} 17px;
   border-radius: 10px;
   border: 1px solid ${(props) => (props.disabled ? "#F13C3C" : "white")};
   margin-left: 10px;
   margin-right: 10px;
+  margin-bottom: ${(props) => (props.login ? "20px" : "0px")};
   flex-direction: row;
   justify-content: space-between;
   align-items: center;

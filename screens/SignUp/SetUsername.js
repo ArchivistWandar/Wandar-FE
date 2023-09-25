@@ -1,7 +1,79 @@
-import React from "react";
+import React, { useRef, useState, useEffect } from "react";
+import AuthLayout from "../../components/auth/AuthLayout";
+import AuthButton from "../../components/auth/AuthButton";
+import {
+  removeWhitespace,
+  validateUsername,
+} from "../../components/auth/Utils";
+import {
+  AuthButtonContainer,
+  AuthContainer,
+  AuthErrorMessage,
+  AuthTextBox,
+  AuthTextInfo,
+  AuthTextInput,
+  AuthTitle,
+} from "../../components/auth/AuthShared";
+import { Text, View } from "react-native";
 
-const SetUsername = () => {
-  return <div></div>;
+const SetUsername = ({ navigation }) => {
+  const [username, setUsername] = useState("");
+  const [errorMessage, setErrorMessage] = useState(false);
+  const [disabled, setDisabled] = useState(true);
+
+  const inputRef = useRef();
+  const goToProfile = () => navigation.navigate("SetProfile");
+
+  const _handleUsernameChange = (username) => {
+    // Remove whitespace and ensure "@" is at the beginning
+    let changedUsername = removeWhitespace(username);
+    if (!changedUsername.startsWith("@")) {
+      changedUsername = "@" + changedUsername;
+    }
+
+    setUsername(changedUsername);
+    setErrorMessage(
+      validateUsername(changedUsername)
+        ? ""
+        : "Your username is already taken. Please try another."
+    );
+  };
+
+  useEffect(() => {
+    setDisabled(!(username && !errorMessage));
+  }, [username, errorMessage]);
+
+  return (
+    <AuthContainer>
+      <AuthTitle>Add your username</AuthTitle>
+      <AuthLayout>
+        <AuthTextBox disabled={errorMessage}>
+          <View>
+            <AuthTextInfo>Username</AuthTextInfo>
+            <AuthTextInput
+              placeholder="@wandar"
+              placeholderTextColor={"rgba(255, 255, 255, 0.6)"}
+              returnKeyType="next"
+              autoCapitalize={"none"}
+              ref={inputRef}
+              onLayout={() => inputRef.current.focus()}
+              value={username}
+              onChangeText={_handleUsernameChange}
+            />
+          </View>
+        </AuthTextBox>
+        <AuthErrorMessage>{errorMessage}</AuthErrorMessage>
+        <AuthButtonContainer>
+          <AuthButton
+            text="Continue"
+            disabled={disabled}
+            onPress={goToProfile}
+            isYellow={false}
+          />
+        </AuthButtonContainer>
+      </AuthLayout>
+    </AuthContainer>
+  );
 };
 
 export default SetUsername;
