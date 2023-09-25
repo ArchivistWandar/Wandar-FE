@@ -52,7 +52,6 @@ const SetUsername = ({ navigation }) => {
               placeholderTextColor={"rgba(255, 255, 255, 0.6)"}
               secureTextEntry={!showPassword}
               autoCorrect={false}
-              keyboardType="password"
               returnKeyType="next"
               autoCapitalize={"none"}
               ref={inputRef}
