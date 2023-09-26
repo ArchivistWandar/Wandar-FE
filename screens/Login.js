@@ -28,7 +28,7 @@ const Logo = styled.Image`
   max-width: 70%;
   width: 100%;
   height: 200px;
-  margin: 80px auto;
+  margin: 100px auto;
   margin-bottom: 30px;
 `;
 
