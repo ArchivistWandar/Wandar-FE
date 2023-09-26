@@ -3,6 +3,7 @@ import { isLoaded, useFonts } from "expo-font";
 import LoggedOutNav from "./navigators/LoggedOutNav";
 import { NavigationContainer } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
+import LoggedInNav from "./navigators/LoggedInNav";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -48,9 +49,11 @@ export default function App() {
     return null;
   }
 
+  const isLoggedIn = true;
+
   return (
     <NavigationContainer>
-      <LoggedOutNav />
+      {isLoggedIn ? <LoggedInNav /> : <LoggedOutNav />}
     </NavigationContainer>
   );
 }

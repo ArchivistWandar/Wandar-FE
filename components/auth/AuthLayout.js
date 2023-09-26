@@ -20,17 +20,13 @@ export default function AuthLayout({ children }) {
 
   return (
     <TouchableWithoutFeedback style={{ flex: 1 }} onPress={dismissKeyboard}>
-      <Container>
-        <KeyboardAvoidingView
-          style={{
-            width: "100%",
-          }}
-          behavior={Platform.OS === "ios" ? "padding" : null}
-          keyboardVerticalOffset={Platform.OS === "ios" ? 50 : 0}
-        >
-          {children}
-        </KeyboardAvoidingView>
-      </Container>
+      <KeyboardAvoidingView
+        style={{ flex: 1 }} // Ensure the view takes up the whole screen
+        behavior={Platform.OS === "ios" ? "padding" : null}
+        keyboardVerticalOffset={Platform.OS === "ios" ? 10 : 0}
+      >
+        <Container>{children}</Container>
+      </KeyboardAvoidingView>
     </TouchableWithoutFeedback>
   );
 }
