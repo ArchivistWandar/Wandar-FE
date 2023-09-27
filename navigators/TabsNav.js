@@ -19,14 +19,20 @@ export default function TabsNav() {
           backgroundColor: colors.backgroundColor,
           borderTopColor: "rgba(255,255,255,0.5)",
         },
-        tabBarActiveTintColor: "white",
+        tabBarActiveTintColor: "#6B78B7",
+        tabBarInactiveTintColor: "white",
       }}
     >
       <Tabs.Screen
         name="TabFeed"
         options={{
           tabBarIcon: ({ focused, color, size }) => (
-            <TabIcon color={color} focused={focused} iconName={"home"} />
+            <TabIcon
+              color={color}
+              focused={focused}
+              iconName={"home"}
+              location={true}
+            />
           ),
         }}
       >
