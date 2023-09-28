@@ -13,7 +13,7 @@ import {
   AuthTextInput,
   AuthTitle,
 } from "../../components/auth/AuthShared";
-import { Text, View } from "react-native";
+import { View } from "react-native";
 import { Container } from "../../components/Shared";
 
 const SetUsername = ({ navigation }) => {

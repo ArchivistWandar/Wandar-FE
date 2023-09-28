@@ -19,8 +19,10 @@ In the project directory, you can run:
 - [ ] 4. Land
 - [ ] 5. Archive
   - [x] Top Tabs Navigator
-  - [ ] Archive Records Page
-  - [ ] Archive Posts Page
+  - [x] Archive Records List Page
+  - [x] Archive Posts List Page
+  - [ ] Archive Record Detail Page
+  - [ ] Archive Post Detail Page
 - [ ] 6. Upload Photo
 - [ ] 7. Upload Record
 - [x] 8. Notifications
