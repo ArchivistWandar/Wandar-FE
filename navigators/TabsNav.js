@@ -2,7 +2,7 @@ import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import TabIcon from "../components/nav/TabIcon";
 import SharedStackNav from "./SharedStackNav";
-import { Image, View } from "react-native";
+import { View } from "react-native";
 import useMe from "../hooks/useMe";
 import { colors } from "../colors";
 
@@ -24,7 +24,7 @@ export default function TabsNav() {
       }}
     >
       <Tabs.Screen
-        name="TabFeed"
+        name="TabLand"
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <TabIcon
@@ -36,10 +36,10 @@ export default function TabsNav() {
           ),
         }}
       >
-        {() => <SharedStackNav screenName="land" />}
+        {() => <SharedStackNav screenName="Land" />}
       </Tabs.Screen>
       <Tabs.Screen
-        name="TabSearch"
+        name="TabArchive"
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <TabIcon color={color} focused={focused} iconName={"albums"} />
@@ -49,7 +49,7 @@ export default function TabsNav() {
         {() => <SharedStackNav screenName="Archive" />}
       </Tabs.Screen>
       <Tabs.Screen
-        name="Camera"
+        name="TabUpload"
         component={View}
         listeners={({ navigation }) => {
           return {

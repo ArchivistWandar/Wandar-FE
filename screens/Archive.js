@@ -1,11 +1,12 @@
 import React from "react";
-import { Text, View } from "react-native";
+import { Text } from "react-native";
+import { Container } from "../components/Shared";
 
 const Archive = () => {
   return (
-    <View>
+    <Container>
       <Text>Archive</Text>
-    </View>
+    </Container>
   );
 };
 
