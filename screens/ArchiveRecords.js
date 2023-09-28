@@ -2,12 +2,12 @@ import React from "react";
 import { Text } from "react-native";
 import { Container } from "../components/Shared";
 
-const Archive = () => {
+const ArchiveRecords = () => {
   return (
     <Container>
-      <Text>Archive</Text>
+      <Text style={{ color: "white" }}>ArchiveRecords</Text>
     </Container>
   );
 };
 
-export default Archive;
+export default ArchiveRecords;
