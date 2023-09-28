@@ -1,10 +1,4 @@
 import { styled } from "styled-components/native";
-import { colors } from "../../colors";
-
-export const AuthContainer = styled.View`
-  flex: 1;
-  background-color: ${colors.backgroundColor};
-`;
 
 export const AuthTitle = styled.Text`
   margin-top: 150px;

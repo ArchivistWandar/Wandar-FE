@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from "react";
 import AuthLayout from "../../components/auth/AuthLayout";
 import {
   AuthButtonContainer,
-  AuthContainer,
   AuthErrorMessage,
   AuthTextBox,
   AuthTextInfo,
@@ -13,6 +12,7 @@ import AuthButton from "../../components/auth/AuthButton";
 import { removeWhitespace } from "../../components/auth/Utils";
 import { Ionicons } from "@expo/vector-icons";
 import { View, TouchableOpacity } from "react-native";
+import { Container } from "../../components/Shared";
 
 const SetUsername = ({ navigation }) => {
   const [password, setPassword] = useState("");
@@ -41,7 +41,7 @@ const SetUsername = ({ navigation }) => {
   const goToUsername = () => navigation.navigate("SetUsername");
 
   return (
-    <AuthContainer>
+    <Container>
       <AuthTitle>Choose a password</AuthTitle>
       <AuthLayout>
         <AuthTextBox disabled={errorMessage}>
@@ -78,7 +78,7 @@ const SetUsername = ({ navigation }) => {
           />
         </AuthButtonContainer>
       </AuthLayout>
-    </AuthContainer>
+    </Container>
   );
 };
 

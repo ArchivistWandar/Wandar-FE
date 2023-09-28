@@ -2,16 +2,16 @@ import React from "react";
 import { View } from "react-native";
 import {
   AuthButtonContainer,
-  AuthContainer,
   AuthTitle,
 } from "../../components/auth/AuthShared";
 import AuthButton from "../../components/auth/AuthButton";
 import AuthLayout from "../../components/auth/AuthLayout";
+import { Container } from "../../components/Shared";
 
 const SetProfile = () => {
   const username = "wandar";
   return (
-    <AuthContainer>
+    <Container>
       <AuthLayout>
         <AuthTitle>
           Welcome {username}!{"\n"}Choose your profile
@@ -25,7 +25,7 @@ const SetProfile = () => {
           isYellow={false}
         />
       </AuthButtonContainer>
-    </AuthContainer>
+    </Container>
   );
 };
 

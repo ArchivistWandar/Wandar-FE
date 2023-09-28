@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from "react";
 import AuthLayout from "../components/auth/AuthLayout";
 import {
   AuthButtonContainer,
-  AuthContainer,
   AuthTextBox,
   AuthTextInput,
 } from "../components/auth/AuthShared";
@@ -11,6 +10,7 @@ import AuthButton from "../components/auth/AuthButton";
 import { styled } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { Container } from "../components/Shared";
 
 const TextInput = styled.TextInput`
   padding: 20px 17px;
@@ -66,7 +66,7 @@ const Login = () => {
   const [disabled, setDisabled] = useState(true); // Initially disabled
 
   return (
-    <AuthContainer>
+    <Container>
       <Logo resizeMode="contain" source={require("../assets/logo.png")} />
       <AuthLayout>
         <TextInput
@@ -101,7 +101,7 @@ const Login = () => {
           <AuthButton text="Continue" disabled={disabled} isYellow={false} />
         </AuthButtonContainer>
       </AuthLayout>
-    </AuthContainer>
+    </Container>
   );
 };
 
