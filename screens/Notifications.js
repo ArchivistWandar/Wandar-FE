@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList, Image } from "react-native";
+import { FlatList } from "react-native";
 import styled from "styled-components/native";
 import { Container } from "../components/Shared";
 const notificationsData = [
@@ -7,22 +7,22 @@ const notificationsData = [
     id: "1",
     type: "post",
     username: "hyeinlee.leeeeeee",
-    postImage: require("./../assets/post1.png"),
-    profileImage: require("./../assets/profile1.png"),
+    postImage: require("./../assets/images/post1.png"),
+    profileImage: require("./../assets/images/profile1.png"),
   },
   {
     id: "2",
     type: "record",
     username: "iamlily",
-    postImage: require("./../assets/record1.png"),
-    profileImage: require("./../assets/profile2.png"),
+    postImage: require("./../assets/images/record1.png"),
+    profileImage: require("./../assets/images/profile2.png"),
   },
   {
     id: "3",
     type: "land",
     username: "dankim",
     landname: "Beach Paradise",
-    profileImage: require("./../assets/profile3.png"),
+    profileImage: require("./../assets/images/profile3.png"),
   },
   {
     id: "4",
