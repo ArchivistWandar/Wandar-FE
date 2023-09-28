@@ -80,14 +80,14 @@ export default function TabsNav() {
         {() => <SharedStackNav screenName="Notifications" />}
       </Tabs.Screen>
       <Tabs.Screen
-        name="TabMe"
+        name="TabMyPage"
         options={{
           tabBarIcon: ({ focused, color, size }) => (
             <TabIcon color={color} focused={focused} iconName={"person"} />
           ),
         }}
       >
-        {() => <SharedStackNav screenName="Me" />}
+        {() => <SharedStackNav screenName="MyPage" />}
       </Tabs.Screen>
     </Tabs.Navigator>
   );
