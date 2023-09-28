@@ -2,12 +2,12 @@ import React from "react";
 import { Text } from "react-native";
 import { Container } from "../components/Shared";
 
-const Me = () => {
+const MyPage = () => {
   return (
     <Container>
-      <Text>Me</Text>
+      <Text>MyPage</Text>
     </Container>
   );
 };
 
-export default Me;
+export default MyPage;
