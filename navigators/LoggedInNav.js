@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import TabsNav from "./TabsNav";
 import UploadNav from "./UploadNav";
 import UploadForm from "../screens/UploadForm";
+import { colors } from "../colors";
 
 const Stack = createStackNavigator();
 
@@ -30,7 +31,7 @@ export default function LoggedInNav() {
           title: "Upload",
           headerTintColor: "white",
           headerStyle: {
-            backgroundColor: "black",
+            backgroundColor: colors.backgroundColor,
           },
         }}
         component={UploadForm}

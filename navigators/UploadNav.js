@@ -3,6 +3,7 @@ import React from "react";
 import SelectPhoto from "../screens/SelectPhoto";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
+import { colors } from "../colors";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator();
@@ -13,7 +14,7 @@ const UploadNav = () => {
       tabBarPosition="bottom"
       screenOptions={{
         tabBarStyle: {
-          backgroundColor: "black",
+          backgroundColor: colors.backgroundColor,
         },
         tabBarActiveTintColor: "white",
         tabBarIndicatorStyle: { backgroundColor: "white", top: 0 },
@@ -29,7 +30,7 @@ const UploadNav = () => {
                 <Ionicons color={tintColor} name="close" size={28} />
               ),
               headerStyle: {
-                backgroundColor: "black",
+                backgroundColor: colors.backgroundColor,
                 shadowOpacity: 0.3,
               },
             }}

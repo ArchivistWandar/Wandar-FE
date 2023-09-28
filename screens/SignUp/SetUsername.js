@@ -7,7 +7,6 @@ import {
 } from "../../components/auth/Utils";
 import {
   AuthButtonContainer,
-  AuthContainer,
   AuthErrorMessage,
   AuthTextBox,
   AuthTextInfo,
@@ -15,6 +14,7 @@ import {
   AuthTitle,
 } from "../../components/auth/AuthShared";
 import { Text, View } from "react-native";
+import { Container } from "../../components/Shared";
 
 const SetUsername = ({ navigation }) => {
   const [username, setUsername] = useState("");
@@ -44,7 +44,7 @@ const SetUsername = ({ navigation }) => {
   }, [username, errorMessage]);
 
   return (
-    <AuthContainer>
+    <Container>
       <AuthTitle>Add your username</AuthTitle>
       <AuthLayout>
         <AuthTextBox disabled={errorMessage}>
@@ -72,7 +72,7 @@ const SetUsername = ({ navigation }) => {
           />
         </AuthButtonContainer>
       </AuthLayout>
-    </AuthContainer>
+    </Container>
   );
 };
 

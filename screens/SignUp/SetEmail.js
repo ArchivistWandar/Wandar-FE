@@ -4,7 +4,6 @@ import AuthButton from "../../components/auth/AuthButton";
 import { validateEmail, removeWhitespace } from "../../components/auth/Utils";
 import {
   AuthButtonContainer,
-  AuthContainer,
   AuthErrorMessage,
   AuthTextBox,
   AuthTextInfo,
@@ -12,6 +11,7 @@ import {
   AuthTitle,
 } from "../../components/auth/AuthShared";
 import { Text, View } from "react-native";
+import { Container } from "../../components/Shared";
 
 const SetUsername = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -34,7 +34,7 @@ const SetUsername = ({ navigation }) => {
   }, [email, errorMessage]);
 
   return (
-    <AuthContainer>
+    <Container>
       <AuthTitle>What’s your email address?</AuthTitle>
       <AuthLayout>
         <AuthTextBox disabled={errorMessage}>
@@ -63,7 +63,7 @@ const SetUsername = ({ navigation }) => {
           />
         </AuthButtonContainer>
       </AuthLayout>
-    </AuthContainer>
+    </Container>
   );
 };
 

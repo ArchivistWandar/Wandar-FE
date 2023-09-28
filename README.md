@@ -20,5 +20,5 @@ In the project directory, you can run:
 - [ ] 5. Archive
 - [ ] 6. Upload Photo
 - [ ] 7. Upload Record
-- [ ] 8. Notifications
+- [x] 8. Notifications
 - [ ] 9. Me
