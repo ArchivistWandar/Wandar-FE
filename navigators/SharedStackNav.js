@@ -5,8 +5,9 @@ import Archive from "../screens/ArchivePosts";
 import Notifications from "../screens/Notifications";
 import { colors } from "../colors";
 import ArchiveNav from "./ArchiveNav";
-import MyPageNav from "./MyPageNav";
+import MyPageTabNav from "./MyPageTabNav";
 import MyPage from "../screens/MyPage/MyPage";
+import MyPageNav from "./MyPageNav";
 
 const Stack = createStackNavigator();
 
@@ -53,16 +54,16 @@ const SharedStackNav = ({ screenName }) => {
       {screenName === "Notifications" ? (
         <Stack.Screen name={"Notifications"} component={Notifications} />
       ) : null}
-      {screenName === "MyPage" ? (
+      {screenName === "MyPageNav" ? (
         <Stack.Screen
-          name={"MyPage"}
-          component={MyPage}
-          options={{ headerTitle: "My page" }}
+          name={"MyPageNav"}
+          component={MyPageNav}
+          options={{ headerShown: false }}
         />
       ) : // <Stack.Screen
-      //   name="MyPageNav"
+      //   name="MyPageTabNav"
       //   options={{ headerShown: false }}
-      //   component={MyPageNav}
+      //   component={MyPageTabNav}
       // />
       null}
       {/* <Stack.Screen name="Photo" component={PhotoScreen} />

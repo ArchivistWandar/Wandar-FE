@@ -26,10 +26,10 @@ In the project directory, you can run:
 - [ ] 6. Upload Photo
 - [ ] 7. Upload Record
 - [x] 8. Notifications
-- [ ] 9. MyPage
+- [x] 9. MyPage
   - [x] My Info Box
   - [x] Tabs Navigator
   - [x] My Timeline
   - [x] My Photos
-  - [ ] Edit Profile Info
-  - [ ] Edit Profile Image
+  - [x] Edit Profile Info
+  - [x] Edit Profile Image
