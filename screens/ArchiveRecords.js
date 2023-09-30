@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { Container } from "../components/Shared";
@@ -23,22 +23,27 @@ const postData = [
   },
 ];
 
-const ArchiveRecords = () => {
+const ArchiveRecords = ({ navigation }) => {
+  const goToRecordDetail = () => {
+    navigation.navigate("RecordDetail");
+  };
   const renderItem = ({ item }) => {
     return (
-      <PostItem>
-        <PostImage source={item.image} />
-        <PostDetails>
-          <PostTitle>{item.title}</PostTitle>
-          <PostDate>{item.date}</PostDate>
-          <PhotoCount>{item.photoCount} photos</PhotoCount>
-        </PostDetails>
-        {item.isPrivate ? (
-          <Ionicons name="lock-closed" size={20} color={"white"} />
-        ) : (
-          <Ionicons name="people" size={20} color={"white"} />
-        )}
-      </PostItem>
+      <TouchableOpacity onPress={goToRecordDetail}>
+        <PostItem>
+          <PostImage source={item.image} />
+          <PostDetails>
+            <PostTitle>{item.title}</PostTitle>
+            <PostDate>{item.date}</PostDate>
+            <PhotoCount>{item.photoCount} photos</PhotoCount>
+          </PostDetails>
+          {item.isPrivate ? (
+            <Ionicons name="lock-closed" size={20} color={"white"} />
+          ) : (
+            <Ionicons name="people" size={20} color={"white"} />
+          )}
+        </PostItem>
+      </TouchableOpacity>
     );
   };
 
