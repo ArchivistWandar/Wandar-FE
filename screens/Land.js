@@ -4,6 +4,9 @@ import styled from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 
 const Land = ({ navigation }) => {
+  const goToFriendsSelect = () => {
+    navigation.navigate("FriendSelect");
+  };
   const goToLandDetail = () => {
     navigation.navigate("LandDetail");
   };
@@ -12,7 +15,7 @@ const Land = ({ navigation }) => {
       <TouchableOpacity onPress={goToLandDetail}>
         <RealLand />
       </TouchableOpacity>
-      <PlaneButton onPress={goToLandDetail}>
+      <PlaneButton onPress={goToFriendsSelect}>
         <PlaneImage source={require("../assets/images/planeButton.png")} />
       </PlaneButton>
     </Container>
