@@ -1,14 +1,13 @@
 import React from "react";
-import { Text } from "react-native";
 import { Container } from "../../components/Shared";
-import MyPageNav from "../../navigators/MyPageNav";
+import MyPageTabNav from "../../navigators/MyPageTabNav";
 import MyInfo from "./MyInfo";
 
-const MyPage = () => {
+const MyPage = ({ navigation }) => {
   return (
     <Container>
-      <MyInfo />
-      <MyPageNav />
+      <MyInfo navigation={navigation} />
+      <MyPageTabNav />
     </Container>
   );
 };

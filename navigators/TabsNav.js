@@ -87,7 +87,7 @@ export default function TabsNav() {
           ),
         }}
       >
-        {() => <SharedStackNav screenName="MyPage" />}
+        {() => <SharedStackNav screenName="MyPageNav" />}
       </Tabs.Screen>
     </Tabs.Navigator>
   );

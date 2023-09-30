@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components/native";
-import { Ionicons } from "@expo/vector-icons";
-import { Container } from "../../components/Shared";
+import { Ionicons } from "@expo/vector-icons"; // Import useNavigation
+import { TouchableOpacity } from "react-native-gesture-handler";
 
 const userData = {
   id: "1",
@@ -10,7 +10,10 @@ const userData = {
   friendsNum: "28",
 };
 
-const MyInfo = () => {
+const MyInfo = ({ navigation }) => {
+  const goToMyInfoEdit = () => {
+    navigation.navigate("MyInfoEdit");
+  };
   return (
     <UserInfoBox>
       <UserInfoContainer>
@@ -19,7 +22,9 @@ const MyInfo = () => {
           <Username>@{userData.username}</Username>
           <FriendsNum>{userData.friendsNum} friends</FriendsNum>
         </UserDetails>
-        <Ionicons name="pencil" size={20} color={"white"} />
+        <TouchableOpacity onPress={goToMyInfoEdit}>
+          <Ionicons name="pencil" size={20} color={"white"} />
+        </TouchableOpacity>
       </UserInfoContainer>
     </UserInfoBox>
   );

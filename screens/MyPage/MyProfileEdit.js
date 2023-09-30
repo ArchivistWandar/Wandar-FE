@@ -1,32 +1,30 @@
-import React, { useState } from "react";
-import styled from "styled-components/native";
-import { Ionicons } from "@expo/vector-icons";
-import AuthButton from "../../components/auth/AuthButton";
-import AuthLayout from "../../components/auth/AuthLayout";
+import React from "react";
+import ProfileSelect from "../../components/ProfileSelect";
 import { Container } from "../../components/Shared";
+import { ScrollView } from "react-native";
+import AuthLayout from "../../components/auth/AuthLayout";
 import {
   AuthButtonContainer,
   AuthTitle,
 } from "../../components/auth/AuthShared";
-import { ScrollView } from "react-native";
-import ProfileSelect from "../../components/ProfileSelect";
+import AuthButton from "../../components/auth/AuthButton";
 
-const SetProfile = () => {
-  const username = "wandar";
+const MyProfileEdit = () => {
+  const username = "vivian";
 
   return (
     <Container>
       <ScrollView>
         <AuthLayout>
           <AuthTitle profile={true}>
-            Welcome {username}! {"\n"}Choose your profile
+            Hi {username}! {"\n"}Edit your profile
           </AuthTitle>
           <ProfileSelect />
         </AuthLayout>
       </ScrollView>
       <AuthButtonContainer>
         <AuthButton
-          text="Continue"
+          text="Save"
           disabled={false}
           // onPress={}
           isYellow={false}
@@ -36,4 +34,4 @@ const SetProfile = () => {
   );
 };
 
-export default SetProfile;
+export default MyProfileEdit;
