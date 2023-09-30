@@ -49,7 +49,7 @@ export default function App() {
     return null;
   }
 
-  const isLoggedIn = false;
+  const isLoggedIn = true;
 
   return (
     <NavigationContainer>
