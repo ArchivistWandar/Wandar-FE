@@ -9,11 +9,11 @@ In the project directory, you can run:
 
 ### <br/> To-do list
 
-- [ ] 1. Sign Up
+- [x] 1. Sign Up
   - [x] Email
   - [x] Password
   - [x] Username
-  - [ ] Profile Image Selection
+  - [x] Profile Image Selection
 - [x] 2. Login
 - [x] 3. Tab Nav Bar & Structure
 - [ ] 4. Land
@@ -26,4 +26,10 @@ In the project directory, you can run:
 - [ ] 6. Upload Photo
 - [ ] 7. Upload Record
 - [x] 8. Notifications
-- [ ] 9. Me
+- [ ] 9. MyPage
+  - [x] My Info Box
+  - [x] Tabs Navigator
+  - [ ] My Timeline
+  - [ ] My Photos
+  - [ ] Edit Profile Info
+  - [ ] Edit Profile Image
