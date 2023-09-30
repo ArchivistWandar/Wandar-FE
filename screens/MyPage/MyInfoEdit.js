@@ -6,7 +6,8 @@ import MyProfileEdit from "./MyProfileEdit";
 import { AuthButtonContainer } from "../../components/auth/AuthShared";
 import AuthButton from "../../components/auth/AuthButton";
 import AuthLayout from "../../components/auth/AuthLayout";
-import { TouchableOpacity, View } from "react-native";
+import { ScrollView, TouchableOpacity, View } from "react-native";
+import ProfileEditContainer from "../../components/ProfileEditContainer";
 
 const MyInfoEdit = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,8 +26,8 @@ const MyInfoEdit = ({ navigation }) => {
   };
 
   return (
-    <Container>
-      <AuthLayout>
+    <ProfileEditContainer>
+      <ScrollView>
         <ProfileImageContainer>
           {/* Original profile image */}
           <ProfileImage source={require("../../assets/images/profile1.png")} />
@@ -77,11 +78,11 @@ const MyInfoEdit = ({ navigation }) => {
             </TouchableOpacity>
           </PasswordInputContainer>
         </TextInputContainer>
-        <AuthButtonContainer>
+        <ButtonContainer>
           <AuthButton text="Save" disabled={disabled} isYellow={false} />
-        </AuthButtonContainer>
-      </AuthLayout>
-    </Container>
+        </ButtonContainer>
+      </ScrollView>
+    </ProfileEditContainer>
   );
 };
 
@@ -131,13 +132,18 @@ const TextInput = styled.TextInput`
 
 const PasswordInput = styled.TextInput`
   width: 87%;
-
   background-color: #1b1b1b;
   border-radius: 5px;
   padding: 10px;
   font-size: 14px;
   color: white;
   font-family: "JostMedium";
+`;
+
+export const ButtonContainer = styled.View`
+  align-items: center;
+  justify-content: center;
+  margin: 30px 40px;
 `;
 
 export default MyInfoEdit;
