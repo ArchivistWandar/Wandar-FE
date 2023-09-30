@@ -36,7 +36,7 @@ export default function TabsNav() {
           ),
         }}
       >
-        {() => <SharedStackNav screenName="Land" />}
+        {() => <SharedStackNav screenName="LandNav" />}
       </Tabs.Screen>
       <Tabs.Screen
         name="TabArchive"

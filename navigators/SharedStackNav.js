@@ -1,13 +1,10 @@
 import { createStackNavigator } from "@react-navigation/stack";
 import React from "react";
-import Land from "../screens/Land";
-import Archive from "../screens/ArchivePosts";
 import Notifications from "../screens/Notifications";
 import { colors } from "../colors";
 import ArchiveNav from "./ArchiveNav";
-import MyPageTabNav from "./MyPageTabNav";
-import MyPage from "../screens/MyPage/MyPage";
 import MyPageNav from "./MyPageNav";
+import LandNav from "./LandNav";
 
 const Stack = createStackNavigator();
 
@@ -28,23 +25,16 @@ const SharedStackNav = ({ screenName }) => {
         },
       }}
     >
-      {screenName === "Land" ? (
+      {screenName === "LandNav" ? (
         <Stack.Screen
-          name={"Land"}
-          component={Land}
+          name={"LandNav"}
+          component={LandNav}
           options={{
             headerShown: false,
           }}
         />
       ) : null}
       {screenName === "Archive" ? (
-        // <Stack.Screen
-        //   name={"Archive"}
-        //   component={Archive}
-        //   options={{
-        //     headerShown: false,
-        //   }}
-        // />
         <Stack.Screen
           name="ArchiveNav"
           options={{ headerShown: false }}
@@ -60,12 +50,7 @@ const SharedStackNav = ({ screenName }) => {
           component={MyPageNav}
           options={{ headerShown: false }}
         />
-      ) : // <Stack.Screen
-      //   name="MyPageTabNav"
-      //   options={{ headerShown: false }}
-      //   component={MyPageTabNav}
-      // />
-      null}
+      ) : null}
       {/* <Stack.Screen name="Photo" component={PhotoScreen} />
       <Stack.Screen name="Likes" component={Likes} />
       <Stack.Screen name="Comments" component={Comments} /> */}
