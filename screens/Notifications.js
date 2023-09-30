@@ -7,14 +7,14 @@ const notificationsData = [
     id: "1",
     type: "post",
     username: "hyeinlee.leeeeeee",
-    postImage: require("./../assets/images/post1.png"),
+    postImage: require("./../assets/images/jeju.png"),
     profileImage: require("./../assets/images/profile1.png"),
   },
   {
     id: "2",
     type: "record",
     username: "iamlily",
-    postImage: require("./../assets/images/record1.png"),
+    postImage: require("./../assets/images/busan.png"),
     profileImage: require("./../assets/images/profile2.png"),
   },
   {
