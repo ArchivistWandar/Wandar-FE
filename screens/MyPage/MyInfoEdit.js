@@ -6,6 +6,7 @@ import MyProfileEdit from "./MyProfileEdit";
 import { AuthButtonContainer } from "../../components/auth/AuthShared";
 import AuthButton from "../../components/auth/AuthButton";
 import AuthLayout from "../../components/auth/AuthLayout";
+import { TouchableOpacity, View } from "react-native";
 
 const MyInfoEdit = ({ navigation }) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -22,7 +23,7 @@ const MyInfoEdit = ({ navigation }) => {
   const handleSave = () => {
     // Handle save logic here (e.g., send updated data to the server).
   };
-  const goToMyProfileEdit = () => navigation.navigate("MyProfileEdit");
+
   return (
     <Container>
       <AuthLayout>
@@ -59,20 +60,22 @@ const MyInfoEdit = ({ navigation }) => {
         <TextInputContainer>
           {/* Password input */}
           <InputLabel>Password</InputLabel>
-          <PasswordInput
-            placeholder="Enter your password"
-            placeholderTextColor={"grey"}
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={(text) => setPassword(text)}
-          />
-          <PasswordVisibilityButton onPress={togglePasswordVisibility}>
-            <Ionicons
-              name={showPassword ? "eye-off" : "eye"}
-              size={24}
-              color="gray"
+          <PasswordInputContainer>
+            <PasswordInput
+              placeholder="Enter your password"
+              placeholderTextColor={"grey"}
+              secureTextEntry={!showPassword}
+              value={password}
+              onChangeText={(text) => setPassword(text)}
             />
-          </PasswordVisibilityButton>
+            <TouchableOpacity onPress={togglePasswordVisibility}>
+              <Ionicons
+                name={showPassword ? "eye" : "eye-off"}
+                color={"white"}
+                size={24}
+              />
+            </TouchableOpacity>
+          </PasswordInputContainer>
         </TextInputContainer>
         <AuthButtonContainer>
           <AuthButton text="Save" disabled={disabled} isYellow={false} />
@@ -104,6 +107,12 @@ const TextInputContainer = styled.View`
   margin: 20px 40px;
 `;
 
+const PasswordInputContainer = styled.View`
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+`;
+
 const InputLabel = styled.Text`
   font-family: "JostMedium";
   color: white;
@@ -121,18 +130,14 @@ const TextInput = styled.TextInput`
 `;
 
 const PasswordInput = styled.TextInput`
+  width: 87%;
+
   background-color: #1b1b1b;
   border-radius: 5px;
   padding: 10px;
   font-size: 14px;
   color: white;
   font-family: "JostMedium";
-`;
-
-const PasswordVisibilityButton = styled.TouchableOpacity`
-  position: absolute;
-  top: 15px;
-  right: 10px;
 `;
 
 export default MyInfoEdit;
