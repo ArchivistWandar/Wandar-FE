@@ -18,8 +18,9 @@ In the project directory, you can run:
 - [x] 3. Tab Nav Bar & Structure
 - [ ] 4. Land
   - [x] Tabs Navigator
-  - [ ] Friends Tab
-  - [ ] Browse Tab
+  - [x] Friends Tab
+  - [x] Browse Tab
+  - [ ] Three.js stuff...
 - [ ] 5. Archive
   - [x] Top Tabs Navigator
   - [x] Archive Records List Page
