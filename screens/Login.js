@@ -27,7 +27,7 @@ const TextInput = styled.TextInput`
 const Logo = styled.Image`
   max-width: 70%;
   width: 100%;
-  height: 200px;
+  height: 10%;
   margin: 100px auto;
   margin-bottom: 30px;
 `;
