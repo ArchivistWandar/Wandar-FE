@@ -30,6 +30,6 @@ In the project directory, you can run:
   - [x] My Info Box
   - [x] Tabs Navigator
   - [ ] My Timeline
-  - [ ] My Photos
+  - [x] My Photos
   - [ ] Edit Profile Info
   - [ ] Edit Profile Image
