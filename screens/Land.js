@@ -1,19 +1,30 @@
 import React from "react";
 import { Container } from "../components/Shared";
 import styled from "styled-components/native";
+import { TouchableOpacity } from "react-native";
 
 const Land = ({ navigation }) => {
-  const goToFriendSelect = () => {
-    navigation.navigate("FriendSelect");
+  const goToLandDetail = () => {
+    navigation.navigate("LandDetail");
   };
   return (
     <Container>
-      <PlaneButton onPress={goToFriendSelect}>
+      <TouchableOpacity onPress={goToLandDetail}>
+        <RealLand />
+      </TouchableOpacity>
+      <PlaneButton onPress={goToLandDetail}>
         <PlaneImage source={require("../assets/images/planeButton.png")} />
       </PlaneButton>
     </Container>
   );
 };
+
+const RealLand = styled.View`
+  margin: 100px;
+  width: 50px;
+  height: 50px;
+  background-color: grey;
+`;
 
 const PlaneButton = styled.TouchableOpacity`
   position: absolute;
