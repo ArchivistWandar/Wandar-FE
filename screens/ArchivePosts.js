@@ -1,5 +1,5 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { Container } from "../components/Shared";
@@ -26,28 +26,33 @@ const postData = [
   // Add more post data here
 ];
 
-const ArchivePosts = () => {
+const ArchivePosts = ({ navigation }) => {
+  const goToPostDetail = () => {
+    navigation.navigate("PostDetail");
+  };
   const renderItem = ({ item }) => {
     return (
-      <PostItem>
-        <PostImage source={item.image} />
-        <PostDetails>
-          <LandName>{item.landName}</LandName>
-          <DateAndPrivacy>
-            <DateText numberOfLines={1}>{item.date}</DateText>
-            {item.isPrivate ? (
-              <IconContainer>
-                <Ionicons name="lock-closed" size={15} color={"white"} />
-              </IconContainer>
-            ) : (
-              <IconContainer>
-                <Ionicons name="people" size={15} color={"white"} />
-              </IconContainer>
-            )}
-          </DateAndPrivacy>
-          <Contents numberOfLines={2}>{item.contents}</Contents>
-        </PostDetails>
-      </PostItem>
+      <TouchableOpacity onPress={goToPostDetail}>
+        <PostItem>
+          <PostImage source={item.image} />
+          <PostDetails>
+            <LandName>{item.landName}</LandName>
+            <DateAndPrivacy>
+              <DateText numberOfLines={1}>{item.date}</DateText>
+              {item.isPrivate ? (
+                <IconContainer>
+                  <Ionicons name="lock-closed" size={15} color={"white"} />
+                </IconContainer>
+              ) : (
+                <IconContainer>
+                  <Ionicons name="people" size={15} color={"white"} />
+                </IconContainer>
+              )}
+            </DateAndPrivacy>
+            <Contents numberOfLines={2}>{item.contents}</Contents>
+          </PostDetails>
+        </PostItem>
+      </TouchableOpacity>
     );
   };
 

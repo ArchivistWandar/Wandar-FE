@@ -1,16 +1,50 @@
-import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import React from "react";
+import { createMaterialTopTabNavigator } from "@react-navigation/material-top-tabs";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
 import ArchiveRecords from "../screens/ArchiveRecords";
 import ArchivePosts from "../screens/ArchivePosts";
 import { colors } from "../colors";
 import TabIcon from "../components/nav/TabIcon";
+import PostDetail from "../screens/PostDetail";
+import RecordDetail from "../screens/RecordDetail"; // Import the RecordDetail screen
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator();
 
 const ArchiveNav = () => {
+  return (
+    <Stack.Navigator
+      initialRouteName="ArchiveTabs"
+      screenOptions={{
+        headerTintColor: "white",
+        headerBackTitleVisible: false,
+        headerBackImage: ({ tintColor }) => (
+          <Ionicons color={tintColor} name="close" size={28} />
+        ),
+      }}
+    >
+      <Stack.Screen
+        name="ArchiveTabs"
+        component={ArchiveTabs}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen
+        name="PostDetail"
+        component={PostDetail}
+        options={{ headerTransparent: true, headerTitle: "" }}
+      />
+      {/* Add the RecordDetail screen */}
+      <Stack.Screen
+        name="RecordDetail"
+        component={RecordDetail}
+        options={{ headerTransparent: true, headerTitle: "" }}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const ArchiveTabs = () => {
   return (
     <Tab.Navigator
       screenOptions={{
