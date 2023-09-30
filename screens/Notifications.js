@@ -74,7 +74,7 @@ const Notifications = () => {
       case "suggestion":
         return (
           <NotificationItem>
-            <ProfileImage source={item.profileImage} />
+            <ProfileImage source={item.profileImage} resizeMode="contain" />
             <NotificationText>{item.text}</NotificationText>
           </NotificationItem>
         );
