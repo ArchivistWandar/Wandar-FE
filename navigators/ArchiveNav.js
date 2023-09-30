@@ -7,7 +7,7 @@ import ArchivePosts from "../screens/ArchivePosts";
 import { colors } from "../colors";
 import TabIcon from "../components/nav/TabIcon";
 import PostDetail from "../screens/PostDetail";
-import RecordDetail from "../screens/RecordDetail"; // Import the RecordDetail screen
+import RecordDetail from "../screens/RecordDetail";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator();
@@ -17,11 +17,9 @@ const ArchiveNav = () => {
     <Stack.Navigator
       initialRouteName="ArchiveTabs"
       screenOptions={{
+        headerMode: "screen",
         headerTintColor: "white",
         headerBackTitleVisible: false,
-        headerBackImage: ({ tintColor }) => (
-          <Ionicons color={tintColor} name="close" size={28} />
-        ),
       }}
     >
       <Stack.Screen
