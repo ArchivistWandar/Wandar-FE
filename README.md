@@ -29,7 +29,7 @@ In the project directory, you can run:
 - [ ] 9. MyPage
   - [x] My Info Box
   - [x] Tabs Navigator
-  - [ ] My Timeline
+  - [x] My Timeline
   - [x] My Photos
   - [ ] Edit Profile Info
   - [ ] Edit Profile Image
