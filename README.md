@@ -20,6 +20,7 @@ In the project directory, you can run:
   - [x] Tabs Navigator
   - [x] Friends Tab
   - [x] Browse Tab
+  - [x] Land Archive Page
   - [ ] Three.js stuff...
 - [ ] 5. Archive
   - [x] Top Tabs Navigator
