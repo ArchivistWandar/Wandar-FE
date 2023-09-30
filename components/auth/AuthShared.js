@@ -31,7 +31,7 @@ export const AuthTextInfo = styled.Text`
 
 export const AuthButtonContainer = styled.View`
   position: absolute;
-  bottom: 10px; /* Adjust this value to control the vertical position */
+  bottom: 10px;
   left: 0;
   right: 0;
   align-items: center;
