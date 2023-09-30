@@ -4,10 +4,11 @@ import { colors } from "../../colors";
 import { Platform } from "react-native";
 
 const Button = styled.TouchableOpacity`
-  margin-bottom: ${(props) => (props.isYellow ? "14px" : "0px")};
   background-color: ${(props) => (props.isYellow ? colors.yellow : "white")};
+  width: 100%;
   padding: 16px 10px;
   border-radius: 50px;
+  margin-bottom: 10px;
   ${Platform.select({
     ios: `
         shadow-color: rgba(0, 0, 0, 0.25);
