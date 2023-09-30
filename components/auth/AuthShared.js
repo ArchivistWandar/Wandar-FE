@@ -1,7 +1,7 @@
 import { styled } from "styled-components/native";
 
 export const AuthTitle = styled.Text`
-  margin-top: 150px;
+  margin-top: ${(props) => (props.profile ? "120px" : "140px")};
   margin-left: 20px;
   margin-bottom: 50px;
   color: #fff;
@@ -30,9 +30,14 @@ export const AuthTextInfo = styled.Text`
 `;
 
 export const AuthButtonContainer = styled.View`
-  margin-right: 10px;
-  margin-bottom: 60px;
-  margin-left: 10px;
+  position: absolute;
+  bottom: 10px; /* Adjust this value to control the vertical position */
+  left: 0;
+  right: 0;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20px;
+  margin-left: 20px;
 `;
 
 export const AuthTextInput = styled.TextInput`
