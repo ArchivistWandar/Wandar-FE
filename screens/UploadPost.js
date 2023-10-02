@@ -1,12 +1,12 @@
 import React from "react";
 import { Text, View } from "react-native";
 
-const UploadForm = () => {
+const UploadPost = () => {
   return (
     <View>
-      <Text>UploadForm</Text>
+      <Text>UploadPost</Text>
     </View>
   );
 };
 
-export default UploadForm;
+export default UploadPost;

@@ -16,6 +16,7 @@ In the project directory, you can run:
   - [x] Profile Image Selection
 - [x] 2. Login
 - [x] 3. Tab Nav Bar & Structure
+  - [x] Modal pop-up: Upload new post or record
 - [ ] 4. Land
   - [x] Tabs Navigator
   - [x] Friends Tab
