@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "wandar",
+    "name": "Wandar",
     "slug": "wandar",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -23,6 +23,16 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    }
+    },
+    "plugins": [
+      [
+        "expo-media-library",
+        {
+          "photosPermission": "Allow Wandar to access your photos.",
+          "savePhotosPermission": "Allow Wandar to save photos.",
+          "isAccessMediaLocationEnabled": true
+        }
+      ]
+    ]
   }
 }
