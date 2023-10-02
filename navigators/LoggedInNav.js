@@ -1,10 +1,8 @@
 import React from "react";
-import { Ionicons } from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
 import TabsNav from "./TabsNav";
-import { colors } from "../colors";
-import UploadPost from "../screens/UploadPost";
-import UploadRecord from "../screens/UploadRecord";
+import UploadPostNav from "./UploadPostNav";
+import UploadRecordNav from "./UploadRecordNav";
 
 const Stack = createStackNavigator();
 
@@ -17,34 +15,14 @@ export default function LoggedInNav() {
         component={TabsNav}
       />
       <Stack.Screen
-        name="UploadPost"
-        options={{
-          headerBackTitleVisible: false,
-          headerBackImage: ({ tintColor }) => (
-            <Ionicons color={tintColor} name="close" size={28} />
-          ),
-          title: "Upload",
-          headerTintColor: "white",
-          headerStyle: {
-            backgroundColor: colors.backgroundColor,
-          },
-        }}
-        component={UploadPost}
+        name="UploadPostNav"
+        options={{ headerShown: false }}
+        component={UploadPostNav}
       />
       <Stack.Screen
-        name="UploadRecord"
-        options={{
-          headerBackTitleVisible: false,
-          headerBackImage: ({ tintColor }) => (
-            <Ionicons color={tintColor} name="close" size={28} />
-          ),
-          title: "Upload",
-          headerTintColor: "white",
-          headerStyle: {
-            backgroundColor: colors.backgroundColor,
-          },
-        }}
-        component={UploadRecord}
+        name="UploadRecordNav"
+        options={{ headerShown: false }}
+        component={UploadRecordNav}
       />
     </Stack.Navigator>
   );
