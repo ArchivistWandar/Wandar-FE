@@ -20,13 +20,13 @@ export default function TabsNav({ navigation }) {
   const handleSelectUpload = () => {
     toggleUploadPopup();
     // Navigate to the Upload Post screen
-    navigation.navigate("UploadPost"); // Change "UploadPost" to the actual screen name
+    navigation.navigate("UploadPostNav"); // Change "UploadPost" to the actual screen name
   };
 
   const handleSelectRecord = () => {
     toggleUploadPopup();
     // Navigate to the Upload Record screen
-    navigation.navigate("UploadRecord"); // Change "UploadRecord" to the actual screen name
+    navigation.navigate("UploadRecordNav"); // Change "UploadRecord" to the actual screen name
   };
 
   return (
