@@ -2,9 +2,9 @@ import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { createStackNavigator } from "@react-navigation/stack";
 import TabsNav from "./TabsNav";
-import UploadNav from "./UploadNav";
-import UploadForm from "../screens/UploadForm";
 import { colors } from "../colors";
+import UploadPost from "../screens/UploadPost";
+import UploadRecord from "../screens/UploadRecord";
 
 const Stack = createStackNavigator();
 
@@ -17,12 +17,7 @@ export default function LoggedInNav() {
         component={TabsNav}
       />
       <Stack.Screen
-        name="Upload"
-        options={{ headerShown: false }}
-        component={UploadNav}
-      />
-      <Stack.Screen
-        name="UploadForm"
+        name="UploadPost"
         options={{
           headerBackTitleVisible: false,
           headerBackImage: ({ tintColor }) => (
@@ -34,7 +29,22 @@ export default function LoggedInNav() {
             backgroundColor: colors.backgroundColor,
           },
         }}
-        component={UploadForm}
+        component={UploadPost}
+      />
+      <Stack.Screen
+        name="UploadRecord"
+        options={{
+          headerBackTitleVisible: false,
+          headerBackImage: ({ tintColor }) => (
+            <Ionicons color={tintColor} name="close" size={28} />
+          ),
+          title: "Upload",
+          headerTintColor: "white",
+          headerStyle: {
+            backgroundColor: colors.backgroundColor,
+          },
+        }}
+        component={UploadRecord}
       />
     </Stack.Navigator>
   );
