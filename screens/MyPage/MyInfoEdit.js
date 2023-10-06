@@ -55,6 +55,8 @@ const MyInfoEdit = ({ navigation }) => {
             placeholderTextColor={"grey"}
             value={email}
             onChangeText={(text) => setEmail(text)}
+            keyboardType="email-address"
+            autoCapitalize={"none"}
           />
         </TextInputContainer>
 
