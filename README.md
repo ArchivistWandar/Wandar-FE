@@ -31,6 +31,7 @@ In the project directory, you can run:
   - [ ] Archive Post Detail Page
 - [ ] 6. Upload Post
   - [x] Setting Structure
+  - [x] Select Photos Page
 - [ ] 7. Upload Record
 - [x] 8. Notifications
 - [x] 9. MyPage
