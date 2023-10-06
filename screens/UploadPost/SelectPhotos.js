@@ -8,13 +8,10 @@ import {
   TouchableOpacity,
   useWindowDimensions,
   StatusBar,
+  Text,
 } from "react-native";
 import { colors } from "../../colors";
-
-const Container = styled.View`
-  flex: 1;
-  background-color: black;
-`;
+import { Container } from "../../components/Shared";
 
 const Top = styled.View`
   flex: 1;
@@ -24,6 +21,15 @@ const Top = styled.View`
 const Bottom = styled.View`
   flex: 1;
   background-color: black;
+`;
+
+const BlackBar = styled.View`
+  height: 40px;
+  background-color: ${colors.backgroundColor};
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
 `;
 
 const ImageContainer = styled.TouchableOpacity``;
@@ -51,9 +57,15 @@ export default function SelectPhotos({ navigation }) {
   const MAX_PHOTOS = 10; // Maximum number of photos allowed
 
   const getPhotos = async () => {
-    const { assets: mediaAssets } = await MediaLibrary.getAssetsAsync();
+    const { assets: mediaAssets } = await MediaLibrary.getAssetsAsync({
+      sortBy: [MediaLibrary.SortBy.creationTime],
+      first: 100000,
+    });
     setPhotos(mediaAssets);
-    setChosenPhoto(mediaAssets[0]?.uri);
+
+    if (!chosenPhoto && mediaAssets.length > 0) {
+      setChosenPhoto(mediaAssets[0]?.uri);
+    }
   };
 
   const getPermissions = async () => {
@@ -101,32 +113,39 @@ export default function SelectPhotos({ navigation }) {
         photo.uri,
       ]);
     }
+
+    // Update the chosen photo when a photo is selected
+    setChosenPhoto(photo.uri);
   };
 
-  const renderItem = ({ item: photo }) => (
-    <ImageContainer
-      onPress={() => togglePhotoSelection(photo)}
-      style={{
-        opacity: selectedPhotos.includes(photo.uri) ? 0.6 : 1,
-      }}
-    >
+  const renderItem = ({ item: photo, index }) => (
+    <ImageContainer onPress={() => togglePhotoSelection(photo)}>
       <Image
         source={{ uri: photo.uri }}
-        style={{ width: width / numColumns, height: 100 }}
+        style={{
+          width: width / numColumns,
+          height: 100,
+          opacity: selectedPhotos.includes(photo.uri) ? 0.5 : 1,
+        }}
       />
       <IconContainer>
-        <Ionicons
-          name={
-            selectedPhotos.includes(photo.uri) ? "checkbox" : "checkbox-outline"
-          }
-          size={18}
-          color="white"
-        />
+        {selectedPhotos.includes(photo.uri) ? (
+          <Text
+            style={{
+              color: "white",
+              fontSize: 16,
+              fontFamily: "JostMedium",
+              paddingRight: 5,
+            }}
+          >
+            {selectedPhotos.indexOf(photo.uri) + 1}
+          </Text>
+        ) : (
+          <Ionicons name="ellipse-outline" size={18} color="white" />
+        )}
       </IconContainer>
     </ImageContainer>
   );
-
-  console.log(selectedPhotos);
 
   return (
     <Container>
@@ -139,6 +158,14 @@ export default function SelectPhotos({ navigation }) {
           />
         )}
       </Top>
+      <BlackBar>
+        {/* Add a dropdown button for albums here */}
+        <Text style={{ color: "white" }}>{/* Album Name */}</Text>
+        <Text style={{ color: "white", fontFamily: "JostMedium" }}>
+          {`${selectedPhotos.length} / ${MAX_PHOTOS}`}{" "}
+          {/* Show selected photos count and maximum */}
+        </Text>
+      </BlackBar>
       <Bottom>
         <FlatList
           data={photos}
