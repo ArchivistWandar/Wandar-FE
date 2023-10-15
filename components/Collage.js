@@ -4,8 +4,7 @@ import { Image, ScrollView, Dimensions, View } from "react-native";
 const targetHeight = 200; // 원하는 이미지 높이
 const maxHeight = 400; // 최대 높이
 
-export default function Collage({ route }) {
-  const { selectedPhotos } = route.params;
+export default function Collage({ selectedPhotoUris }) {
   const windowWidth = Dimensions.get("window").width;
 
   const [imagesData, setImagesData] = useState([]);
@@ -13,7 +12,7 @@ export default function Collage({ route }) {
 
   useEffect(() => {
     Promise.all(
-      selectedPhotos.map(
+      selectedPhotoUris.map(
         (uri) =>
           new Promise((resolve) => {
             Image.getSize(uri, (width, height) =>
@@ -44,7 +43,7 @@ export default function Collage({ route }) {
 
       setImagesData(images);
     });
-  }, [selectedPhotos]);
+  }, [selectedPhotoUris]);
 
   // Calculate total ratios for each row
   const totalFirstRowRatio = imagesData.reduce(
@@ -65,7 +64,7 @@ export default function Collage({ route }) {
               30;
             let imageHeight = targetHeight;
 
-            if (selectedPhotos.length === 1) {
+            if (selectedPhotoUris.length === 1) {
               imageWidth = windowWidth - 50;
               imageHeight = image.height * (windowWidth / image.width);
 
@@ -100,9 +99,9 @@ export default function Collage({ route }) {
                 let imageWidth;
                 let imageHeight = targetHeight;
 
-                if (selectedPhotos.length === 3) {
+                if (selectedPhotoUris.length === 3) {
                   imageWidth = windowWidth;
-                } else if (selectedPhotos.length === 4) {
+                } else if (selectedPhotoUris.length === 4) {
                   imageWidth = windowWidth / 2;
                 }
 

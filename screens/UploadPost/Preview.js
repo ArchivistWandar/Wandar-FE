@@ -4,6 +4,7 @@ import { Container } from "../../components/Shared";
 import Collage from "../../components/Collage";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
+import PhotoDateRange from "../../components/PhotoDateRange";
 
 const MemoContainer = styled.View`
   margin: 25px;
@@ -40,7 +41,23 @@ export default function Preview({ route, navigation }) {
             {selectedLand.name}
           </Text>
         </View>
-        <Collage route={route} />
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: 20,
+          }}
+        >
+          <PhotoDateRange
+            photos={selectedPhotos}
+            textStyle={{
+              color: "white",
+              fontFamily: "JostMedium",
+              fontSize: 14,
+            }}
+          />
+        </View>
+        <Collage selectedPhotoUris={selectedPhotos.map((photo) => photo.uri)} />
         <MemoContainer>
           <Text
             style={{
