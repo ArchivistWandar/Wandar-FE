@@ -66,13 +66,13 @@ export default function Collage({ route }) {
             let imageHeight = targetHeight;
 
             if (selectedPhotos.length === 1) {
-              imageWidth = windowWidth - 30;
+              imageWidth = windowWidth - 50;
               imageHeight = image.height * (windowWidth / image.width);
 
               // If calculated height is greater than max height
               if (imageHeight > maxHeight) {
                 imageHeight = maxHeight;
-                imageWidth = windowWidth - 30;
+                imageWidth = windowWidth - 50;
               }
             }
 
