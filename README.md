@@ -33,6 +33,7 @@ In the project directory, you can run:
   - [x] Setting Structure
   - [x] Select Photos Page
   - [x] Photo Collage (max 4 images)
+  - [x] AddMemo Page
 - [ ] 7. Upload Record
 - [x] 8. Notifications
 - [x] 9. MyPage
