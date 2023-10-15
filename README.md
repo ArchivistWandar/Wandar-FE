@@ -32,6 +32,7 @@ In the project directory, you can run:
 - [ ] 6. Upload Post
   - [x] Setting Structure
   - [x] Select Photos Page
+  - [x] Photo Collage (max 4 images)
 - [ ] 7. Upload Record
 - [x] 8. Notifications
 - [x] 9. MyPage
