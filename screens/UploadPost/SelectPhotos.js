@@ -59,7 +59,7 @@ export default function SelectPhotos({ navigation }) {
   const [selectedPhotos, setSelectedPhotos] = useState([]);
 
   const isSelected = useMemo(() => {
-    return (uri) => selectedPhotos.includes(uri);
+    return (uri) => selectedPhotos.some((photo) => photo.uri === uri);
   }, [selectedPhotos]);
 
   const getPhotos = async () => {
@@ -108,15 +108,12 @@ export default function SelectPhotos({ navigation }) {
   const { width } = useWindowDimensions();
 
   const togglePhotoSelection = (photo) => {
-    if (selectedPhotos.includes(photo.uri)) {
+    if (selectedPhotos.some((p) => p.uri === photo.uri)) {
       setSelectedPhotos((prevSelectedPhotos) =>
-        prevSelectedPhotos.filter((selected) => selected !== photo.uri)
+        prevSelectedPhotos.filter((p) => p.uri !== photo.uri)
       );
     } else if (selectedPhotos.length < MAX_PHOTOS) {
-      setSelectedPhotos((prevSelectedPhotos) => [
-        ...prevSelectedPhotos,
-        photo.uri,
-      ]);
+      setSelectedPhotos((prevSelectedPhotos) => [...prevSelectedPhotos, photo]);
     }
 
     // Update the chosen photo when a photo is selected
@@ -143,7 +140,7 @@ export default function SelectPhotos({ navigation }) {
               paddingRight: 5,
             }}
           >
-            {selectedPhotos.indexOf(photo.uri) + 1}
+            {selectedPhotos.findIndex((p) => p.uri === photo.uri) + 1}
           </Text>
         ) : (
           <Ionicons name="ellipse-outline" size={18} color="white" />

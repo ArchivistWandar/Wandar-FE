@@ -57,8 +57,6 @@ export default function ChooseLand({ route, navigation }) {
     navigation.setOptions({ headerRight: HeaderRight });
   }, [selectedLandIndex]);
 
-  console.log(selectedLandIndex);
-
   const handleScroll = (event) => {
     const newSelectedIndex = Math.round(
       event.nativeEvent.contentOffset.x / windowWidth
@@ -148,11 +146,16 @@ export default function ChooseLand({ route, navigation }) {
             <Ionicons name="chevron-forward" size={30} color="#fff" />
           </TouchableOpacity>
         </View>
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+          }}
+        >
           {lands.map((land, index) => (
             <Text
               key={index}
-              style={{ margin: 3, color: "white", fontSize: 15 }}
+              style={{ margin: 3, color: "white", fontSize: 10 }}
             >
               {selectedLandIndex === index ? "●" : "○"}
             </Text>
