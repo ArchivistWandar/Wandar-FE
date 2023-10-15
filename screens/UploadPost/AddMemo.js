@@ -1,17 +1,43 @@
-import React, { useState } from "react";
+import React, { memo, useEffect, useState } from "react";
 import Collage from "../../components/Collage";
 import styled from "styled-components/native";
-import { Text, TextInput } from "react-native";
+import { Text, TextInput, TouchableOpacity } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Container } from "../../components/Shared";
+import { colors } from "../../colors";
 
 const MemoContainer = styled.View`
   margin: 25px;
   margin-top: 10px;
 `;
 
-export default function AddMemo({ route }) {
+const HeaderRightText = styled.Text`
+  color: ${colors.yellow};
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 10px;
+  font-family: "JostSemiBold";
+`;
+
+export default function AddMemo({ navigation, route }) {
   const [memoText, setMemoText] = useState(""); // State to store the memo text
+
+  const HeaderRight = () => (
+    <TouchableOpacity
+      onPress={() =>
+        navigation.navigate("ChooseLand", {
+          selectedPhotos: route.params.selectedPhotos,
+          memoText: memoText,
+        })
+      }
+    >
+      <HeaderRightText>Next</HeaderRightText>
+    </TouchableOpacity>
+  );
+
+  useEffect(() => {
+    navigation.setOptions({ headerRight: HeaderRight });
+  }, [memoText]);
 
   return (
     <Container>
@@ -25,9 +51,8 @@ export default function AddMemo({ route }) {
           </Text>
           <TextInput
             style={{
+              padding: 15,
               paddingTop: 15,
-              paddingLeft: 15,
-              paddingBottom: 15,
               marginTop: 10,
               borderRadius: 5,
               borderColor: "white",

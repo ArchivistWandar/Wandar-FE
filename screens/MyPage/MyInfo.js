@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components/native";
-import { Ionicons } from "@expo/vector-icons"; // Import useNavigation
+import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
 const userData = {
