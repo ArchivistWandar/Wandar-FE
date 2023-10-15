@@ -152,8 +152,6 @@ export default function SelectPhotos({ navigation }) {
     </ImageContainer>
   ));
 
-  // ... Other code ...
-
   const renderItem = ({ item: photo }) => (
     <SelectedImage
       photo={photo}
@@ -162,8 +160,6 @@ export default function SelectPhotos({ navigation }) {
       onPress={() => togglePhotoSelection(photo)}
     />
   );
-
-  // ... Other code ...
 
   return (
     <Container>

@@ -35,6 +35,7 @@ In the project directory, you can run:
   - [x] Photo Collage (max 4 images)
   - [x] AddMemo Page
   - [x] ChooseLand Page
+  - [x] Preview Page
 - [ ] 7. Upload Record
 - [x] 8. Notifications
 - [x] 9. MyPage
