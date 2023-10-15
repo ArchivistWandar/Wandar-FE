@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import * as MediaLibrary from "expo-media-library";
 import styled from "styled-components/native";
@@ -12,6 +12,9 @@ import {
 } from "react-native";
 import { colors } from "../../colors";
 import { Container } from "../../components/Shared";
+
+const MAX_PHOTOS = 4; // Maximum number of photos allowed
+const numColumns = 4;
 
 const Top = styled.View`
   flex: 1;
@@ -54,7 +57,10 @@ export default function SelectPhotos({ navigation }) {
   const [photos, setPhotos] = useState([]);
   const [chosenPhoto, setChosenPhoto] = useState("");
   const [selectedPhotos, setSelectedPhotos] = useState([]);
-  const MAX_PHOTOS = 10; // Maximum number of photos allowed
+
+  const isSelected = useMemo(() => {
+    return (uri) => selectedPhotos.includes(uri);
+  }, [selectedPhotos]);
 
   const getPhotos = async () => {
     const { assets: mediaAssets } = await MediaLibrary.getAssetsAsync({
@@ -99,7 +105,6 @@ export default function SelectPhotos({ navigation }) {
     navigation.setOptions({ headerRight: HeaderRight });
   }, [selectedPhotos, photoLocal]);
 
-  const numColumns = 4;
   const { width } = useWindowDimensions();
 
   const togglePhotoSelection = (photo) => {
@@ -118,18 +123,18 @@ export default function SelectPhotos({ navigation }) {
     setChosenPhoto(photo.uri);
   };
 
-  const renderItem = ({ item: photo, index }) => (
-    <ImageContainer onPress={() => togglePhotoSelection(photo)}>
+  const SelectedImage = React.memo(({ photo, width, numColumns, onPress }) => (
+    <ImageContainer onPress={onPress}>
       <Image
         source={{ uri: photo.uri }}
         style={{
           width: width / numColumns,
           height: 100,
-          opacity: selectedPhotos.includes(photo.uri) ? 0.5 : 1,
+          opacity: isSelected(photo.uri) ? 0.5 : 1,
         }}
       />
       <IconContainer>
-        {selectedPhotos.includes(photo.uri) ? (
+        {isSelected(photo.uri) ? (
           <Text
             style={{
               color: "white",
@@ -145,7 +150,20 @@ export default function SelectPhotos({ navigation }) {
         )}
       </IconContainer>
     </ImageContainer>
+  ));
+
+  // ... Other code ...
+
+  const renderItem = ({ item: photo }) => (
+    <SelectedImage
+      photo={photo}
+      width={width}
+      numColumns={numColumns}
+      onPress={() => togglePhotoSelection(photo)}
+    />
   );
+
+  // ... Other code ...
 
   return (
     <Container>
