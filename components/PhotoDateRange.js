@@ -18,10 +18,14 @@ function PhotoDateRange({ photos, textStyle }) {
   const formattedOldestDate = formatter.format(oldestDate);
   const formattedNewestDate = formatter.format(newestDate);
 
+  if (formattedOldestDate === formattedNewestDate) {
+    return <Text style={textStyle}>{formattedNewestDate}</Text>;
+  }
+
   return (
-    <Text
-      style={textStyle}
-    >{`${formattedOldestDate} ~ ${formattedNewestDate}`}</Text>
+    <Text style={textStyle}>
+      {`${formattedOldestDate} ~ ${formattedNewestDate}`}
+    </Text>
   );
 }
 
