@@ -5,6 +5,7 @@ import Collage from "../../components/Collage";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import PhotoDateRange from "../../components/PhotoDateRange";
+import PrivacyToggle from "../../components/PrivacyToggle";
 
 const MemoContainer = styled.View`
   margin: 25px;
@@ -14,13 +15,6 @@ const MemoContainer = styled.View`
 
 export default function Preview({ route, navigation }) {
   const { selectedPhotos, memoText, selectedLand } = route.params;
-
-  const goToChooseLand = () => {
-    navigation.navigate("ChooseLand", {
-      selectedPhotos: route.params.selectedPhotos,
-      memoText: memoText,
-    });
-  };
 
   return (
     <Container>
@@ -33,6 +27,8 @@ export default function Preview({ route, navigation }) {
             justifyContent: "center",
             flexDirection: "row",
             gap: 10,
+            marginLeft: 25,
+            marginRight: 25,
           }}
         >
           <Text
@@ -40,6 +36,14 @@ export default function Preview({ route, navigation }) {
           >
             {selectedLand.name}
           </Text>
+          <PrivacyToggle
+            selectionMode={1}
+            roundCorner={true}
+            option1="Friends"
+            option2="Private"
+            onSelectSwitch={(value) => console.log(value)}
+            selectionColor="white"
+          />
         </View>
         <View
           style={{
