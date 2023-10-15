@@ -21,6 +21,7 @@ const HeaderRightText = styled.Text`
 
 export default function AddMemo({ navigation, route }) {
   const [memoText, setMemoText] = useState(""); // State to store the memo text
+  const { selectedPhotos } = route.params;
 
   const HeaderRight = () => (
     <TouchableOpacity
@@ -42,7 +43,7 @@ export default function AddMemo({ navigation, route }) {
   return (
     <Container>
       <KeyboardAwareScrollView>
-        <Collage route={route} />
+        <Collage selectedPhotoUris={selectedPhotos.map((photo) => photo.uri)} />
         <MemoContainer>
           <Text
             style={{ fontFamily: "JostItalic", fontSize: 20, color: "white" }}

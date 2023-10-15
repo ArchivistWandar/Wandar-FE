@@ -36,6 +36,7 @@ In the project directory, you can run:
   - [x] AddMemo Page
   - [x] ChooseLand Page
   - [x] Preview Page
+  - [ ] Upload to Backend
 - [ ] 7. Upload Record
 - [x] 8. Notifications
 - [x] 9. MyPage
