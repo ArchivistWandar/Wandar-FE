@@ -3,6 +3,7 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { Container } from "../components/Shared";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
+import TempLand from "../components/TempLand";
 
 const LandDetail = ({ navigation }) => {
   const goToLandArchiveNav = () => navigation.navigate("LandArchiveNav");
@@ -22,6 +23,7 @@ const LandDetail = ({ navigation }) => {
           />
         </TouchableOpacity>
       </Header>
+      <TempLand />
     </Container>
   );
 };
