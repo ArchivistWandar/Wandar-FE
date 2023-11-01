@@ -3,7 +3,7 @@ import { Renderer, TextureLoader } from "expo-three";
 import { useEffect } from "react";
 import {
   AmbientLight,
-  BoxBufferGeometry,
+  BoxGeometry,
   Fog,
   GridHelper,
   Mesh,
@@ -68,7 +68,7 @@ export default function App() {
       cameraControls.update();
     }
 
-    const myCube = new TileMesh(2, 2);
+    const myCube = new TileMesh(2, 3);
     myCube.position.set(1, 0, 0);
     scene.add(myCube);
 
@@ -88,7 +88,7 @@ export default function App() {
 class IconMesh extends Mesh {
   constructor() {
     super(
-      new BoxBufferGeometry(1.5, 1.0, 1.0),
+      new BoxGeometry(1.5, 1.0, 1.0),
       new MeshStandardMaterial({
         //map: new TextureLoader().load(require("./icon.jpg")),
         color: "yellow", // Yellow color instead of texture
@@ -100,9 +100,9 @@ class IconMesh extends Mesh {
 class TileMesh extends Mesh {
   constructor(x, y) {
     super(
-      new BoxBufferGeometry(x, 0.1, y),
+      new BoxGeometry(x, 0.1, y),
       new MeshStandardMaterial({
-        color: "orange",
+        color: "pink",
       })
     );
   }
