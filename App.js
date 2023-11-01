@@ -14,6 +14,11 @@ import {
   SpotLight,
 } from "three";
 
+import * as THREE from "three";
+import CameraControls from "camera-controls";
+
+CameraControls.install({ THREE: THREE });
+
 export default function App() {
   let timeout;
 
@@ -51,14 +56,21 @@ export default function App() {
     scene.add(spotLight);
 
     const cube = new IconMesh();
+    cube.position.set(0, 0, 0);
     scene.add(cube);
 
-    camera.lookAt(cube.position);
+    // Create CameraControls and attach it to the renderer's canvas
+    const cameraControls = new CameraControls(camera, gl.canvas);
 
     function update() {
       cube.rotation.y += 0.05;
       cube.rotation.x += 0.025;
+      cameraControls.update();
     }
+
+    const myCube = new TileMesh(2, 2);
+    myCube.position.set(1, 0, 0);
+    scene.add(myCube);
 
     // Setup an animation loop
     const render = () => {
@@ -76,9 +88,21 @@ export default function App() {
 class IconMesh extends Mesh {
   constructor() {
     super(
-      new BoxBufferGeometry(1.0, 1.0, 1.0),
+      new BoxBufferGeometry(1.5, 1.0, 1.0),
       new MeshStandardMaterial({
-        map: new TextureLoader().load(require("./icon.jpg")),
+        //map: new TextureLoader().load(require("./icon.jpg")),
+        color: "yellow", // Yellow color instead of texture
+      })
+    );
+  }
+}
+
+class TileMesh extends Mesh {
+  constructor(x, y) {
+    super(
+      new BoxBufferGeometry(x, 0.1, y),
+      new MeshStandardMaterial({
+        color: "orange",
       })
     );
   }
