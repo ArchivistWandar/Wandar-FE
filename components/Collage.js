@@ -11,38 +11,35 @@ export default function Collage({ selectedPhotoUris }) {
   const [secondRowImage, setSecondRowImage] = useState(null);
 
   useEffect(() => {
-    Promise.all(
-      selectedPhotoUris.map(
-        (uri) =>
-          new Promise((resolve) => {
-            Image.getSize(uri, (width, height) =>
-              resolve({ uri: uri, width: width, height: height })
-            );
-          })
-      )
-    ).then((images) => {
-      if (images.length === 3) {
-        let maxRatioIndex = 0;
-        for (let i = 1; i < images.length; i++) {
-          if (
-            images[i].width / images[i].height >
-            images[maxRatioIndex].width / images[maxRatioIndex].height
-          ) {
-            maxRatioIndex = i;
-          }
+    const images = selectedPhotoUris.map((photo) => {
+      return {
+        uri: photo.uri,
+        width: photo.width,
+        height: photo.height,
+      };
+    });
+
+    if (images.length === 3) {
+      let maxRatioIndex = 0;
+      for (let i = 1; i < images.length; i++) {
+        if (
+          images[i].width / images[i].height >
+          images[maxRatioIndex].width / images[maxRatioIndex].height
+        ) {
+          maxRatioIndex = i;
         }
-
-        setSecondRowImage(images[maxRatioIndex]);
-
-        // Remove the image with the largest width-to-height ratio
-        images.splice(maxRatioIndex, 1);
-      } else if (images.length === 4) {
-        setSecondRowImage(images.slice(2));
-        images.splice(2);
       }
 
-      setImagesData(images);
-    });
+      setSecondRowImage(images[maxRatioIndex]);
+
+      // Remove the image with the largest width-to-height ratio
+      images.splice(maxRatioIndex, 1);
+    } else if (images.length === 4) {
+      setSecondRowImage(images.slice(2));
+      images.splice(2);
+    }
+
+    setImagesData(images);
   }, [selectedPhotoUris]);
 
   // Calculate total ratios for each row

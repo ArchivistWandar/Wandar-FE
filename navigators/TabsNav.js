@@ -117,6 +117,7 @@ export default function TabsNav({ navigation }) {
         onClose={toggleUploadPopup}
         onSelectUpload={handleSelectUpload}
         onSelectRecord={handleSelectRecord}
+        navigation={navigation} // Pass the navigation prop
       />
     </View>
   );

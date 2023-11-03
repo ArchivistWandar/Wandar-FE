@@ -7,10 +7,12 @@ import SelectPhotos from "../screens/UploadPost/SelectPhotos";
 import AddMemo from "../screens/UploadPost/AddMemo";
 import ChooseLand from "../screens/UploadPost/ChooseLand";
 import Preview from "../screens/UploadPost/Preview";
+import UploadPopup from "../components/nav/UploadPopup";
 
 const Stack = createStackNavigator();
 
-const UploadPostNav = () => {
+const UploadPostNav = ({ route }) => {
+  const { result } = route.params;
   return (
     <Stack.Navigator
       screenOptions={{
@@ -27,30 +29,6 @@ const UploadPostNav = () => {
         },
       }}
     >
-      <Stack.Screen
-        name="SelectPhotos"
-        options={({ navigation }) => ({
-          headerTitle: "New post",
-          headerRight: () => (
-            <TouchableOpacity
-              onPress={() => {
-                navigation.navigate("AddMemo");
-              }}
-            >
-              <Text
-                style={{
-                  color: "#FFEE74",
-                  marginRight: 16,
-                  fontFamily: "JostSemiBold",
-                }}
-              >
-                Next
-              </Text>
-            </TouchableOpacity>
-          ),
-        })}
-        component={SelectPhotos}
-      />
       <Stack.Screen
         name="AddMemo"
         options={({ navigation }) => ({
@@ -73,6 +51,7 @@ const UploadPostNav = () => {
             </TouchableOpacity>
           ),
         })}
+        initialParams={{ route: result }}
         component={AddMemo}
       />
       <Stack.Screen
