@@ -5,7 +5,8 @@ import UploadRecord from "../screens/UploadRecord/UploadRecord";
 
 const Stack = createStackNavigator();
 
-const UploadRecordNav = () => {
+const UploadRecordNav = ({ route }) => {
+  const { result } = route.params;
   return (
     <Stack.Navigator
       screenOptions={{
@@ -27,6 +28,7 @@ const UploadRecordNav = () => {
         options={{
           headerTitle: "New record",
         }}
+        initialParams={{ route: result }}
         component={UploadRecord}
       />
     </Stack.Navigator>
