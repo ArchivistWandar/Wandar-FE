@@ -38,6 +38,8 @@ In the project directory, you can run:
   - [x] Preview Page
   - [ ] Upload to Backend
 - [ ] 7. Upload Record
+  - [x] Select Photos Page
+  - [x] Branches Page
 - [x] 8. Notifications
 - [x] 9. MyPage
   - [x] My Info Box

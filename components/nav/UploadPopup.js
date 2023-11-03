@@ -28,8 +28,20 @@ const UploadPopup = ({ isVisible, onClose, navigation }) => {
     onClose();
   };
 
-  const onSelectRecord = () => {
-    // Perform any actions you need related to selecting 'Record'
+  const onSelectRecord = async () => {
+    let result2 = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: false,
+      allowsMultipleSelection: true,
+      aspect: [4, 3],
+      quality: 1,
+      selectionLimit: 6,
+    });
+
+    if (!result2.canceled) {
+      navigation.navigate("UploadRecordNav", { result: result2 });
+    }
+
     // Close the modal after selecting an option
     onClose();
   };
