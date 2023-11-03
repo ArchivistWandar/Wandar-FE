@@ -52,16 +52,16 @@ export default function Preview({ route, navigation }) {
             marginTop: 20,
           }}
         >
-          <PhotoDateRange
-            photos={selectedPhotos}
+          {/* <PhotoDateRange
+            photos={selectedPhotos.assets}
             textStyle={{
               color: "white",
               fontFamily: "JostMedium",
               fontSize: 14,
             }}
-          />
+          /> */}
         </View>
-        <Collage selectedPhotoUris={selectedPhotos.map((photo) => photo.uri)} />
+        <Collage selectedPhotoUris={selectedPhotos.assets} />
         <MemoContainer>
           <Text
             style={{
