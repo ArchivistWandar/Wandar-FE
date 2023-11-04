@@ -18,7 +18,7 @@ const SelectRPhotos = ({ navigation }) => {
     if (result.canceled) {
       navigation.goBack();
     } else {
-      navigation.navigate("UploadRecord", { result: result });
+      navigation.navigate("PreviewRecord", { result: result });
     }
   };
 
