@@ -21,13 +21,13 @@ const HeaderRightText = styled.Text`
 
 export default function AddMemo({ navigation, route }) {
   const [memoText, setMemoText] = useState(""); // State to store the memo text
-  const { assets } = route.params.route;
+  const { assets } = route.params.result;
 
   const HeaderRight = () => (
     <TouchableOpacity
       onPress={() =>
         navigation.navigate("ChooseLand", {
-          selectedPhotos: route.params.route,
+          selectedPhotos: route.params.result,
           memoText: memoText,
         })
       }
