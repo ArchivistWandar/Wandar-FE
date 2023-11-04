@@ -1,12 +1,13 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { colors } from "../colors";
+
+import SelectRPhotos from "../screens/UploadRecord/SelectRPhotos";
 import UploadRecord from "../screens/UploadRecord/UploadRecord";
 
 const Stack = createStackNavigator();
 
-const UploadRecordNav = ({ route }) => {
-  const { result } = route.params;
+const UploadRecordNav = () => {
   return (
     <Stack.Navigator
       screenOptions={{
@@ -24,11 +25,19 @@ const UploadRecordNav = ({ route }) => {
       }}
     >
       <Stack.Screen
+        name="SelectRPhotos"
+        options={{
+          headerShown: false,
+        }}
+        component={SelectRPhotos}
+      />
+
+      <Stack.Screen
         name="UploadRecord"
         options={{
           headerTitle: "New record",
         }}
-        initialParams={{ route: result }}
+        // initialParams={{ route: result }}
         component={UploadRecord}
       />
     </Stack.Navigator>

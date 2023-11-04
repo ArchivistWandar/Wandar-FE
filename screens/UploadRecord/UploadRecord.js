@@ -3,7 +3,7 @@ import { View, Image, StyleSheet } from "react-native";
 import { Container } from "../../components/Shared";
 
 const UploadRecord = ({ route }) => {
-  const { assets } = route.params.route;
+  const { assets } = route.params.result;
 
   return (
     <Container>
