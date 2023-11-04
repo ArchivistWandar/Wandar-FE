@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import {
   Modal,
   Text,
@@ -7,51 +7,19 @@ import {
   TouchableWithoutFeedback,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons"; // Import Ionicons for icons
-import * as ImagePicker from "expo-image-picker";
 
-const UploadPopup = ({ isVisible, onClose, navigation }) => {
-  const onSelectUpload = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      allowsMultipleSelection: true,
-      aspect: [4, 3],
-      quality: 1,
-      selectionLimit: 4,
-    });
-
-    if (!result.canceled) {
-      navigation.navigate("UploadPostNav", { result: result });
-    }
-
-    // Close the modal after selecting an option
-    onClose();
-  };
-
-  const onSelectRecord = async () => {
-    let result2 = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: false,
-      allowsMultipleSelection: true,
-      aspect: [4, 3],
-      quality: 1,
-      selectionLimit: 6,
-    });
-
-    if (!result2.canceled) {
-      navigation.navigate("UploadRecordNav", { result: result2 });
-    }
-
-    // Close the modal after selecting an option
-    onClose();
-  };
-
+const UploadPopup = ({
+  isVisible,
+  onClose,
+  onSelectUpload,
+  onSelectRecord,
+}) => {
   const popupStyle = {
     position: "absolute",
-    bottom: "10%",
-    left: "31%",
+    bottom: "10%", // Adjust the distance from the bottom as needed
+    left: "31%", // Adjust for the popup width
     backgroundColor: "white",
-    width: "38%",
+    width: "38%", // Adjust the width as needed
     alignSelf: "flex-end",
     padding: 16,
     borderRadius: 20,

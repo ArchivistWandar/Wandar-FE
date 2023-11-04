@@ -3,7 +3,7 @@ import * as ImagePicker from "expo-image-picker";
 import { Container } from "../../components/Shared";
 import { Text, View } from "react-native";
 
-const SelectPhotos = ({ navigation }) => {
+const SelectRPhotos = ({ navigation }) => {
   const pickImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
@@ -11,14 +11,14 @@ const SelectPhotos = ({ navigation }) => {
       allowsMultipleSelection: true,
       aspect: [4, 3],
       quality: 1,
-      selectionLimit: 4,
+      selectionLimit: 6,
       orderedSelection: true,
     });
 
     if (result.canceled) {
       navigation.goBack();
     } else {
-      navigation.navigate("AddMemo", { result: result });
+      navigation.navigate("UploadRecord", { result: result });
     }
   };
 
@@ -47,4 +47,4 @@ const SelectPhotos = ({ navigation }) => {
   );
 };
 
-export default SelectPhotos;
+export default SelectRPhotos;
