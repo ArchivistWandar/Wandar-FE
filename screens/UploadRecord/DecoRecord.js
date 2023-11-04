@@ -2,8 +2,8 @@ import React from "react";
 import { View, Image, StyleSheet } from "react-native";
 import { Container } from "../../components/Shared";
 
-const UploadRecord = ({ route }) => {
-  const { assets } = route.params.result;
+const DecoRecord = ({ route, navigation }) => {
+  const { assets } = route.params.selectedPhotos;
 
   return (
     <Container>
@@ -59,4 +59,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default UploadRecord;
+export default DecoRecord;

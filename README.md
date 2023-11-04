@@ -40,6 +40,7 @@ In the project directory, you can run:
 - [ ] 7. Upload Record
   - [x] Select Photos Page
   - [x] Branches Page
+  - [x] Theme
 - [x] 8. Notifications
 - [x] 9. MyPage
   - [x] My Info Box
