@@ -4,14 +4,13 @@ import {
   Image,
   StyleSheet,
   TouchableOpacity,
-  Button,
-  ImageBackground,
   Modal,
   Text,
   FlatList,
   TouchableWithoutFeedback,
   Platform,
   TextInput,
+  Dimensions,
 } from "react-native";
 import { colors } from "../../colors";
 import styled from "styled-components/native";
@@ -22,7 +21,6 @@ import { Ionicons } from "@expo/vector-icons";
 const EditableHeaderTitle = ({ initialTitle, textColor }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [title, setTitle] = useState(initialTitle);
-  console.log(textColor);
 
   return isEditing ? (
     <TextInput
@@ -66,6 +64,8 @@ const HeaderRightText = styled.Text`
 `;
 
 const PreviewRecord = ({ navigation, route }) => {
+  const windowWidth = Dimensions.get("window").width;
+
   const [theme, setTheme] = useState({
     backgroundColor: "#202020",
     name: "Original.",
@@ -73,9 +73,6 @@ const PreviewRecord = ({ navigation, route }) => {
   });
   const [modalVisible, setModalVisible] = useState(true);
   const { assets } = route.params.result;
-
-  console.log(theme);
-  // PreviewRecord.js
 
   useEffect(() => {
     navigation.setOptions({
@@ -242,7 +239,7 @@ const PreviewRecord = ({ navigation, route }) => {
             color: theme ? theme.textColor : "white",
             fontFamily: "JostSemiBoldItalic",
             fontSize: 20,
-            top: "18%",
+            top: "16%",
           }}
         >
           Wandar.
@@ -287,7 +284,7 @@ const PreviewRecord = ({ navigation, route }) => {
         <View
           style={{
             position: "absolute",
-            top: "85%", // 원의 위치. 선의 끝에 맞춰 조절하세요.
+            top: "85%", // 원의 위치.
             left: "50%",
             marginLeft: -4, // 원의 반지름만큼 offset을 줘서 선 가운데에 위치시킵니다.
             width: 8, // 원의 크기
@@ -318,17 +315,24 @@ const PreviewRecord = ({ navigation, route }) => {
                 style={{
                   position: "absolute",
                   top: "50%", // 가지가 이미지의 중앙에서 시작
-                  width: "50%", // 가지의 길이. 적절히 조절하세요.
+                  width: "50%", // 가지의 길이.
                   height: 1,
                   backgroundColor: theme ? theme.textColor : "white",
                 }}
               />
 
-              <Image source={{ uri: image.uri }} style={styles.image} />
+              <Image
+                source={{ uri: image.uri }}
+                style={{
+                  width: windowWidth / 3.5,
+                  height: windowWidth / 3.5,
+                  borderRadius: 10,
+                }}
+              />
               <View
                 style={{
                   position: "absolute",
-                  top: "48%", // 원의 위치. 선의 끝에 맞춰 조절하세요.
+                  top: "48%", // 원의 위치.
                   left: "50%",
                   marginLeft: -3, // 원의 반지름만큼 offset을 줘서 선 가운데에 위치시킵니다.
                   width: 6, // 원의 크기
@@ -354,17 +358,12 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "space-around",
     alignItems: "center",
-    height: "50%",
+    height: "60%",
     width: "100%",
   },
   imageWrapper: {
     width: "85%",
     top: "10%",
-  },
-  image: {
-    width: 120,
-    height: 120,
-    borderRadius: 10,
   },
 });
 
