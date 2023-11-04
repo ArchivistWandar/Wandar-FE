@@ -10,12 +10,52 @@ import {
   Text,
   FlatList,
   TouchableWithoutFeedback,
+  Platform,
+  TextInput,
 } from "react-native";
 import { colors } from "../../colors";
 import styled from "styled-components/native";
 import { themes } from "../../components/RecordTheme";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
+
+const EditableHeaderTitle = ({ initialTitle, textColor }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [title, setTitle] = useState(initialTitle);
+  console.log(textColor);
+
+  return isEditing ? (
+    <TextInput
+      value={title}
+      onChangeText={setTitle}
+      onEndEditing={() => {
+        if (title.trim() === "") {
+          setTitle(initialTitle);
+        }
+        setIsEditing(false);
+      }}
+      autoFocus
+      style={{ color: textColor, fontFamily: "JostSemiBold", fontSize: 15 }}
+    />
+  ) : (
+    <TouchableOpacity
+      onPress={() => setIsEditing(true)}
+      style={{
+        flex: 1,
+        alignItems: "center",
+        flexDirection: "row",
+        gap: 10,
+      }}
+    >
+      <Text
+        style={{ color: textColor, fontFamily: "JostSemiBold", fontSize: 15 }}
+      >
+        {title}
+      </Text>
+      <Ionicons name="pencil" size={18} color={textColor} />
+    </TouchableOpacity>
+  );
+};
 
 const HeaderRightText = styled.Text`
   color: ${colors.yellow};
@@ -26,11 +66,47 @@ const HeaderRightText = styled.Text`
 `;
 
 const PreviewRecord = ({ navigation, route }) => {
-  const [theme, setTheme] = useState(null);
+  const [theme, setTheme] = useState({
+    backgroundColor: "#202020",
+    name: "Original.",
+    textColor: "white",
+  });
   const [modalVisible, setModalVisible] = useState(true);
   const { assets } = route.params.result;
 
   console.log(theme);
+  // PreviewRecord.js
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerTintColor: Platform.OS === "ios" ? "white" : theme?.textColor,
+      headerTitle: () => (
+        <EditableHeaderTitle
+          initialTitle="New record"
+          textColor={Platform.OS === "ios" ? "white" : theme?.textColor}
+        />
+      ),
+      headerBackground: () =>
+        Platform.OS === "ios" ? (
+          <BlurView
+            tint="dark"
+            intensity={50}
+            style={StyleSheet.absoluteFill}
+          />
+        ) : (
+          <View
+            style={{
+              backgroundColor: theme
+                ? theme.backgroundColor
+                : "rgba(0, 0, 0, 0.5)",
+            }}
+          />
+        ),
+    });
+  }, [theme]); // theme가 변경될 때마다 이 useEffect가 실행됩니다.
+  const selectTheme = (newTheme) => {
+    setTheme(newTheme);
+  };
 
   const HeaderRight = () => (
     <TouchableOpacity
@@ -40,7 +116,7 @@ const PreviewRecord = ({ navigation, route }) => {
     //   })
     // }
     >
-      <HeaderRightText>Next</HeaderRightText>
+      <HeaderRightText>Upload</HeaderRightText>
     </TouchableOpacity>
   );
 
@@ -71,48 +147,90 @@ const PreviewRecord = ({ navigation, route }) => {
               alignItems: "center",
             }}
           >
-            <BlurView
-              style={{
-                width: "100%",
-                padding: 20,
-                borderRadius: "10px",
-              }}
-              tint="dark"
-              intensity={40}
-            >
-              <FlatList
-                data={themes}
-                renderItem={({ item: theme }) => (
-                  <TouchableOpacity
-                    onPress={() => {
-                      setTheme(theme);
-                      setModalVisible(false);
-                    }}
-                    style={{
-                      flex: 1,
-                      margin: 10,
-                      padding: 10,
-                      borderRadius: 10,
-                      backgroundColor: theme.backgroundColor,
-                      justifyContent: "center",
-                      alignItems: "center",
-                    }}
-                  >
-                    <Text
+            {Platform.OS === "ios" ? (
+              <BlurView
+                style={{
+                  width: "100%",
+                  padding: 20,
+                }}
+                tint="dark"
+                intensity={40}
+              >
+                <FlatList
+                  data={themes}
+                  renderItem={({ item: theme }) => (
+                    <TouchableOpacity
+                      onPress={() => {
+                        selectTheme(theme);
+                        setModalVisible(false);
+                      }}
                       style={{
-                        fontSize: 12,
-                        color: theme.textColor,
-                        fontFamily: "JostMediumItalic",
+                        flex: 1,
+                        margin: 10,
+                        padding: 10,
+                        borderRadius: 10,
+                        backgroundColor: theme.backgroundColor,
+                        justifyContent: "center",
+                        alignItems: "center",
                       }}
                     >
-                      {theme.name}
-                    </Text>
-                  </TouchableOpacity>
-                )}
-                keyExtractor={(theme, index) => index.toString()}
-                numColumns={3} // 열의 수를 3으로 설정
-              />
-            </BlurView>
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          color: theme.textColor,
+                          fontFamily: "JostMediumItalic",
+                        }}
+                      >
+                        {theme.name}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={(theme, index) => index.toString()}
+                  numColumns={3} // 열의 수를 3으로 설정
+                />
+              </BlurView>
+            ) : (
+              <View
+                style={{
+                  width: "100%",
+                  padding: 20,
+                  backgroundColor: "rgba(0, 0, 0, 0.5)",
+                }}
+              >
+                <FlatList
+                  data={themes}
+                  renderItem={({ item: theme }) => (
+                    <TouchableOpacity
+                      onPress={() => {
+                        setTheme(theme);
+                        setModalVisible(false);
+                      }}
+                      style={{
+                        flex: 1,
+                        margin: 10,
+                        padding: 10,
+                        borderRadius: 10,
+                        backgroundColor: theme.backgroundColor,
+                        justifyContent: "center",
+                        alignItems: "center",
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 10,
+                          color: theme.textColor,
+                          fontFamily: "JostMediumItalic",
+                        }}
+                      >
+                        {theme.name}
+                      </Text>
+                    </TouchableOpacity>
+                  )}
+                  keyExtractor={(theme, index) => index.toString()}
+                  numColumns={3} // 열의 수를 3으로 설정
+                />
+              </View>
+            )}
           </View>
         </TouchableWithoutFeedback>
       </Modal>
@@ -120,19 +238,21 @@ const PreviewRecord = ({ navigation, route }) => {
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <Text
           style={{
+            position: "absolute",
             color: theme ? theme.textColor : "white",
             fontFamily: "JostSemiBoldItalic",
             fontSize: 20,
-            top: "-3%",
+            top: "18%",
           }}
         >
           Wandar.
         </Text>
         <TouchableOpacity
           style={{
-            top: "140%",
+            position: "absolute",
+            bottom: "5%",
             flexDirection: "row",
-            gap: "5px",
+            gap: 5,
           }}
           onPress={() => setModalVisible(!modalVisible)}
         >
@@ -239,7 +359,7 @@ const styles = StyleSheet.create({
   },
   imageWrapper: {
     width: "85%",
-    top: "5%",
+    top: "10%",
   },
   image: {
     width: 120,
