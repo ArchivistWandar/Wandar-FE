@@ -2,6 +2,7 @@ import React from "react";
 import { Container } from "../components/Shared";
 import styled from "styled-components/native";
 import { TouchableOpacity } from "react-native";
+import TempLand from "../components/TempLand";
 
 const Land = ({ navigation }) => {
   const goToFriendsSelect = () => {
@@ -12,9 +13,8 @@ const Land = ({ navigation }) => {
   };
   return (
     <Container>
-      <TouchableOpacity onPress={goToLandDetail}>
-        <RealLand />
-      </TouchableOpacity>
+      <TouchableOpacity onPress={goToLandDetail}></TouchableOpacity>
+      <TempLand />
       <PlaneButton onPress={goToFriendsSelect}>
         <PlaneImage source={require("../assets/images/planeButton.png")} />
       </PlaneButton>
