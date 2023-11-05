@@ -44,6 +44,7 @@ export default function AddMemo({ navigation, route }) {
     <Container>
       <KeyboardAwareScrollView>
         <Collage selectedPhotoUris={assets} />
+
         <MemoContainer>
           <Text
             style={{ fontFamily: "JostItalic", fontSize: 20, color: "white" }}

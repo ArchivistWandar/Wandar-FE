@@ -52,14 +52,14 @@ export default function Preview({ route, navigation }) {
             marginTop: 20,
           }}
         >
-          {/* <PhotoDateRange
+          <PhotoDateRange
             photos={selectedPhotos.assets}
             textStyle={{
               color: "white",
               fontFamily: "JostMedium",
               fontSize: 14,
             }}
-          /> */}
+          />
         </View>
         <Collage selectedPhotoUris={selectedPhotos.assets} />
         <MemoContainer>
