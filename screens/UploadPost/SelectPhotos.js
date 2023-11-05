@@ -13,6 +13,7 @@ const SelectPhotos = ({ navigation }) => {
       quality: 1,
       selectionLimit: 4,
       orderedSelection: true,
+      exif: true,
     });
 
     if (result.canceled) {
