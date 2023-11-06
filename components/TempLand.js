@@ -16,7 +16,8 @@ import {
 } from "three";
 import * as THREE from "three";
 import CameraControls from "camera-controls";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { Asset } from "expo-asset";
 
 CameraControls.install({ THREE: THREE });
 
@@ -116,23 +117,13 @@ export default function TempLand() {
     cube.position.set(0, 0, 0);
     scene.add(cube);
 
+    await loadGLBModel(scene);
+
     // Create CameraControls and attach it to the renderer's canvas
     const cameraControls = new CameraControls(camera, gl.canvas);
     cameraControlsRef.current = cameraControls;
 
     let clock = new THREE.Clock();
-
-    const gltfLoader = new GLTFLoader();
-    try {
-      const gltf = await gltfLoader.loadAsync(
-        require("Wandar-FE/assets/glbAsset/bowl-soup-christmas.glb")
-      );
-      gltf.scene.scale.set(10, 10, 10); // 필요한 경우 스케일 조정
-      gltf.scene.position.set(0, 10, 0); // 필요한 경우 위치 조정
-      scene.add(gltf.scene);
-    } catch (e) {
-      console.error("Error loading GLTF:", e);
-    }
 
     function update() {
       let delta = clock.getDelta();
@@ -164,6 +155,23 @@ export default function TempLand() {
   );
 }
 
+async function loadGLBModel(scene) {
+  const modelAsset = Asset.fromModule(
+    require("../assets/glbAsset/bell-b-christmas.glb")
+  );
+  await modelAsset.downloadAsync();
+
+  const modelUri = modelAsset.localUri;
+
+  const loader = new GLTFLoader();
+  try {
+    const gltf = await loader.loadAsync(modelUri);
+    // 모델이 로드되면, 이제 이를 씬에 추가하거나 다른 처리를 할 수 있습니다.
+    scene.add(gltf.scene);
+  } catch (error) {
+    console.error("Error loading GLTF model", error);
+  }
+}
 class IconMesh extends Mesh {
   constructor() {
     super(
