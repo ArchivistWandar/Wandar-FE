@@ -16,66 +16,63 @@ import {
 } from "three";
 import * as THREE from "three";
 import CameraControls from "camera-controls";
-import { Container } from "./Shared";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+
+import AssetManager from "./assetManager";
 
 CameraControls.install({ THREE: THREE });
 
 export default function TempLand() {
-  let timeout;
+  const timeoutRef = useRef();
   const cameraControlsRef = useRef(null);
+  const initialDistanceRef = useRef(null);
 
   useEffect(() => {
-    // Clear the animation loop when the component unmounts
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(timeoutRef.current);
   }, []);
 
   const panResponder = useRef(
     PanResponder.create({
       onStartShouldSetPanResponder: () => true,
       onPanResponderGrant: (evt, gestureState) => {
-        // When a touch starts, we store the initial distance if there are two touches
         if (evt.nativeEvent.touches.length === 2) {
+          console.log("touches 2!!!");
           const touch1 = evt.nativeEvent.touches[0];
           const touch2 = evt.nativeEvent.touches[1];
           const dx = touch1.pageX - touch2.pageX;
           const dy = touch1.pageY - touch2.pageY;
-          this.initialDistance = Math.sqrt(dx * dx + dy * dy);
+          initialDistanceRef.current = 1.5 * Math.sqrt(dx * dx + dy * dy);
         }
       },
       onPanResponderMove: (evt, gestureState) => {
-        if (evt.nativeEvent.touches.length === 2) {
-          // Handle zooming (dolly)
+        if (
+          evt.nativeEvent.touches.length === 2 &&
+          initialDistanceRef.current !== null
+        ) {
           const touch1 = evt.nativeEvent.touches[0];
           const touch2 = evt.nativeEvent.touches[1];
           const dx = touch1.pageX - touch2.pageX;
           const dy = touch1.pageY - touch2.pageY;
           const distance = Math.sqrt(dx * dx + dy * dy);
+          const distanceDiff = distance - initialDistanceRef.current;
+          const scaleFactor = 0.005;
 
-          // Calculate the difference from the initial distance
-          const distanceDiff = distance - this.initialDistance;
-
-          // Scale factor for zoom speed (you may want to adjust this)
-          const scaleFactor = 0.001;
-
-          // Determine if we zoom in or out based on the distance difference
-          if (distanceDiff > 0) {
-            // Zoom in
-            cameraControlsRef.current.dolly(scaleFactor * distanceDiff, true);
-          } else {
-            // Zoom out
-            cameraControlsRef.current.dolly(
-              -scaleFactor * Math.abs(distanceDiff),
-              true
-            );
+          if (cameraControlsRef.current) {
+            if (distanceDiff > 0) {
+              cameraControlsRef.current.dolly(scaleFactor * distanceDiff, true);
+            } else {
+              cameraControlsRef.current.dolly(
+                -scaleFactor * Math.abs(distanceDiff),
+                true
+              );
+            }
           }
-        } else if (evt.nativeEvent.touches.length === 1) {
-          // Handle panning (truck)
-          const touch = evt.nativeEvent.touches[0];
-
-          // Scale factors for panning speed (you may want to adjust these)
+        } else if (
+          evt.nativeEvent.touches.length === 1 &&
+          cameraControlsRef.current
+        ) {
           const panXScaleFactor = 0.001;
           const panYScaleFactor = 0.001;
-
           cameraControlsRef.current.truck(
             -gestureState.dx * panXScaleFactor,
             -gestureState.dy * panYScaleFactor,
@@ -84,8 +81,7 @@ export default function TempLand() {
         }
       },
       onPanResponderRelease: () => {
-        // Reset the initial distance on release
-        this.initialDistance = null;
+        initialDistanceRef.current = null;
       },
     })
   ).current;
@@ -135,13 +131,13 @@ export default function TempLand() {
       cameraControls.update(delta);
     }
 
-    const myCube = new TileMesh(2, 2);
-    myCube.position.set(1, 0, 0);
+    const myCube = new TileMesh(10, 10);
+    myCube.position.set(0, 0, 0);
     scene.add(myCube);
 
     // Setup an animation loop
     const render = () => {
-      timeout = requestAnimationFrame(render);
+      timeoutRef.current = requestAnimationFrame(render);
       update();
       renderer.render(scene, camera);
       gl.endFrameEXP();
@@ -150,13 +146,11 @@ export default function TempLand() {
   };
 
   return (
-    <Container>
-      <GLView
-        {...panResponder.panHandlers}
-        style={{ flex: 1 }}
-        onContextCreate={onContextCreate}
-      />
-    </Container>
+    <GLView
+      {...panResponder.panHandlers}
+      style={{ flex: 1 }}
+      onContextCreate={onContextCreate}
+    />
   );
 }
 
@@ -176,7 +170,7 @@ class TileMesh extends Mesh {
     super(
       new BoxGeometry(x, 0.1, y), // Change BoxBufferGeometry to BoxGeometry
       new MeshStandardMaterial({
-        color: "orange",
+        color: "seagreen",
       })
     );
   }
