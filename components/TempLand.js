@@ -18,8 +18,6 @@ import * as THREE from "three";
 import CameraControls from "camera-controls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
-import AssetManager from "./assetManager";
-
 CameraControls.install({ THREE: THREE });
 
 export default function TempLand() {
@@ -123,6 +121,18 @@ export default function TempLand() {
     cameraControlsRef.current = cameraControls;
 
     let clock = new THREE.Clock();
+
+    const gltfLoader = new GLTFLoader();
+    try {
+      const gltf = await gltfLoader.loadAsync(
+        require("Wandar-FE/assets/glbAsset/bowl-soup-christmas.glb")
+      );
+      gltf.scene.scale.set(10, 10, 10); // 필요한 경우 스케일 조정
+      gltf.scene.position.set(0, 10, 0); // 필요한 경우 위치 조정
+      scene.add(gltf.scene);
+    } catch (e) {
+      console.error("Error loading GLTF:", e);
+    }
 
     function update() {
       let delta = clock.getDelta();
