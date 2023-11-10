@@ -5,12 +5,17 @@ import { NavigationContainer } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
 import LoggedInNav from "./navigators/LoggedInNav";
 import { LogBox } from "react-native";
+import { ApolloProvider, useReactiveVar } from "@apollo/client";
+import client, { isLoggedInVar } from "./apollo";
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  // const isLoggedIn = true;
+
   const [isFontsLoaded] = useFonts({
     JostBlack: require("./assets/fonts/Jost-Black.ttf"),
     JostBlackItalic: require("./assets/fonts/Jost-BlackItalic.ttf"),
@@ -52,11 +57,11 @@ export default function App() {
     return null;
   }
 
-  const isLoggedIn = true;
-
   return (
-    <NavigationContainer>
-      {isLoggedIn ? <LoggedInNav /> : <LoggedOutNav />}
-    </NavigationContainer>
+    <ApolloProvider client={client}>
+      <NavigationContainer>
+        {isLoggedIn ? <LoggedInNav /> : <LoggedOutNav />}
+      </NavigationContainer>
+    </ApolloProvider>
   );
 }

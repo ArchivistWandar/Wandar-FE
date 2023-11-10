@@ -1,7 +1,9 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { FlatList, TouchableOpacity, View } from "react-native";
 import styled from "styled-components/native";
 import { Container } from "../components/Shared";
+import { Ionicons } from "@expo/vector-icons";
+
 const notificationsData = [
   {
     id: "1",
@@ -38,7 +40,11 @@ const notificationsData = [
   },
 ];
 
-const Notifications = () => {
+const Notifications = ({ navigation }) => {
+  const goToFollowRequests = () => {
+    navigation.navigate("FollowRequests");
+  };
+
   const renderItem = ({ item }) => {
     switch (item.type) {
       case "post":
@@ -85,6 +91,36 @@ const Notifications = () => {
 
   return (
     <Container>
+      <TouchableOpacity
+        style={{
+          padding: 20,
+          flexDirection: "row",
+          alignItems: "center",
+        }}
+        onPress={goToFollowRequests}
+      >
+        <View
+          style={{
+            margin: 5,
+            alignItems: "center",
+            marginLeft: 10,
+            marginRight: 30,
+          }}
+        >
+          <Ionicons name="person-add" size={24} color={"white"} />
+        </View>
+        <View style={{ flexDirection: "column" }}>
+          <NotificationText>
+            <Username>Follow requests</Username>
+          </NotificationText>
+          <NotificationText style={{ color: "grey" }}>
+            Approve or ignore requests
+          </NotificationText>
+        </View>
+      </TouchableOpacity>
+      <View
+        style={{ borderColor: "rgba(255,255,255, 0.1)", borderTopWidth: 1 }}
+      ></View>
       <NotificationList
         data={notificationsData}
         keyExtractor={(item) => item.id}
@@ -99,7 +135,7 @@ const NotificationList = styled(FlatList)`
   margin: 20px;
 `;
 
-const NotificationItem = styled.View`
+const NotificationItem = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   margin-bottom: 30px;

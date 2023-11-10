@@ -36,7 +36,6 @@ In the project directory, you can run:
   - [x] AddMemo Page
   - [x] ChooseLand Page
   - [x] Preview Page
-  - [ ] Upload to Backend
 - [ ] 7. Upload Record
   - [x] Select Photos Page
   - [x] Branches Page
@@ -49,3 +48,5 @@ In the project directory, you can run:
   - [x] My Photos
   - [x] Edit Profile Info
   - [x] Edit Profile Image
+- [ ] 10. Connect to Backend
+  - [x] Set-Up

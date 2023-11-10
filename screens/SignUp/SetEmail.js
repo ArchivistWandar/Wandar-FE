@@ -19,7 +19,9 @@ const SetUsername = ({ navigation }) => {
   const [disabled, setDisabled] = useState(true);
 
   const inputRef = useRef();
-  const goToPassword = () => navigation.navigate("SetPassword");
+  const goToPassword = () => {
+    navigation.navigate("SetPassword", { email: email });
+  };
 
   const _handleEmailChange = (email) => {
     const changedEmail = removeWhitespace(email);
