@@ -11,6 +11,16 @@ import { styled } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Container } from "../components/Shared";
+import { gql, useMutation } from "@apollo/client";
+
+const LOGIN_MUTATION = gql`
+  mutation Login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      ok
+      token
+    }
+  }
+`;
 
 const TextInput = styled.TextInput`
   padding: 20px 17px;
@@ -32,11 +42,31 @@ const Logo = styled.Image`
   margin-bottom: 30px;
 `;
 
-const Login = () => {
+const Login = ({ route: { params } }) => {
   const inputRef = useRef();
-  const { register, handleSubmit, setValue, watch } = useForm();
+  const { register, handleSubmit, setValue, watch } = useForm({
+    defaultValues: {
+      password: params?.password,
+      username: params?.username,
+    },
+  });
   const passwordRef = useRef();
   const [showPassword, setShowPassword] = useState(false);
+  const onCompleted = (data) => {
+    console.log(data);
+    const {
+      login: { ok, token },
+    } = data;
+    if (ok) {
+      isLoggedInVar(true);
+    }
+  };
+  const [logInMutation, { loading, error }] = useMutation(LOGIN_MUTATION, {
+    onCompleted,
+    onError: (error) => {
+      console.log("Error occurred:", error);
+    },
+  });
 
   const usernameValue = watch("username", ""); // Get the current value of the username field
   const passwordValue = watch("password", ""); // Get the current value of the password field
@@ -46,12 +76,22 @@ const Login = () => {
   };
 
   const onValid = (data) => {
-    console.log(data);
+    if (!loading) {
+      logInMutation({
+        variables: {
+          ...data,
+        },
+      });
+    }
   };
 
   useEffect(() => {
-    register("username");
-    register("password");
+    register("username", {
+      required: true,
+    });
+    register("password", {
+      required: true,
+    });
   }, [register]);
 
   useEffect(() => {
@@ -98,7 +138,12 @@ const Login = () => {
           </TouchableOpacity>
         </AuthTextBox>
         <AuthButtonContainer>
-          <AuthButton text="Continue" disabled={disabled} isYellow={false} />
+          <AuthButton
+            text="Continue"
+            disabled={disabled}
+            isYellow={false}
+            onPress={handleSubmit(onValid)}
+          />
         </AuthButtonContainer>
       </AuthLayout>
     </Container>

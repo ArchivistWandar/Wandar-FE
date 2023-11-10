@@ -16,13 +16,20 @@ import {
 import { View } from "react-native";
 import { Container } from "../../components/Shared";
 
-const SetUsername = ({ navigation }) => {
+const SetUsername = ({ route, navigation }) => {
+  const { email, password } = route.params;
+
   const [username, setUsername] = useState("");
   const [errorMessage, setErrorMessage] = useState(false);
   const [disabled, setDisabled] = useState(true);
 
   const inputRef = useRef();
-  const goToProfile = () => navigation.navigate("SetProfile");
+  const goToProfile = () =>
+    navigation.navigate("SetProfile", {
+      email: email,
+      password: password,
+      username: username.replace("@", ""),
+    });
 
   const _handleUsernameChange = (username) => {
     // Remove whitespace and ensure "@" is at the beginning

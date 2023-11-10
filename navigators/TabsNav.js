@@ -99,7 +99,7 @@ export default function TabsNav({ navigation }) {
             ),
           }}
         >
-          {() => <SharedStackNav screenName="Notifications" />}
+          {() => <SharedStackNav screenName="NotificationsNav" />}
         </Tabs.Screen>
         <Tabs.Screen
           name="TabMyPage"
