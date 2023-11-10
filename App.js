@@ -6,7 +6,8 @@ import * as SplashScreen from "expo-splash-screen";
 import LoggedInNav from "./navigators/LoggedInNav";
 import { LogBox } from "react-native";
 import { ApolloProvider, useReactiveVar } from "@apollo/client";
-import client, { isLoggedInVar } from "./apollo";
+import client, { TOKEN, isLoggedInVar, tokenVar } from "./apollo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -14,7 +15,6 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
-  // const isLoggedIn = true;
 
   const [isFontsLoaded] = useFonts({
     JostBlack: require("./assets/fonts/Jost-Black.ttf"),
@@ -36,6 +36,19 @@ export default function App() {
     JostThin: require("./assets/fonts/Jost-Thin.ttf"),
     JostThinItalic: require("./assets/fonts/Jost-ThinItalic.ttf"),
   });
+
+  // 로그인 상태 초기화 함수
+  const initializeLoginState = async () => {
+    const token = await AsyncStorage.getItem(TOKEN);
+    if (token) {
+      isLoggedInVar(true);
+      tokenVar(token);
+    }
+  };
+
+  useEffect(() => {
+    initializeLoginState();
+  }, []);
 
   const handleOnLayout = useCallback(async () => {
     try {

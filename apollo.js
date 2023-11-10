@@ -1,10 +1,14 @@
 import { ApolloClient, InMemoryCache, makeVar } from "@apollo/client";
+import { setContext } from "@apollo/client/link/context";
+import { offsetLimitPagination } from "@apollo/client/utilities";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { onError } from "@apollo/client/link/error";
+import { createUploadLink } from "apollo-upload-client";
 
 export const isLoggedInVar = makeVar(false);
 export const tokenVar = makeVar("");
 
-const TOKEN = "token";
+export const TOKEN = "token";
 
 export const logUserIn = async (token) => {
   await AsyncStorage.setItem(TOKEN, token);
@@ -18,9 +22,44 @@ export const logUserOut = async () => {
   tokenVar(null);
 };
 
-const client = new ApolloClient({
+const uploadHttpLink = createUploadLink({
   uri: "https://able-caryn-wandar-archivist.koyeb.app/graphql",
-  cache: new InMemoryCache(),
+  headers: {
+    "apollo-require-preflight": true,
+  },
+});
+
+const authLink = setContext((_, { headers }) => {
+  return {
+    headers: {
+      ...headers,
+      token: tokenVar(),
+    },
+  };
+});
+
+const onErrorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    console.log(`GraphQL Error`, graphQLErrors);
+  }
+  if (networkError) {
+    console.log("Network Error", networkError);
+  }
+});
+
+export const cache = new InMemoryCache({
+  typePolicies: {
+    Query: {
+      fields: {
+        seeFeed: offsetLimitPagination(),
+      },
+    },
+  },
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(onErrorLink).concat(uploadHttpLink),
+  cache,
 });
 
 export default client;
