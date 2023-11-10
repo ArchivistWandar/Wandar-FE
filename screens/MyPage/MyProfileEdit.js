@@ -27,6 +27,7 @@ const MyProfileEdit = () => {
           text="Save"
           disabled={false}
           // onPress={}
+          loading={false}
           isYellow={false}
         />
       </AuthButtonContainer>

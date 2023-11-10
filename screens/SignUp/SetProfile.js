@@ -93,6 +93,7 @@ const SetProfile = ({ route, navigation }) => {
           disabled={false}
           onPress={handleSubmit(onValid)}
           isYellow={false}
+          loading={loading}
         />
       </AuthButtonContainer>
     </Container>

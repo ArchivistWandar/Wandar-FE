@@ -76,6 +76,7 @@ const SetUsername = ({ route, navigation }) => {
             disabled={disabled}
             onPress={goToProfile}
             isYellow={false}
+            loading={false}
           />
         </AuthButtonContainer>
       </AuthLayout>

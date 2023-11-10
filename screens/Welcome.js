@@ -38,12 +38,14 @@ export default function Welcome({ navigation }) {
           disabled={false}
           onPress={goToSignUp}
           isYellow={true}
+          loading={false}
         />
         <AuthButton
           text="Login"
           disabled={false}
           onPress={goToLogin}
           isYellow={false}
+          loading={false}
         />
       </ButtonContainer>
     </Container>

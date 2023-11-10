@@ -78,6 +78,7 @@ const SetPassword = ({ route, navigation }) => {
             disabled={disabled} // Disable the button if conditions are not met
             onPress={goToUsername}
             isYellow={false}
+            loading={false}
           />
         </AuthButtonContainer>
       </AuthLayout>

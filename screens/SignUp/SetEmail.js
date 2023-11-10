@@ -62,6 +62,7 @@ const SetUsername = ({ navigation }) => {
             disabled={disabled}
             onPress={goToPassword}
             isYellow={false}
+            loading={false}
           />
         </AuthButtonContainer>
       </AuthLayout>

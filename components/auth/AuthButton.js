@@ -1,7 +1,7 @@
 import React from "react";
 import styled from "styled-components/native";
 import { colors } from "../../colors";
-import { Platform } from "react-native";
+import { ActivityIndicator, Platform } from "react-native";
 
 const Button = styled.TouchableOpacity`
   background-color: ${(props) => (props.isYellow ? colors.yellow : "white")};
@@ -31,10 +31,20 @@ const ButtonText = styled.Text`
   font-size: 16px;
 `;
 
-export default function AuthButton({ onPress, disabled, text, isYellow }) {
+export default function AuthButton({
+  onPress,
+  disabled,
+  text,
+  isYellow,
+  loading,
+}) {
   return (
     <Button disabled={disabled} onPress={onPress} isYellow={isYellow}>
-      <ButtonText>{text}</ButtonText>
+      {loading ? (
+        <ActivityIndicator color={colors.backgroundColor} />
+      ) : (
+        <ButtonText>{text}</ButtonText>
+      )}
     </Button>
   );
 }
