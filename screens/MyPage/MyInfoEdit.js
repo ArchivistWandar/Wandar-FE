@@ -81,7 +81,12 @@ const MyInfoEdit = ({ navigation }) => {
           </PasswordInputContainer>
         </TextInputContainer>
         <ButtonContainer>
-          <AuthButton text="Save" disabled={disabled} isYellow={false} />
+          <AuthButton
+            text="Save"
+            disabled={disabled}
+            isYellow={false}
+            loading={false}
+          />
         </ButtonContainer>
       </ScrollView>
     </ProfileEditContainer>
