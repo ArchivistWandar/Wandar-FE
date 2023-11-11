@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { GLView } from "expo-gl";
 import { PanResponder, View } from "react-native";
 import { Renderer } from "expo-three";
@@ -22,11 +22,20 @@ import { Asset } from "expo-asset";
 CameraControls.install({ THREE: THREE });
 
 export default function TempLand() {
+  const [modelLoaded, setModelLoaded] = useState(false);
   const timeoutRef = useRef();
   const cameraControlsRef = useRef(null);
   const initialDistanceRef = useRef(null);
 
   useEffect(() => {
+    // 모델 로드
+    Asset.loadAsync(require("../assets/glbAsset/square.glb"))
+      .then(() => {
+        setModelLoaded(true); // 로딩 완료 시 상태 업데이트
+      })
+      .catch((error) => console.error("Model loading error:", error));
+
+    // 컴포넌트 언마운트 시 타임아웃 클리어
     return () => clearTimeout(timeoutRef.current);
   }, []);
 
@@ -117,21 +126,26 @@ export default function TempLand() {
     cube.position.set(0, 0, 0);
     scene.add(cube);
 
-    const gltfLoader = new GLTFLoader();
-
-    // 모델 로드
-    gltfLoader.load(
-      Asset.fromModule(require("../assets/glbAsset/bell-b-christmas.glb")).uri,
-      (gltf) => {
-        // 로드된 모델을 scene에 추가
-        scene.add(gltf.scene);
-        gltf.scene.scale(100, 100, 100);
-      },
-      undefined, // 로드 진행 상황에 대한 콜백 함수 (필요시 사용)
-      (error) => {
-        console.error("An error happened during loading a model", error);
-      }
-    );
+    if (modelLoaded) {
+      console.log("loading----------------------------------");
+      console.log(modelLoaded);
+      // 모델 로드가 완료되면 씬에 추가
+      const gltfLoader = new GLTFLoader();
+      gltfLoader.load(
+        Asset.fromModule(require("../assets/glbAsset/square.glb")).uri,
+        (gltf) => {
+          gltf.scene.position.set(2, 5, 5);
+          scene.add(gltf.scene);
+          console.log("Model loaded and added to the scene");
+          console.log("Model position:", gltf.scene.position);
+          console.log("Model scale:", gltf.scene.scale);
+        },
+        undefined, // 로드 진행 상황에 대한 콜백 함수 (필요시 사용)
+        (error) => {
+          console.error("An error happened during loading a model", error);
+        }
+      );
+    }
 
     // Create CameraControls and attach it to the renderer's canvas
     const cameraControls = new CameraControls(camera, gl.canvas);
