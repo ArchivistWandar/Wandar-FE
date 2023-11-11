@@ -3,6 +3,7 @@ import { Container } from "../components/Shared";
 import styled from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import TempLand from "../components/TempLand";
+import Bell from "../Bell-b-christmas.jsx";
 
 const Land = ({ navigation }) => {
   const goToFriendsSelect = () => {

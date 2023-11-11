@@ -13,11 +13,17 @@
     },
     "assetBundlePatterns": ["**/*"],
     "ios": {
+      "infoPlist": {
+        "NSDocumentDirectoryUsageDescription": "$(PRODUCT_NAME) would like access to your documents",
+        "NSFileProviderDomainUsageDescription": "$(PRODUCT_NAME) would like to use your file provider storage"
+      },
       "supportsTablet": true
     },
     "android": {
+      "permissions": ["android.permission.READ_EXTERNAL_STORAGE", "android.permission.WRITE_EXTERNAL_STORAGE"],
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
+        
         "backgroundColor": "#ffffff"
       }
     },

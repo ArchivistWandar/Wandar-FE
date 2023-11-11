@@ -17,6 +17,7 @@
     "@react-navigation/material-top-tabs": "^6.6.4",
     "@react-navigation/native": "^6.1.7",
     "@react-navigation/stack": "^6.3.17",
+    "@react-three/drei": "^9.88.13",
     "@react-three/fiber": "^8.14.2",
     "camera-controls": "^2.7.3",
     "expo": "^49.0.3",
@@ -47,6 +48,7 @@
     "react-native-screens": "~3.22.0",
     "react-native-svg": "13.9.0",
     "react-native-web": "^0.19.6",
+    "rn-fetch-blob": "^0.12.0",
     "styled-components": "^6.0.8",
     "three": "^0.145.0"
   },

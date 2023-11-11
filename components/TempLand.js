@@ -113,11 +113,25 @@ export default function TempLand() {
     spotLight.lookAt(scene.position);
     scene.add(spotLight);
 
-    const cube = new IconMesh();
+    const cube = new TileMesh();
     cube.position.set(0, 0, 0);
     scene.add(cube);
 
-    await loadGLBModel(scene);
+    const gltfLoader = new GLTFLoader();
+
+    // 모델 로드
+    gltfLoader.load(
+      Asset.fromModule(require("../assets/glbAsset/bell-b-christmas.glb")).uri,
+      (gltf) => {
+        // 로드된 모델을 scene에 추가
+        scene.add(gltf.scene);
+        gltf.scene.scale(100, 100, 100);
+      },
+      undefined, // 로드 진행 상황에 대한 콜백 함수 (필요시 사용)
+      (error) => {
+        console.error("An error happened during loading a model", error);
+      }
+    );
 
     // Create CameraControls and attach it to the renderer's canvas
     const cameraControls = new CameraControls(camera, gl.canvas);
@@ -153,34 +167,6 @@ export default function TempLand() {
       onContextCreate={onContextCreate}
     />
   );
-}
-
-async function loadGLBModel(scene) {
-  const modelAsset = Asset.fromModule(
-    require("../assets/glbAsset/bell-b-christmas.glb")
-  );
-  await modelAsset.downloadAsync();
-
-  const modelUri = modelAsset.localUri;
-
-  const loader = new GLTFLoader();
-  try {
-    const gltf = await loader.loadAsync(modelUri);
-    // 모델이 로드되면, 이제 이를 씬에 추가하거나 다른 처리를 할 수 있습니다.
-    scene.add(gltf.scene);
-  } catch (error) {
-    console.error("Error loading GLTF model", error);
-  }
-}
-class IconMesh extends Mesh {
-  constructor() {
-    super(
-      new BoxGeometry(1.5, 1.0, 1.0), // Change BoxBufferGeometry to BoxGeometry
-      new MeshStandardMaterial({
-        color: "yellow", // Yellow color instead of texture
-      })
-    );
-  }
 }
 
 class TileMesh extends Mesh {
