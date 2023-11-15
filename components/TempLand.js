@@ -4,7 +4,6 @@ import { Renderer } from "expo-three";
 import {
   AmbientLight,
   PerspectiveCamera,
-  OrthographicCamera,
   Scene,
   PointLight,
   SpotLight,
@@ -13,19 +12,16 @@ import {
   TextureLoader,
 } from "three";
 import * as THREE from "three";
-import CameraControls from "camera-controls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Asset } from "expo-asset";
-
-CameraControls.install({ THREE: THREE });
+import MobileCameraManager from "./MobileCameraManager.js"; // 파일 경로에 주의하세요
 
 export default function TempLand() {
   const [modelLoaded, setModelLoaded] = useState(false);
   const [textures, setTextures] = useState({});
-  const cameraControlsRef = useRef(null);
+  const cameraManagerRef = useRef(null);
 
   useEffect(() => {
-    // 텍스처 로드
     const loadTextures = async () => {
       const textureLoader = new TextureLoader();
       const albedo = await new Promise((resolve, reject) => {
@@ -49,7 +45,6 @@ export default function TempLand() {
       setTextures({ albedo, emissive });
     };
 
-    // 모델 로드
     const loadModel = async () => {
       try {
         await Asset.loadAsync(require("../assets/glbAsset2/bell3.glb"));
@@ -68,17 +63,6 @@ export default function TempLand() {
     const aspect = width / height;
     const sceneColor = 0x6ad6f0;
 
-    const frustumSize = 10;
-    const orthoCamera = new OrthographicCamera(
-      (frustumSize * aspect) / -2,
-      (frustumSize * aspect) / 2,
-      frustumSize / 2,
-      frustumSize / -2,
-      1,
-      1000
-    );
-    orthoCamera.position.set(2, 5, 5);
-
     const renderer = new Renderer({ gl });
     renderer.setSize(width, height);
     renderer.setClearColor(sceneColor);
@@ -87,8 +71,9 @@ export default function TempLand() {
     scene.fog = new Fog(sceneColor, 1, 10000);
     scene.add(new GridHelper(10, 10));
 
-    const camera = new PerspectiveCamera(70, width / height, 0.01, 1000);
+    const camera = new PerspectiveCamera(70, aspect, 0.01, 1000);
     camera.position.set(2, 5, 5);
+    cameraManagerRef.current = new MobileCameraManager(camera);
 
     const ambientLight = new AmbientLight(0x101010);
     scene.add(ambientLight);
@@ -129,19 +114,44 @@ export default function TempLand() {
       );
     }
 
-    const cameraControls = new CameraControls(camera, gl.canvas);
-    cameraControlsRef.current = cameraControls;
-
     let clock = new THREE.Clock();
     const render = () => {
       requestAnimationFrame(render);
       const delta = clock.getDelta();
-      cameraControls.update(delta);
+      if (cameraManagerRef.current) {
+        cameraManagerRef.current.update(delta);
+      }
       renderer.render(scene, camera);
       gl.endFrameEXP();
     };
     render();
   };
 
-  return <GLView style={{ flex: 1 }} onContextCreate={onContextCreate} />;
+  const handleTouch = (event, type) => {
+    if (!cameraManagerRef.current) return;
+    switch (type) {
+      case "start":
+        cameraManagerRef.current.onTouchStart(event);
+        break;
+      case "move":
+        cameraManagerRef.current.onTouchMove(event);
+        break;
+      case "end":
+        cameraManagerRef.current.onTouchEnd(event);
+        break;
+      default:
+        break;
+    }
+  };
+
+  return (
+    <GLView
+      onStartShouldSetResponder={() => true}
+      onResponderGrant={(e) => handleTouch(e, "start")}
+      onResponderMove={(e) => handleTouch(e, "move")}
+      onResponderRelease={(e) => handleTouch(e, "end")}
+      style={{ flex: 1 }}
+      onContextCreate={onContextCreate}
+    />
+  );
 }
