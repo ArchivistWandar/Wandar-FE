@@ -37,19 +37,23 @@ export default class MobileCameraManager {
     if (event.nativeEvent.touches.length === 1 && this.initialTouch) {
       // 한 손가락 터치: 패닝
       const touch = event.nativeEvent.touches[0];
-      const deltaX = (touch.pageX - this.initialTouch.x) * PAN_SENSITIVITY;
-      const deltaY = (touch.pageY - this.initialTouch.y) * PAN_SENSITIVITY;
+      const deltaX = (touch.pageX - this.initialTouch.x) * -PAN_SENSITIVITY; // 반대 방향으로 변경
+      const deltaY = (touch.pageY - this.initialTouch.y) * -PAN_SENSITIVITY; // 반대 방향으로 변경
 
-      // 카메라 기준점 이동
+      // 카메라의 현재 방향에 기반한 이동 벡터 계산
       const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(
         this.camera.quaternion
       );
       const left = new THREE.Vector3(-1, 0, 0).applyQuaternion(
         this.camera.quaternion
       );
+      const up = new THREE.Vector3(0, 1, 0);
 
+      // 좌우 이동 (left 벡터 사용)
       this.cameraOrigin.add(left.multiplyScalar(deltaX));
-      this.cameraOrigin.add(forward.multiplyScalar(deltaY));
+
+      // 상하 이동 (up 벡터 사용)
+      this.cameraOrigin.add(up.multiplyScalar(deltaY));
 
       this.initialTouch = { x: touch.pageX, y: touch.pageY };
     } else if (event.nativeEvent.touches.length === 2 && this.initialDistance) {
