@@ -35,16 +35,21 @@ export default class MobileCameraManager {
 
   onTouchMove(event) {
     if (event.nativeEvent.touches.length === 1 && this.initialTouch) {
+      // 한 손가락 터치: 패닝
       const touch = event.nativeEvent.touches[0];
-      const deltaX = (touch.pageX - this.initialTouch.x) * AZIMUTH_SENSITIVITY;
-      const deltaY =
-        (touch.pageY - this.initialTouch.y) * ELEVATION_SENSITIVITY;
+      const deltaX = (touch.pageX - this.initialTouch.x) * PAN_SENSITIVITY;
+      const deltaY = (touch.pageY - this.initialTouch.y) * PAN_SENSITIVITY;
 
-      this.cameraAzimuth += deltaX;
-      this.cameraElevation = Math.max(
-        Math.min(this.cameraElevation + deltaY, MAX_CAMERA_ELEVATION),
-        MIN_CAMERA_ELEVATION
+      // 카메라 기준점 이동
+      const forward = new THREE.Vector3(0, 0, -1).applyQuaternion(
+        this.camera.quaternion
       );
+      const left = new THREE.Vector3(-1, 0, 0).applyQuaternion(
+        this.camera.quaternion
+      );
+
+      this.cameraOrigin.add(left.multiplyScalar(deltaX));
+      this.cameraOrigin.add(forward.multiplyScalar(deltaY));
 
       this.initialTouch = { x: touch.pageX, y: touch.pageY };
     } else if (event.nativeEvent.touches.length === 2 && this.initialDistance) {
