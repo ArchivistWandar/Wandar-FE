@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { gql, useQuery } from "@apollo/client";
+import { Alert } from "react-native";
 
 const MY_PAGE = gql`
   query SeeMypage {
@@ -50,8 +51,22 @@ const MyPage = ({ navigation }) => {
     lastUpdate: data?.seeMypage?.lastUpdate,
   };
 
+  const confirmLogOut = () => {
+    Alert.alert("Log Out", "Are you sure you want to log out?", [
+      {
+        text: "Cancel",
+        style: "cancel",
+      },
+      {
+        text: "Log Out",
+        style: "destructive",
+        onPress: () => logUserOut(),
+      },
+    ]);
+  };
+
   const HeaderRight = () => (
-    <TouchableOpacity onPress={() => logUserOut()}>
+    <TouchableOpacity onPress={confirmLogOut}>
       <Ionicons
         name="log-out-outline"
         size={30}
