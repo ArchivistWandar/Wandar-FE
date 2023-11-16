@@ -4,10 +4,52 @@ import MyPageTabNav from "../../navigators/MyPageTabNav";
 import MyInfo from "./MyInfo";
 import { logUserOut } from "../../apollo";
 import { useEffect } from "react";
-import { Text, TouchableOpacity } from "react-native";
+import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
+import { gql, useQuery } from "@apollo/client";
+
+const MY_PAGE = gql`
+  query SeeMypage {
+    seeMypage {
+      username
+      avatar
+      totalFriends
+      records {
+        photos {
+          photo
+        }
+      }
+      posts {
+        photos {
+          photo
+        }
+      }
+      lands {
+        landname
+      }
+      lastUpdate
+    }
+  }
+`;
 
 const MyPage = ({ navigation }) => {
+  const { data, loading, refetch } = useQuery(MY_PAGE);
+
+  // Extract the necessary data
+  const myInfoProps = {
+    username: data?.seeMypage?.username,
+    avatar: data?.seeMypage?.avatar,
+    totalFriends: data?.seeMypage?.totalFriends,
+    loading,
+  };
+
+  const myPageTabNavProps = {
+    records: data?.seeMypage?.records,
+    posts: data?.seeMypage?.posts,
+    lands: data?.seeMypage?.lands,
+    lastUpdate: data?.seeMypage?.lastUpdate,
+  };
+
   const HeaderRight = () => (
     <TouchableOpacity onPress={() => logUserOut()}>
       <Ionicons
@@ -25,8 +67,8 @@ const MyPage = ({ navigation }) => {
 
   return (
     <Container>
-      <MyInfo navigation={navigation} />
-      <MyPageTabNav />
+      <MyInfo {...myInfoProps} navigation={navigation} />
+      <MyPageTabNav {...myPageTabNavProps} />
     </Container>
   );
 };

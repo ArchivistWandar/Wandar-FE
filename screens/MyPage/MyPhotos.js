@@ -10,7 +10,7 @@ const images = [
   require("../../assets/images/plane.png"),
 ];
 
-const MyPhotos = () => {
+const MyPhotos = ({ records, posts, lands, lastUpdate }) => {
   const numColumns = 3;
   const { width } = useWindowDimensions();
 
