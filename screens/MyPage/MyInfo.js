@@ -2,25 +2,52 @@ import React from "react";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { Skeleton } from "moti/skeleton";
+import { View } from "react-native";
 
-const userData = {
-  id: "1",
-  username: "hyeinlee.le",
-  profileImage: require("../../assets/images/profile4.png"),
-  friendsNum: "28",
-};
-
-const MyInfo = ({ navigation }) => {
+const MyInfo = ({ navigation, username, avatar, totalFriends, loading }) => {
   const goToMyInfoEdit = () => {
     navigation.navigate("MyInfoEdit");
   };
+
   return (
     <UserInfoBox>
       <UserInfoContainer>
-        <ProfileImage source={userData.profileImage} />
+        {!loading ? (
+          <ProfileImage source={{ uri: avatar }} />
+        ) : (
+          <View style={{ marginRight: "7%" }}>
+            <Skeleton
+              colorMode={"light"}
+              radius="round"
+              height={50}
+              width={50}
+            />
+          </View>
+        )}
         <UserDetails>
-          <Username>@{userData.username}</Username>
-          <FriendsNum>{userData.friendsNum} friends</FriendsNum>
+          {!loading ? (
+            <Username>@{username}</Username>
+          ) : (
+            <View style={{ marginBottom: "4%" }}>
+              <Skeleton
+                width={80}
+                height={16}
+                colorMode={"light"}
+                radius={"round"}
+              />
+            </View>
+          )}
+          {!loading ? (
+            <FriendsNum>{totalFriends} friends</FriendsNum>
+          ) : (
+            <Skeleton
+              width={60}
+              height={14}
+              colorMode={"light"}
+              radius={"round"}
+            />
+          )}
         </UserDetails>
         <TouchableOpacity onPress={goToMyInfoEdit}>
           <Ionicons name="pencil" size={20} color={"white"} />

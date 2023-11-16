@@ -24,7 +24,7 @@ const timelineData = [
   // Add more timeline data here
 ];
 
-const MyTimeline = () => {
+const MyTimeline = ({ records, posts, lands, lastUpdate }) => {
   const formatLandnames = (landnames) => {
     if (landnames.length === 1) {
       return `Land ${landnames[0]}`;
