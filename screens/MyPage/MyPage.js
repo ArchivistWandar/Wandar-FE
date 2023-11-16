@@ -6,7 +6,7 @@ import { logUserOut } from "../../apollo";
 import { useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useApolloClient } from "@apollo/client";
 import { Alert } from "react-native";
 
 const MY_PAGE = gql`
@@ -34,7 +34,10 @@ const MY_PAGE = gql`
 `;
 
 const MyPage = ({ navigation }) => {
-  const { data, loading, refetch } = useQuery(MY_PAGE);
+  const client = useApolloClient();
+  const { data, loading, refetch } = useQuery(MY_PAGE, {
+    fetchPolicy: "network-only",
+  });
 
   // Extract the necessary data
   const myInfoProps = {
@@ -60,7 +63,7 @@ const MyPage = ({ navigation }) => {
       {
         text: "Log Out",
         style: "destructive",
-        onPress: () => logUserOut(),
+        onPress: () => logUserOut(client),
       },
     ]);
   };
