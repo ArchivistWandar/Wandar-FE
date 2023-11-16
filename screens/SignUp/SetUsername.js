@@ -11,12 +11,25 @@ import {
 } from "../../components/auth/AuthShared";
 import { ActivityIndicator, Text, View } from "react-native";
 import { Container } from "../../components/Shared";
-import { gql, useLazyQuery } from "@apollo/client";
+import { gql, useLazyQuery, useMutation } from "@apollo/client";
 
 const SEARCH_USERS = gql`
   query SearchUsers($keyword: String!) {
     searchUsers(keyword: $keyword) {
       username
+    }
+  }
+`;
+
+const CREATE_ACCOUNT_MUTATION = gql`
+  mutation CreateAccount(
+    $username: String!
+    $email: String!
+    $password: String!
+  ) {
+    createAccount(username: $username, email: $email, password: $password) {
+      ok
+      error
     }
   }
 `;
@@ -30,9 +43,6 @@ const SetUsername = ({ route, navigation }) => {
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
 
   const inputRef = useRef();
-  const goToProfile = () =>
-    navigation.navigate("SetProfile", { email, password, username });
-
   const [checkUsername, { loading, data }] = useLazyQuery(SEARCH_USERS);
 
   const _handleUsernameChange = (username) => {
@@ -77,6 +87,41 @@ const SetUsername = ({ route, navigation }) => {
       )
     );
   }, [username, errorMessage, isCheckingUsername]);
+
+  // mutation
+
+  const [createAccountMutation, { loading: creatingAccount }] = useMutation(
+    CREATE_ACCOUNT_MUTATION,
+    {
+      onCompleted: (data) => {
+        const {
+          createAccount: { ok },
+        } = data;
+        if (ok) {
+          // Handle successful account creation (e.g., navigate to login)
+          navigation.navigate("Login", { username, password });
+        }
+      },
+      onError: (error) => {
+        console.error("Error creating account:", error.message);
+        // Set appropriate error message
+      },
+    }
+  );
+
+  const onValid = () => {
+    if (!creatingAccount) {
+      createAccountMutation({
+        variables: {
+          username, // Remove '@' if included in the username
+          email,
+          password,
+        },
+      }).catch((error) => {
+        console.error("Mutation error:", error);
+      });
+    }
+  };
 
   return (
     <Container>
@@ -132,11 +177,11 @@ const SetUsername = ({ route, navigation }) => {
 
         <AuthButtonContainer>
           <AuthButton
-            text="Continue"
+            text="Create Account"
             disabled={disabled}
-            onPress={goToProfile}
+            onPress={onValid}
             isYellow={false}
-            loading={false}
+            loading={creatingAccount}
           />
         </AuthButtonContainer>
       </AuthLayout>

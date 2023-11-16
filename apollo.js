@@ -16,10 +16,11 @@ export const logUserIn = async (token) => {
   tokenVar(token);
 };
 
-export const logUserOut = async () => {
+export const logUserOut = async (client) => {
   await AsyncStorage.removeItem(TOKEN);
   isLoggedInVar(false);
   tokenVar(null);
+  client.resetStore(); // Reset the store on logout
 };
 
 const uploadHttpLink = createUploadLink({
