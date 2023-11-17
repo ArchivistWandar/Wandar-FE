@@ -45,37 +45,55 @@ const SetUsername = ({ route, navigation }) => {
   const inputRef = useRef();
   const [checkUsername, { loading, data }] = useLazyQuery(SEARCH_USERS);
 
-  const _handleUsernameChange = (username) => {
-    if (username.length > 0 && !/^[A-Za-z0-9_]+$/.test(username)) {
-      setErrorMessage("Please use only English characters, numbers, or '_'.");
+  const _handleUsernameChange = (inputUsername) => {
+    setUsername(inputUsername);
+    if (
+      inputUsername.length >= 3 &&
+      !/^[0-9]/.test(inputUsername) &&
+      /^[A-Za-z0-9_]+$/.test(inputUsername)
+    ) {
+      setIsCheckingUsername(true);
+      checkUsername({ variables: { keyword: inputUsername } });
+    } else {
       setIsCheckingUsername(false);
-      return;
+    }
+  };
+  // username 변경에 대한 유효성 검사
+  useEffect(() => {
+    let newErrorMessage = "";
+    if (username.length > 0) {
+      if (!/^[A-Za-z0-9_]+$/.test(username)) {
+        newErrorMessage =
+          "Please use only English characters, numbers, or '_'.";
+      } else if (username.length < 3) {
+        newErrorMessage = "Username must be at least 3 characters long.";
+      } else if (/^[0-9]/.test(username)) {
+        newErrorMessage = "Username must not start with a number.";
+      }
     }
 
-    setUsername(username);
+    if (newErrorMessage !== errorMessage) {
+      setErrorMessage(newErrorMessage);
+    }
 
     if (username.length >= 3) {
       setIsCheckingUsername(true);
       checkUsername({ variables: { keyword: username } });
-    } else if (username.length > 0) {
-      setErrorMessage("Username must be at least 3 characters long.");
-      setIsCheckingUsername(false);
     } else {
-      setErrorMessage("");
       setIsCheckingUsername(false);
     }
-  };
+  }, [username]);
 
+  // 서버 쿼리 결과에 따른 에러 메시지 설정
   useEffect(() => {
-    if (!loading) {
+    if (!loading && isCheckingUsername) {
       setIsCheckingUsername(false);
-      if (data && data.searchUsers.length > 0) {
+      const usernameExists = data?.searchUsers?.length > 0;
+      if (usernameExists) {
         setErrorMessage("Your username is already taken. Please try another.");
-      } else {
-        setErrorMessage("");
       }
     }
-  }, [data, loading, username.length]);
+  }, [data, loading, isCheckingUsername]);
 
   useEffect(() => {
     setDisabled(
@@ -87,6 +105,10 @@ const SetUsername = ({ route, navigation }) => {
       )
     );
   }, [username, errorMessage, isCheckingUsername]);
+
+  useEffect(() => {
+    console.log(errorMessage);
+  }, [errorMessage]);
 
   // mutation
 
@@ -148,7 +170,7 @@ const SetUsername = ({ route, navigation }) => {
             </View>
           </View>
         </AuthTextBox>
-        {isCheckingUsername ? (
+        {isCheckingUsername && (
           <View
             style={{
               flexDirection: "row",
@@ -171,7 +193,9 @@ const SetUsername = ({ route, navigation }) => {
               Checking username availability...
             </Text>
           </View>
-        ) : (
+        )}
+
+        {!isCheckingUsername && errorMessage && (
           <AuthErrorMessage>{errorMessage}</AuthErrorMessage>
         )}
 
