@@ -5,6 +5,8 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { Skeleton } from "moti/skeleton";
 import { View } from "react-native";
 
+const defaultAvatar = require("../../assets/images/profile8.png");
+
 const MyInfo = ({ navigation, username, avatar, totalFriends, loading }) => {
   const goToMyInfoEdit = () => {
     navigation.navigate("MyInfoEdit");
@@ -14,7 +16,9 @@ const MyInfo = ({ navigation, username, avatar, totalFriends, loading }) => {
     <UserInfoBox>
       <UserInfoContainer>
         {!loading ? (
-          <ProfileImage source={{ uri: avatar }} />
+          <ProfileImage
+            source={avatar === null ? defaultAvatar : { uri: avatar }}
+          />
         ) : (
           <View style={{ marginRight: "7%" }}>
             <Skeleton
