@@ -9,7 +9,7 @@ const MAX_CAMERA_ELEVATION = 80;
 const AZIMUTH_SENSITIVITY = 0.2;
 const ELEVATION_SENSITIVITY = 0.2;
 const ZOOM_SENSITIVITY = 0.0005;
-const PAN_SENSITIVITY = -0.01;
+const PAN_SENSITIVITY = -0.05;
 const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
 export default class MobileCameraManager {
@@ -30,6 +30,16 @@ export default class MobileCameraManager {
       this.initialTouch = { x: touch.pageX, y: touch.pageY };
     } else if (event.nativeEvent.touches.length === 2) {
       this.initialDistance = this.getDistance(event.nativeEvent.touches);
+    } else if (event.nativeEvent.touches.length === 3) {
+      // 세 손가락 터치 시작 위치 기록
+      const touch1 = event.nativeEvent.touches[0];
+      const touch2 = event.nativeEvent.touches[1];
+      const touch3 = event.nativeEvent.touches[2];
+
+      this.initialThreeFingerTouch = {
+        x: (touch1.pageX + touch2.pageX + touch3.pageX) / 3,
+        y: (touch1.pageY + touch2.pageY + touch3.pageY) / 3,
+      };
     }
   }
 
@@ -67,6 +77,31 @@ export default class MobileCameraManager {
         ),
         MIN_CAMERA_RADIUS
       );
+    } else if (
+      event.nativeEvent.touches.length === 3 &&
+      this.initialThreeFingerTouch
+    ) {
+      // 세 손가락으로 회전 처리
+      const touch1 = event.nativeEvent.touches[0];
+      const touch2 = event.nativeEvent.touches[1];
+      const touch3 = event.nativeEvent.touches[2];
+
+      const currentX = (touch1.pageX + touch2.pageX + touch3.pageX) / 3;
+      const currentY = (touch1.pageY + touch2.pageY + touch3.pageY) / 3;
+
+      // 방향 반대로 변경
+      const deltaX =
+        (this.initialThreeFingerTouch.x - currentX) * AZIMUTH_SENSITIVITY;
+      const deltaY =
+        (this.initialThreeFingerTouch.y - currentY) * ELEVATION_SENSITIVITY;
+
+      this.cameraAzimuth += deltaX;
+      this.cameraElevation = Math.min(
+        Math.max(this.cameraElevation - deltaY, MIN_CAMERA_ELEVATION),
+        MAX_CAMERA_ELEVATION
+      );
+
+      this.initialThreeFingerTouch = { x: currentX, y: currentY };
     }
 
     this.updateCameraPosition();
@@ -75,6 +110,7 @@ export default class MobileCameraManager {
   onTouchEnd(event) {
     this.initialTouch = null;
     this.initialDistance = null;
+    this.initialThreeFingerTouch = null;
   }
 
   getDistance(touches) {

@@ -47,7 +47,7 @@ export default function TempLand() {
 
     const loadModel = async () => {
       try {
-        await Asset.loadAsync(require("../assets/glbAsset2/milk.glb"));
+        await Asset.loadAsync(require("../assets/glbAsset2/table.glb"));
         setModelLoaded(true);
       } catch (error) {
         console.error("Model loading error:", error);
@@ -75,7 +75,7 @@ export default function TempLand() {
     camera.position.set(2, 5, 5);
     cameraManagerRef.current = new MobileCameraManager(camera);
 
-    const ambientLight = new AmbientLight(0x101010);
+    const ambientLight = new AmbientLight(255);
     scene.add(ambientLight);
 
     const pointLight = new PointLight(0xffffff, 2, 1000, 1);
@@ -90,7 +90,7 @@ export default function TempLand() {
     if (modelLoaded && textures.albedo && textures.emissive) {
       const gltfLoader = new GLTFLoader();
       gltfLoader.load(
-        Asset.fromModule(require("../assets/glbAsset2/milk.glb")).uri,
+        Asset.fromModule(require("../assets/glbAsset2/table.glb")).uri,
         (gltf) => {
           const model = gltf.scene;
           model.traverse((child) => {
