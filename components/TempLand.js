@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+
 import { GLView } from "expo-gl";
 import { Renderer } from "expo-three";
 import {
@@ -14,11 +15,13 @@ import {
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Asset } from "expo-asset";
-import MobileCameraManager from "./MobileCameraManager.js"; // 파일 경로에 주의하세요
-
+import MobileCameraManager from "./MobileCameraManager.js";
+import SlideUpModal from "./SlideUpModal";
+import { Image, View, TouchableOpacity, Text } from "react-native";
 export default function TempLand() {
   const [modelLoaded, setModelLoaded] = useState(false);
   const [textures, setTextures] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
   const cameraManagerRef = useRef(null);
 
   useEffect(() => {
@@ -144,14 +147,28 @@ export default function TempLand() {
     }
   };
 
+  const openModal = () => {
+    setModalVisible(true);
+  };
+
+  const closeModal = () => {
+    setModalVisible(false);
+  };
+
   return (
-    <GLView
-      onStartShouldSetResponder={() => true}
-      onResponderGrant={(e) => handleTouch(e, "start")}
-      onResponderMove={(e) => handleTouch(e, "move")}
-      onResponderRelease={(e) => handleTouch(e, "end")}
-      style={{ flex: 1 }}
-      onContextCreate={onContextCreate}
-    />
+    <View style={{ flex: 1 }}>
+      <TouchableOpacity onPress={openModal}>
+        <Text>Open Modal</Text>
+      </TouchableOpacity>
+      <GLView
+        onStartShouldSetResponder={() => true}
+        onResponderGrant={(e) => handleTouch(e, "start")}
+        onResponderMove={(e) => handleTouch(e, "move")}
+        onResponderRelease={(e) => handleTouch(e, "end")}
+        style={{ flex: 1 }}
+        onContextCreate={onContextCreate}
+      />
+      <SlideUpModal visible={modalVisible} onClose={closeModal} />
+    </View>
   );
 }

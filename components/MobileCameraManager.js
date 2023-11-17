@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import React from "react";
 
 // 상수 정의
 const DEG2RAD = Math.PI / 180.0;
@@ -6,13 +7,13 @@ const MIN_CAMERA_RADIUS = 0.1;
 const MAX_CAMERA_RADIUS = 5;
 const MIN_CAMERA_ELEVATION = 0;
 const MAX_CAMERA_ELEVATION = 80;
-const AZIMUTH_SENSITIVITY = 0.2;
-const ELEVATION_SENSITIVITY = 0.2;
+const AZIMUTH_SENSITIVITY = 0.3;
+const ELEVATION_SENSITIVITY = 0.3;
 const ZOOM_SENSITIVITY = 0.0005;
 const PAN_SENSITIVITY = -0.05;
 const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
-export default class MobileCameraManager {
+class MobileCameraManager {
   constructor(camera) {
     this.camera = camera;
     this.cameraOrigin = new THREE.Vector3(8, 0, 8);
@@ -143,3 +144,5 @@ export default class MobileCameraManager {
     this.updateCameraPosition(); // 카메라 위치 및 방향을 업데이트하는 메서드
   }
 }
+
+export default MobileCameraManager;
