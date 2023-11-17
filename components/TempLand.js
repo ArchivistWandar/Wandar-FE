@@ -47,7 +47,7 @@ export default function TempLand() {
 
     const loadModel = async () => {
       try {
-        await Asset.loadAsync(require("../assets/glbAsset2/bell3.glb"));
+        await Asset.loadAsync(require("../assets/glbAsset2/milk.glb"));
         setModelLoaded(true);
       } catch (error) {
         console.error("Model loading error:", error);
@@ -90,7 +90,7 @@ export default function TempLand() {
     if (modelLoaded && textures.albedo && textures.emissive) {
       const gltfLoader = new GLTFLoader();
       gltfLoader.load(
-        Asset.fromModule(require("../assets/glbAsset2/bell3.glb")).uri,
+        Asset.fromModule(require("../assets/glbAsset2/milk.glb")).uri,
         (gltf) => {
           const model = gltf.scene;
           model.traverse((child) => {
