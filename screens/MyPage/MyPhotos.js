@@ -1,22 +1,57 @@
-import React from "react";
-import { FlatList, Image, useWindowDimensions } from "react-native";
-import { Container } from "../../components/Shared";
+import React, { useEffect, useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  Image,
+  useWindowDimensions,
+} from "react-native";
+import { gql, useQuery } from "@apollo/client";
+import { Container, LoadingContainer } from "../../components/Shared";
+import { currentUsernameVar } from "../../apollo";
 
-const images = [
-  require("../../assets/images/jeju.png"),
-  require("../../assets/images/busan.png"),
-  require("../../assets/images/exhibition.png"),
-  require("../../assets/images/flowers.png"),
-  require("../../assets/images/plane.png"),
-];
+const SEE_PHOTOS_QUERY = gql`
+  query SeePhotos($username: String!) {
+    seePhotos(username: $username) {
+      photo
+      isPublic
+      post {
+        id
+      }
+      record {
+        id
+      }
+      isMine
+    }
+  }
+`;
 
-const MyPhotos = ({ records, posts, lands, lastUpdate }) => {
+const MyPhotos = () => {
+  const username = currentUsernameVar();
   const numColumns = 3;
   const { width } = useWindowDimensions();
 
+  const { data, loading, error } = useQuery(SEE_PHOTOS_QUERY, {
+    variables: { username: username },
+    fetchPolicy: "network-only",
+  });
+
+  // Display loading container until all photos are loaded
+  if (loading || !data?.seePhotos) {
+    return (
+      <LoadingContainer>
+        <ActivityIndicator size="small" color="white" />
+      </LoadingContainer>
+    );
+  }
+
+  const photos = data.seePhotos.map((photo) => ({
+    ...photo,
+    key: photo.record.id.toString(),
+  }));
+
   const renderItem = ({ item }) => (
     <Image
-      source={item}
+      source={{ uri: item.photo }}
       style={{ width: width / numColumns, height: width / numColumns }}
       resizeMode="cover"
     />
@@ -26,8 +61,8 @@ const MyPhotos = ({ records, posts, lands, lastUpdate }) => {
     <Container>
       <FlatList
         numColumns={numColumns}
-        data={images}
-        keyExtractor={(item, index) => index.toString()} // Use index as the key
+        data={photos}
+        keyExtractor={(item) => item.key}
         renderItem={renderItem}
       />
     </Container>
