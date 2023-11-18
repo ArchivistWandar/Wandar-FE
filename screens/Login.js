@@ -60,7 +60,7 @@ const Login = ({ route: { params } }) => {
       login: { ok, token },
     } = data;
     if (ok) {
-      await logUserIn(token);
+      await logUserIn(token, watch("username"));
     }
   };
 
