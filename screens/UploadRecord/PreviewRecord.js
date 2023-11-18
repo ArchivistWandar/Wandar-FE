@@ -17,21 +17,46 @@ import styled from "styled-components/native";
 import { themes } from "../../components/RecordTheme";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
+import { gql, useMutation } from "@apollo/client";
+import { ReactNativeFile } from "apollo-upload-client";
 
-const EditableHeaderTitle = ({ initialTitle, textColor }) => {
+const CREATE_RECORD_MUTATION = gql`
+  mutation CreateRecord(
+    $title: String!
+    $photos: [Upload]!
+    $theme: String!
+    $isPublic: Boolean!
+  ) {
+    createRecord(
+      title: $title
+      photos: $photos
+      theme: $theme
+      isPublic: $isPublic
+    ) {
+      ok
+    }
+  }
+`;
+
+const EditableHeaderTitle = ({ initialTitle, textColor, setTitle }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState(initialTitle);
+  const [title, setTitleInternal] = useState(initialTitle); // 내부 상태 추가
+
+  const handleEndEditing = () => {
+    if (title.trim() === "") {
+      setTitleInternal(initialTitle);
+      setTitle(initialTitle); // 외부 상태도 초기값으로 설정
+    } else {
+      setTitle(title); // 외부 상태 업데이트
+    }
+    setIsEditing(false);
+  };
 
   return isEditing ? (
     <TextInput
       value={title}
-      onChangeText={setTitle}
-      onEndEditing={() => {
-        if (title.trim() === "") {
-          setTitle(initialTitle);
-        }
-        setIsEditing(false);
-      }}
+      onChangeText={(text) => setTitleInternal(text)} // 내부 상태 업데이트
+      onEndEditing={handleEndEditing}
       autoFocus
       style={{ color: textColor, fontFamily: "JostSemiBold", fontSize: 15 }}
     />
@@ -65,6 +90,7 @@ const HeaderRightText = styled.Text`
 
 const PreviewRecord = ({ navigation, route }) => {
   const windowWidth = Dimensions.get("window").width;
+  const [title, setTitle] = useState("New record");
 
   const [theme, setTheme] = useState({
     backgroundColor: "#202020",
@@ -79,8 +105,9 @@ const PreviewRecord = ({ navigation, route }) => {
       headerTintColor: Platform.OS === "ios" ? "white" : theme?.textColor,
       headerTitle: () => (
         <EditableHeaderTitle
-          initialTitle="New record"
+          initialTitle={title}
           textColor={Platform.OS === "ios" ? "white" : theme?.textColor}
+          setTitle={setTitle}
         />
       ),
       headerBackground: () =>
@@ -100,26 +127,56 @@ const PreviewRecord = ({ navigation, route }) => {
           />
         ),
     });
-  }, [theme]); // theme가 변경될 때마다 이 useEffect가 실행됩니다.
+  }, [theme, title]); // theme가 변경될 때마다 이 useEffect가 실행됩니다.
   const selectTheme = (newTheme) => {
     setTheme(newTheme);
   };
 
-  const HeaderRight = () => (
-    <TouchableOpacity
-    // onPress={() =>
-    //   navigation.navigate("DecoRecord", {
-    //     selectedPhotos: route.params.result,
-    //   })
-    // }
-    >
-      <HeaderRightText>Upload</HeaderRightText>
-    </TouchableOpacity>
+  // mutation
+
+  const [createRecordMutation, { loading: isCreatingRecord }] = useMutation(
+    CREATE_RECORD_MUTATION
   );
 
+  const handleUpload = () => {
+    // Prepare the photos as an array of ReactNativeFile objects
+    const photoFiles = route.params.result.assets.map((asset) => {
+      return new ReactNativeFile({
+        uri: asset.uri,
+        type: `image/${asset.uri.split(".").pop()}`,
+        name: asset.filename || `photo.${asset.uri.split(".").pop()}`,
+      });
+    });
+
+    // Use the mutation with the prepared variables
+    createRecordMutation({
+      variables: {
+        title: title,
+        photos: photoFiles,
+        theme: theme.name,
+        isPublic: true,
+      },
+      onCompleted: (response) => {
+        // Handle successful upload
+        console.log(response);
+      },
+      onError: (error) => {
+        // Handle error
+        console.log(error);
+      },
+    });
+  };
+
   useEffect(() => {
-    navigation.setOptions({ headerRight: HeaderRight });
-  });
+    navigation.setOptions({
+      // ... existing options ...
+      headerRight: () => (
+        <TouchableOpacity onPress={handleUpload}>
+          <HeaderRightText>Upload</HeaderRightText>
+        </TouchableOpacity>
+      ),
+    });
+  }, [navigation, theme, route.params.result.assets]);
 
   return (
     <View

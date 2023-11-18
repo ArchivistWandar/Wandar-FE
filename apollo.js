@@ -7,19 +7,24 @@ import { createUploadLink } from "apollo-upload-client";
 
 export const isLoggedInVar = makeVar(false);
 export const tokenVar = makeVar("");
+export const currentUsernameVar = makeVar("");
 
 export const TOKEN = "token";
 
-export const logUserIn = async (token) => {
+export const logUserIn = async (token, username) => {
   await AsyncStorage.setItem(TOKEN, token);
+  await AsyncStorage.setItem("username", username); // Save username
   isLoggedInVar(true);
   tokenVar(token);
+  currentUsernameVar(username);
 };
 
 export const logUserOut = async (client) => {
   await AsyncStorage.removeItem(TOKEN);
+  await AsyncStorage.removeItem("username"); // Remove username
   isLoggedInVar(false);
   tokenVar(null);
+  currentUsernameVar(""); // Reset username
   client.resetStore(); // Reset the store on logout
 };
 

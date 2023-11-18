@@ -6,7 +6,12 @@ import * as SplashScreen from "expo-splash-screen";
 import LoggedInNav from "./navigators/LoggedInNav";
 import { LogBox } from "react-native";
 import { ApolloProvider, useReactiveVar } from "@apollo/client";
-import client, { TOKEN, isLoggedInVar, tokenVar } from "./apollo";
+import client, {
+  TOKEN,
+  currentUsernameVar,
+  isLoggedInVar,
+  tokenVar,
+} from "./apollo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
@@ -40,9 +45,11 @@ export default function App() {
   // 로그인 상태 초기화 함수
   const initializeLoginState = async () => {
     const token = await AsyncStorage.getItem(TOKEN);
-    if (token) {
+    const username = await AsyncStorage.getItem("username");
+    if (token && username) {
       isLoggedInVar(true);
       tokenVar(token);
+      currentUsernameVar(username);
     }
   };
 

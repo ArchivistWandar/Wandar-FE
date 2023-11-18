@@ -1,22 +1,38 @@
 import React from "react";
-import { FlatList } from "react-native";
+import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { Container } from "../Shared";
 
-const UserList = ({ data, friend }) => {
+const UserList = ({
+  data,
+  friend,
+  onSearch,
+  onAddFriend,
+  addingFriendUsername,
+}) => {
   const renderItem = ({ item }) => {
+    const isAddingThisFriend = item.username === addingFriendUsername;
+
     return (
       <PostItem>
-        <PostImage source={item.image} />
+        <PostImage source={item.avatar} />
         <PostDetails>
           <PostTitle>{item.username}'s lands</PostTitle>
-          <PostDate>Last update: {item.lastUpdate}</PostDate>
+          {item.lastUpdate ? (
+            <PostDate>Last update: {item.lastUpdate}</PostDate>
+          ) : null}
         </PostDetails>
         {friend ? (
           <Ionicons name="chevron-forward" size={24} color={"white"} />
         ) : (
-          <Ionicons name="person-add" size={24} color={"white"} />
+          <TouchableOpacity onPress={() => onAddFriend(item.username)}>
+            {isAddingThisFriend ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : (
+              <Ionicons name="person-add" size={24} color={"white"} />
+            )}
+          </TouchableOpacity>
         )}
       </PostItem>
     );
@@ -31,7 +47,11 @@ const UserList = ({ data, friend }) => {
           color="white"
           style={{ marginRight: 10 }}
         />
-        <SearchInput placeholder="Search..." placeholderTextColor="#777" />
+        <SearchInput
+          placeholder="Search..."
+          placeholderTextColor="#777"
+          onChangeText={onSearch}
+        />
       </SearchContainer>
       <FlatList
         data={data}

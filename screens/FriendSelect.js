@@ -1,5 +1,4 @@
 import React from "react";
-import { Text } from "react-native";
 import { Container } from "../components/Shared";
 import FriendsNav from "../navigators/FriendsNav";
 import styled from "styled-components/native";
