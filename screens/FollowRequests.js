@@ -1,60 +1,134 @@
-import React from "react";
-import { FlatList, View, TouchableOpacity } from "react-native";
+import React, { useContext } from "react";
+import { useQuery, gql, useMutation } from "@apollo/client";
+import { ActivityIndicator, FlatList, Text } from "react-native";
 import styled from "styled-components/native";
-import { Container } from "../components/Shared";
+import { Container, LoadingContainer } from "../components/Shared";
 import { colors } from "../colors";
+import { RequestProcessedContext } from "../components/RequestProcessedProvider";
+import { SEE_FRIENDS } from "./FriendsTab";
+import { currentUsernameVar } from "../apollo";
 
-const requestsData = [
-  {
-    id: "1",
-    username: "hyeinlee.leeeeeee",
-    profileImage: require("./../assets/images/profile1.png"),
-  },
-  {
-    id: "2",
-    username: "iamlily",
-    profileImage: require("./../assets/images/profile2.png"),
-  },
-  {
-    id: "3",
-    username: "dankim",
-    profileImage: require("./../assets/images/profile3.png"),
-  },
-  {
-    id: "4",
-    username: "millyyyyyyy",
-    profileImage: require("./../assets/images/profile8.png"),
-  },
-];
+// GraphQL Query
+const SEE_FRIEND_REQUEST = gql`
+  query SeeFriendRequest {
+    seeFriendRequest {
+      requestSender {
+        username
+      }
+      createdAt
+    }
+  }
+`;
+
+const ACCEPT_OR_DECLINE_FRIEND_REQUEST = gql`
+  mutation AcceptOrDeclineFriendRequest(
+    $username: String!
+    $isAccepting: Boolean!
+  ) {
+    acceptOrDeclineFriendRequest(
+      username: $username
+      isAccepting: $isAccepting
+    ) {
+      ok
+    }
+  }
+`;
 
 const FollowRequests = ({ navigation }) => {
-  const handleConfirm = (id) => {
-    console.log(`Confirmed request: ${id}`);
+  const { data, loading, error } = useQuery(SEE_FRIEND_REQUEST);
+  const { setRequestProcessed } = useContext(RequestProcessedContext);
+  // In your mutation
+  const [acceptOrDeclineFriendRequest] = useMutation(
+    ACCEPT_OR_DECLINE_FRIEND_REQUEST,
+    {
+      update(cache, { data: { acceptOrDeclineFriendRequest } }) {
+        if (acceptOrDeclineFriendRequest.ok) {
+          const existingFriends = cache.readQuery({
+            query: SEE_FRIENDS,
+            variables: { username: currentUsernameVar() },
+          });
+
+          // Modify `existingFriends` as needed, perhaps removing or adding a friend
+          // Then write it back to the cache
+          cache.writeQuery({
+            query: SEE_FRIENDS,
+            variables: { username: currentUsernameVar() },
+            data: { ...existingFriends /* modified data */ },
+          });
+        }
+      },
+    }
+  );
+
+  const handleConfirm = (username) => {
+    acceptOrDeclineFriendRequest({
+      variables: { username, isAccepting: true },
+      refetchQueries: [
+        { query: SEE_FRIEND_REQUEST },
+        { query: SEE_FRIENDS, variables: { username: currentUsernameVar() } },
+      ],
+    })
+      .then((response) => {
+        if (response.data.acceptOrDeclineFriendRequest.ok) {
+          setRequestProcessed((prev) => !prev);
+          alert(`Friend request from ${username} accepted.`);
+        } else {
+          alert(`Failed to accept the friend request from ${username}.`);
+        }
+      })
+      .catch((error) => {
+        alert(`An error occurred: ${error.message}`);
+      });
   };
 
-  const handleDelete = (id) => {
-    console.log(`Deleted request: ${id}`);
+  const handleDelete = (username) => {
+    acceptOrDeclineFriendRequest({
+      variables: { username, isAccepting: false },
+      refetchQueries: [
+        { query: SEE_FRIEND_REQUEST },
+        { query: SEE_FRIENDS, variables: { username: currentUsernameVar() } },
+      ],
+    })
+      .then((response) => {
+        if (response.data.acceptOrDeclineFriendRequest.ok) {
+          setRequestProcessed((prev) => !prev);
+          alert(`Friend request from ${username} declined.`);
+        } else {
+          alert(`Failed to decline the friend request from ${username}.`);
+        }
+      })
+      .catch((error) => {
+        alert(`An error occurred: ${error.message}`);
+      });
   };
+
+  if (loading)
+    return (
+      <LoadingContainer>
+        <ActivityIndicator size="small" color="white" />
+      </LoadingContainer>
+    );
+  if (error) return <Text>Error: {error.message}</Text>;
 
   return (
     <Container>
       <RequestList
-        data={requestsData}
-        keyExtractor={(item) => item.id}
+        data={data?.seeFriendRequest}
+        keyExtractor={(item, index) => String(index)}
         renderItem={({ item }) => (
           <RequestItem>
-            <ProfileImage source={item.profileImage} />
-            <Username>{item.username}</Username>
+            <ProfileImage source={require("./../assets/images/profile8.png")} />
+            <Username>{item.requestSender.username}</Username>
             <ButtonsContainer>
               <RequestButtonContainer
                 color={colors.blue}
-                onPress={() => handleConfirm(item.id)}
+                onPress={() => handleConfirm(item.requestSender.username)}
               >
                 <RequestButton>Confirm</RequestButton>
               </RequestButtonContainer>
               <RequestButtonContainer
                 color="rgba(255,255,255,0.1)"
-                onPress={() => handleDelete(item.id)}
+                onPress={() => handleDelete(item.requestSender.username)}
               >
                 <RequestButton>Delete</RequestButton>
               </RequestButtonContainer>

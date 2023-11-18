@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { isLoaded, useFonts } from "expo-font";
 import LoggedOutNav from "./navigators/LoggedOutNav";
 import { NavigationContainer } from "@react-navigation/native";
@@ -13,6 +13,7 @@ import client, {
   tokenVar,
 } from "./apollo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RequestProcessedProvider } from "./components/RequestProcessedProvider";
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -20,6 +21,7 @@ SplashScreen.preventAutoHideAsync();
 
 export default function App() {
   const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const [isProcessed, setRequestProcessed] = useState(false);
 
   const [isFontsLoaded] = useFonts({
     JostBlack: require("./assets/fonts/Jost-Black.ttf"),
@@ -78,10 +80,12 @@ export default function App() {
   }
 
   return (
-    <ApolloProvider client={client}>
-      <NavigationContainer>
-        {isLoggedIn ? <LoggedInNav /> : <LoggedOutNav />}
-      </NavigationContainer>
-    </ApolloProvider>
+    <RequestProcessedProvider value={{ isProcessed, setRequestProcessed }}>
+      <ApolloProvider client={client}>
+        <NavigationContainer>
+          {isLoggedIn ? <LoggedInNav /> : <LoggedOutNav />}
+        </NavigationContainer>
+      </ApolloProvider>
+    </RequestProcessedProvider>
   );
 }

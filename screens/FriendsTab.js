@@ -1,13 +1,12 @@
-import React, { useState } from "react";
-import { Container } from "../components/Shared";
+import React, { useContext, useEffect, useState } from "react";
+import { Container, LoadingContainer } from "../components/Shared";
 import UserList from "../components/friendsNav/UserList";
 import { gql, useQuery } from "@apollo/client";
 import { currentUsernameVar } from "../apollo";
 import { ActivityIndicator } from "react-native";
-import { colors } from "../colors";
-import styled from "styled-components/native";
+import { RequestProcessedContext } from "../components/RequestProcessedProvider";
 
-const SEE_FRIENDS = gql`
+export const SEE_FRIENDS = gql`
   query SeeFriends($username: String!) {
     seeFriends(username: $username) {
       ok
@@ -24,10 +23,17 @@ const SEE_FRIENDS = gql`
 const FriendsTab = () => {
   const username = currentUsernameVar();
   const [searchKeyword, setSearchKeyword] = useState("");
+  const { requestProcessed } = useContext(RequestProcessedContext);
 
-  const { data, loading, error } = useQuery(SEE_FRIENDS, {
+  // In your FriendsTab component
+  const { data, loading, error, refetch } = useQuery(SEE_FRIENDS, {
     variables: { username: username },
   });
+
+  // Assuming you have a state or context that changes when a mutation occurs
+  useEffect(() => {
+    refetch();
+  }, [requestProcessed]); // useEffect depends on `requestProcessed`
 
   const handleSearch = (text) => {
     setSearchKeyword(text.toLowerCase());
@@ -76,12 +82,5 @@ const FriendsTab = () => {
     </Container>
   );
 };
-
-const LoadingContainer = styled.View`
-  flex: 1;
-  background-color: ${colors.backgroundColor};
-  align-items: center;
-  justify-content: center;
-`;
 
 export default FriendsTab;
