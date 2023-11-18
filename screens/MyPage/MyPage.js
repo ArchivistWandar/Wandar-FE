@@ -13,6 +13,7 @@ const MY_PAGE = gql`
   query SeeMypage {
     seeMypage {
       username
+      email
       avatar
       totalFriends
       records {
@@ -43,6 +44,7 @@ const MyPage = ({ navigation }) => {
   const myInfoProps = {
     username: data?.seeMypage?.username,
     avatar: data?.seeMypage?.avatar,
+    email: data?.seeMypage?.email,
     totalFriends: data?.seeMypage?.totalFriends,
     loading,
   };
