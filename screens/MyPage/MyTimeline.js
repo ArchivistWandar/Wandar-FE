@@ -7,6 +7,7 @@ import {
 } from "../../components/Shared";
 import { ActivityIndicator, RefreshControl, ScrollView } from "react-native";
 import { gql, useQuery } from "@apollo/client";
+import { Skeleton } from "moti/skeleton";
 
 const MY_PAGE = gql`
   query SeeMypage {
@@ -37,6 +38,7 @@ const MY_PAGE = gql`
 
 const MyTimeline = () => {
   const [refreshing, setRefreshing] = useState(false);
+  const [loadingImages, setLoadingImages] = useState({});
   const { data, loading, refetch, error } = useQuery(MY_PAGE, {
     fetchPolicy: "network-only",
   });
@@ -45,6 +47,14 @@ const MyTimeline = () => {
     setRefreshing(true);
     await refetch();
     setRefreshing(false);
+  };
+
+  const handleImageLoadStart = (id) => {
+    setLoadingImages((prev) => ({ ...prev, [id]: true }));
+  };
+
+  const handleImageLoadEnd = (id) => {
+    setLoadingImages((prev) => ({ ...prev, [id]: false }));
   };
 
   if (loading) {
@@ -71,10 +81,12 @@ const MyTimeline = () => {
   return (
     <Container>
       <ScrollView
+        contentContainerStyle={{
+          padding: 16, // Adjust this value as needed
+        }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
-        contentContainerStyle={{ padding: 16 }}
       >
         {timelineData.map((item, index) => (
           <TimelineItem key={index}>
@@ -82,7 +94,24 @@ const MyTimeline = () => {
             {item.photos && item.photos.length > 0 && (
               <NotificationBox>
                 <LeftContent>
-                  <PostImage source={{ uri: item.photos[0].photo }} />
+                  {loadingImages[item.id] && (
+                    <Skeleton
+                      colorMode="light"
+                      width={50}
+                      height={50}
+                      radius={6}
+                    />
+                  )}
+                  <PostImage
+                    source={{ uri: item.photos[0].photo }}
+                    style={
+                      loadingImages[item.id]
+                        ? { position: "absolute", opacity: 0 }
+                        : {}
+                    }
+                    onLoadStart={() => handleImageLoadStart(item.id)}
+                    onLoadEnd={() => handleImageLoadEnd(item.id)}
+                  />
                 </LeftContent>
                 <RightContent record={true}>
                   <NotificationText>New Wandar Record</NotificationText>

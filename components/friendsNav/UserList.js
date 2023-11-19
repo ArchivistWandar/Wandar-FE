@@ -1,5 +1,10 @@
 import React from "react";
-import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  TouchableOpacity,
+} from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { Container } from "../Shared";
@@ -11,6 +16,8 @@ const UserList = ({
   onAddFriend,
   addingFriendUsername,
   friend,
+  refreshing,
+  onRefresh,
 }) => {
   const renderItem = ({ item }) => {
     const isAddingThisFriend = item.username === addingFriendUsername;
@@ -60,6 +67,9 @@ const UserList = ({
         data={data}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       />
     </Container>
   );
