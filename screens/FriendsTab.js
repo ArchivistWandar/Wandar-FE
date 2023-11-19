@@ -77,6 +77,7 @@ const FriendsTab = () => {
         friend={true}
         onSearch={handleSearch}
         onAddFriend={null}
+        loading={loading}
         addingFriendUsername={null}
         refreshing={refreshing} // Pass the state
         onRefresh={onRefresh} // Pass the function

@@ -5,7 +5,12 @@ import {
   LoadingContainer,
   formatDate,
 } from "../../components/Shared";
-import { ActivityIndicator, RefreshControl, ScrollView } from "react-native";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  Text,
+} from "react-native";
 import { gql, useQuery } from "@apollo/client";
 import { Skeleton } from "moti/skeleton";
 

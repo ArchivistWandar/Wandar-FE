@@ -2,6 +2,7 @@ import React from "react";
 import styled from "styled-components/native";
 import { colors } from "../colors";
 import AuthButton from "../components/auth/AuthButton";
+import { Image, View, useWindowDimensions } from "react-native";
 
 const Container = styled.View`
   flex: 1;
@@ -25,6 +26,7 @@ const WelcomeMessage = styled.Text`
 `;
 
 export default function Welcome({ navigation }) {
+  const { width } = useWindowDimensions(); // Get window width
   const goToSignUp = () => navigation.navigate("SignUpNav");
   const goToLogin = () => navigation.navigate("Login");
   return (
@@ -32,6 +34,15 @@ export default function Welcome({ navigation }) {
       <WelcomeMessage>
         Design, Capture, & Share. {"\n"} Wandar Your World
       </WelcomeMessage>
+      <View style={{ flex: 1, justifyContent: "center", marginTop: "20%" }}>
+        <Image
+          source={require("../assets/Maskgroup.png")}
+          resizeMode="contain"
+          style={{
+            width: width,
+          }}
+        />
+      </View>
       <ButtonContainer>
         <AuthButton
           text="Sign Up"
