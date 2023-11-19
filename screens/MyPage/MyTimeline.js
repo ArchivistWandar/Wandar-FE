@@ -1,25 +1,66 @@
 import React from "react";
 import styled from "styled-components/native";
-import { Container } from "../../components/Shared";
-import { Image } from "react-native";
+import { Container, LoadingContainer } from "../../components/Shared";
+import { ActivityIndicator } from "react-native";
+import { gql, useQuery } from "@apollo/client";
 
-const MyTimeline = ({ records, posts, lands, lastUpdate }) => {
-  console.log(records, posts, lands, lastUpdate);
+const MY_PAGE = gql`
+  query SeeMypage {
+    seeMypage {
+      records {
+        photos {
+          photo
+        }
+        createdAt
+      }
+      posts {
+        photos {
+          photo
+        }
+        createdAt
+      }
+      lands {
+        landname
+      }
+      lastUpdate
+    }
+  }
+`;
 
-  // Function to format date
+const MyTimeline = () => {
+  const { data, loading, refetch, error } = useQuery(MY_PAGE, {
+    fetchPolicy: "network-only",
+  });
+
+  if (loading) {
+    return (
+      <LoadingContainer>
+        <ActivityIndicator size="small" color="white" />
+      </LoadingContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Text>Error: {error.message}</Text>
+      </Container>
+    );
+  }
+
   const formatDate = (timestamp) => {
-    const date = new Date(timestamp);
+    const date = new Date(parseInt(timestamp));
     return date.toLocaleDateString("en-US", {
       year: "numeric",
-      month: "long",
+      month: "short",
       day: "numeric",
     });
   };
 
-  // Ensure records is an array before mapping
-  const timelineData = Array.isArray(records)
-    ? records.sort((a, b) => new Date(b.date) - new Date(a.date))
-    : [];
+  // Extract timeline data from query response
+  const timelineData = data.seeMypage.records.sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
 
   return (
     <Container>
@@ -34,7 +75,7 @@ const MyTimeline = ({ records, posts, lands, lastUpdate }) => {
                 </LeftContent>
                 <RightContent record={true}>
                   <NotificationText>New Wandar Record</NotificationText>
-                  <DateText>{formatDate(item.date)}</DateText>
+                  <DateText>{formatDate(item.createdAt)}</DateText>
                 </RightContent>
               </NotificationBox>
             )}
