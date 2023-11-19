@@ -96,7 +96,7 @@ const RecordDetail = ({ navigation, route }) => {
       headerTitle: () => (
         <Text
           style={{
-            color: theme ? theme.textColor : "white",
+            color: "white",
             fontFamily: "JostSemiBold",
             fontSize: 15,
           }}

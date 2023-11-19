@@ -93,7 +93,11 @@ const Notifications = ({ navigation }) => {
               <Skeleton colorMode="dark" width={50} height={50} radius={25} />
             )}
             <ProfileImage
-              source={{ uri: content.user.avatar }}
+              source={
+                content.user.avatar
+                  ? { uri: content.user.avatar }
+                  : require("./../assets/images/profile8.png")
+              }
               style={
                 avatarLoading[avatarId]
                   ? { position: "absolute", opacity: 0 }
@@ -127,7 +131,11 @@ const Notifications = ({ navigation }) => {
               <Skeleton colorMode="dark" width={50} height={50} radius={25} />
             )}
             <ProfileImage
-              source={{ uri: content.user.avatar }}
+              source={
+                content.user.avatar
+                  ? { uri: content.user.avatar }
+                  : require("./../assets/images/profile8.png")
+              }
               style={
                 avatarLoading[avatarId]
                   ? { position: "absolute", opacity: 0 }
@@ -162,7 +170,11 @@ const Notifications = ({ navigation }) => {
               <Skeleton colorMode="dark" width={50} height={50} radius={25} />
             )}
             <ProfileImage
-              source={{ uri: content.user.avatar }}
+              source={
+                content.user.avatar
+                  ? { uri: content.user.avatar }
+                  : require("./../assets/images/profile8.png")
+              }
               style={
                 avatarLoading[avatarId]
                   ? { position: "absolute", opacity: 0 }

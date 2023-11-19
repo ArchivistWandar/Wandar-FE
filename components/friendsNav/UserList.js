@@ -7,7 +7,7 @@ import {
 } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import { Container } from "../Shared";
+import { Container, LoadingContainer } from "../Shared";
 import { currentUsernameVar } from "../../apollo";
 
 const UserList = ({
@@ -18,11 +18,14 @@ const UserList = ({
   friend,
   refreshing,
   onRefresh,
+  loading,
 }) => {
   const renderItem = ({ item }) => {
     const isAddingThisFriend = item.username === addingFriendUsername;
     const isFriendOrSelf =
       item.isFriend || item.username === currentUsernameVar();
+    const isSentButPending = item.isPending === "sentButPending";
+    const isReceivedButPending = item.isPending === "receivedButPending";
 
     return (
       <PostItem>
@@ -36,13 +39,23 @@ const UserList = ({
         {friend ? (
           <Ionicons name="chevron-forward" size={24} color={"white"} />
         ) : !isFriendOrSelf ? (
-          <TouchableOpacity onPress={() => onAddFriend(item.username)}>
+          <>
             {isAddingThisFriend ? (
               <ActivityIndicator size="small" color="white" />
+            ) : isSentButPending ? (
+              <InfoContainer>
+                <InfoText>Pending</InfoText>
+              </InfoContainer>
+            ) : isReceivedButPending ? (
+              <InfoContainer>
+                <InfoText>Request Received</InfoText>
+              </InfoContainer>
             ) : (
-              <Ionicons name="person-add" size={24} color={"white"} />
+              <TouchableOpacity onPress={() => onAddFriend(item.username)}>
+                <Ionicons name="person-add" size={24} color={"white"} />
+              </TouchableOpacity>
             )}
-          </TouchableOpacity>
+          </>
         ) : null}
       </PostItem>
     );
@@ -63,14 +76,20 @@ const UserList = ({
           onChangeText={onSearch}
         />
       </SearchContainer>
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      />
+      {loading === true ? (
+        <LoadingContainer>
+          <ActivityIndicator size="small" color="white" />
+        </LoadingContainer>
+      ) : (
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+        />
+      )}
     </Container>
   );
 };
@@ -125,6 +144,19 @@ const PostDate = styled.Text`
   font-size: 12px;
   color: #bbb;
   margin-bottom: 4px;
+`;
+
+const InfoContainer = styled.View`
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin-left: 10px;
+`;
+
+const InfoText = styled.Text`
+  font-family: "JostMedium";
+  color: white;
+  font-size: 12px;
 `;
 
 export default UserList;

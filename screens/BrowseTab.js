@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { Container } from "../components/Shared";
+import { Container, LoadingContainer } from "../components/Shared";
 import UserList from "../components/friendsNav/UserList";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { currentUsernameVar } from "../apollo";
 import { Alert } from "react-native";
+import { ActivityIndicator } from "react-native";
 
 const SEARCH_USERS = gql`
   query SearchUsers($keyword: String!) {
@@ -12,6 +13,7 @@ const SEARCH_USERS = gql`
       username
       avatar
       isFriend
+      isPending
     }
   }
 `;
@@ -36,7 +38,11 @@ const BrowseTab = () => {
     skip: keyword.length === 0,
   });
 
-  const [sendFriendRequest] = useMutation(SEND_FRIEND_REQUEST);
+  const [sendFriendRequest] = useMutation(SEND_FRIEND_REQUEST, {
+    onCompleted: () => {
+      refetch();
+    },
+  });
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -50,8 +56,6 @@ const BrowseTab = () => {
       refetch();
     }
   };
-
-  // ...other imports
 
   const handleSendFriendRequest = (username) => {
     const sendRequest = () => {
@@ -84,13 +88,14 @@ const BrowseTab = () => {
   };
 
   // Format the data for UserList
-  const formattedData =
-    data?.searchUsers.map((user) => ({
-      ...user,
-      avatar: user.avatar
-        ? { uri: user.avatar }
-        : require("../assets/images/profile8.png"), // Replace with your default avatar path
-    })) || [];
+  const formattedData = data?.searchUsers
+    ? data.searchUsers.map((user) => ({
+        ...user,
+        avatar: user.avatar
+          ? { uri: user.avatar }
+          : require("../assets/images/profile8.png"),
+      }))
+    : [];
 
   return (
     <Container>
