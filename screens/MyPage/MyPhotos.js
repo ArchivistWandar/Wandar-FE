@@ -44,10 +44,12 @@ const MyPhotos = () => {
     );
   }
 
-  const photos = data.seePhotos.map((photo) => ({
-    ...photo,
-    key: photo.record.id.toString(),
-  }));
+  const photos = data.seePhotos
+    .filter((photo) => photo.record && photo.record.id)
+    .map((photo) => ({
+      ...photo,
+      key: photo.record.id.toString(),
+    }));
 
   const renderItem = ({ item }) => (
     <Image

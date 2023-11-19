@@ -14,6 +14,7 @@ const SEE_FRIEND_REQUEST = gql`
     seeFriendRequest {
       requestSender {
         username
+        avatar
       }
       createdAt
     }
@@ -35,7 +36,9 @@ const ACCEPT_OR_DECLINE_FRIEND_REQUEST = gql`
 `;
 
 const FollowRequests = ({ navigation }) => {
-  const { data, loading, error } = useQuery(SEE_FRIEND_REQUEST);
+  const { data, loading, error } = useQuery(SEE_FRIEND_REQUEST, {
+    fetchPolicy: "network-only",
+  });
   const { setRequestProcessed } = useContext(RequestProcessedContext);
   // In your mutation
   const [acceptOrDeclineFriendRequest] = useMutation(
@@ -109,6 +112,21 @@ const FollowRequests = ({ navigation }) => {
       </LoadingContainer>
     );
   if (error) return <Text>Error: {error.message}</Text>;
+  if (data?.seeFriendRequest.length === 0) {
+    return (
+      <LoadingContainer>
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontFamily: "JostMedium",
+          }}
+        >
+          Nothing to show
+        </Text>
+      </LoadingContainer>
+    );
+  }
 
   return (
     <Container>
@@ -117,7 +135,13 @@ const FollowRequests = ({ navigation }) => {
         keyExtractor={(item, index) => String(index)}
         renderItem={({ item }) => (
           <RequestItem>
-            <ProfileImage source={require("./../assets/images/profile8.png")} />
+            <ProfileImage
+              source={
+                item.requestSender.avatar
+                  ? { uri: item.requestSender.avatar }
+                  : require("./../assets/images/profile8.png")
+              }
+            />
             <Username>{item.requestSender.username}</Username>
             <ButtonsContainer>
               <RequestButtonContainer
