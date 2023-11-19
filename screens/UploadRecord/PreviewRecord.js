@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Alert,
   View,
   Image,
   StyleSheet,
@@ -11,6 +12,7 @@ import {
   Platform,
   TextInput,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { colors } from "../../colors";
 import styled from "styled-components/native";
@@ -40,26 +42,27 @@ const CREATE_RECORD_MUTATION = gql`
 
 const EditableHeaderTitle = ({ initialTitle, textColor, setTitle }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitleInternal] = useState(initialTitle); // 내부 상태 추가
+  const [localTitle, setLocalTitle] = useState(initialTitle);
 
   const handleEndEditing = () => {
-    if (title.trim() === "") {
-      setTitleInternal(initialTitle);
-      setTitle(initialTitle); // 외부 상태도 초기값으로 설정
+    if (localTitle.trim() === "") {
+      setLocalTitle(initialTitle); // Reset local title to initial title
     } else {
-      setTitle(title); // 외부 상태 업데이트
+      setTitle(localTitle); // Update parent component's title state
     }
     setIsEditing(false);
   };
 
   return isEditing ? (
-    <TextInput
-      value={title}
-      onChangeText={(text) => setTitleInternal(text)} // 내부 상태 업데이트
-      onEndEditing={handleEndEditing}
-      autoFocus
-      style={{ color: textColor, fontFamily: "JostSemiBold", fontSize: 15 }}
-    />
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <TextInput
+        value={localTitle}
+        onChangeText={setLocalTitle}
+        onEndEditing={handleEndEditing}
+        autoFocus
+        style={{ color: textColor, fontFamily: "JostSemiBold", fontSize: 15 }}
+      />
+    </TouchableWithoutFeedback>
   ) : (
     <TouchableOpacity
       onPress={() => setIsEditing(true)}
@@ -73,7 +76,7 @@ const EditableHeaderTitle = ({ initialTitle, textColor, setTitle }) => {
       <Text
         style={{ color: textColor, fontFamily: "JostSemiBold", fontSize: 15 }}
       >
-        {title}
+        {localTitle}
       </Text>
       <Ionicons name="pencil" size={18} color={textColor} />
     </TouchableOpacity>
@@ -99,6 +102,9 @@ const PreviewRecord = ({ navigation, route }) => {
   });
   const [modalVisible, setModalVisible] = useState(true);
   const { assets } = route.params.result;
+
+  // State to manage upload status
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     navigation.setOptions({
@@ -134,11 +140,39 @@ const PreviewRecord = ({ navigation, route }) => {
 
   // mutation
 
-  const [createRecordMutation, { loading: isCreatingRecord }] = useMutation(
-    CREATE_RECORD_MUTATION
-  );
+  const [createRecordMutation] = useMutation(CREATE_RECORD_MUTATION, {
+    onCompleted: (response) => {
+      setIsUploading(false); // Reset uploading status
+      // Show success alert
+      Alert.alert(
+        "Upload Successful",
+        "Your record has been successfully uploaded.",
+        [
+          {
+            text: "Go to Archive Records",
+            onPress: () =>
+              navigation.navigate("ArchiveNav", { screen: "ArchiveRecords" }),
+          },
+          {
+            text: "View Record Detail",
+            onPress: () =>
+              navigation.navigate("ArchiveNav", { screen: "RecordDetail" }),
+          },
+        ]
+      );
+    },
+    onError: (error) => {
+      setIsUploading(false); // Reset uploading status
+      // Show error alert
+      Alert.alert("Upload Failed", `An error occurred: ${error.message}`, [
+        { text: "Cancel", style: "cancel" },
+        { text: "Retry", onPress: handleUpload },
+      ]);
+    },
+  });
 
   const handleUpload = () => {
+    setIsUploading(true);
     // Prepare the photos as an array of ReactNativeFile objects
     const photoFiles = route.params.result.assets.map((asset) => {
       return new ReactNativeFile({
@@ -156,28 +190,28 @@ const PreviewRecord = ({ navigation, route }) => {
         theme: theme.name,
         isPublic: true,
       },
-      onCompleted: (response) => {
-        // Handle successful upload
-        console.log(response);
-      },
-      onError: (error) => {
-        // Handle error
-        console.log(error);
-      },
     });
   };
 
   useEffect(() => {
     navigation.setOptions({
-      // ... existing options ...
-      headerRight: () => (
-        <TouchableOpacity onPress={handleUpload}>
-          <HeaderRightText>Upload</HeaderRightText>
-        </TouchableOpacity>
-      ),
+      headerRight: () =>
+        isUploading ? (
+          <ActivityIndicator
+            size="small"
+            color={"white"}
+            style={{ marginRight: "10%" }}
+          />
+        ) : (
+          <TouchableOpacity onPress={handleUpload}>
+            <HeaderRightText>Upload</HeaderRightText>
+          </TouchableOpacity>
+        ),
     });
-  }, [navigation, theme, route.params.result.assets]);
-
+  }, [navigation, theme, route.params.result.assets, isUploading]);
+  useEffect(() => {
+    console.log(title);
+  }, [title]);
   return (
     <View
       style={{
