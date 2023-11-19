@@ -13,11 +13,9 @@ import { ActivityIndicator, Text, View } from "react-native";
 import { Container } from "../../components/Shared";
 import { gql, useLazyQuery, useMutation } from "@apollo/client";
 
-const SEARCH_USERS = gql`
-  query SearchUsers($keyword: String!) {
-    searchUsers(keyword: $keyword) {
-      username
-    }
+const VERIFY_USERNAME = gql`
+  query duplicateVerifyUsername($username: String!) {
+    duplicateVerifyUsername(username: $username)
   }
 `;
 
@@ -43,7 +41,21 @@ const SetUsername = ({ route, navigation }) => {
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
 
   const inputRef = useRef();
-  const [checkUsername, { loading, data }] = useLazyQuery(SEARCH_USERS);
+  const [checkUsername, { loading }] = useLazyQuery(VERIFY_USERNAME, {
+    onCompleted: (data) => {
+      setIsCheckingUsername(false);
+      const usernameExists = data?.duplicateVerifyUsername;
+      if (usernameExists) {
+        setErrorMessage("Your username is already taken. Please try another.");
+      } else {
+        setErrorMessage("");
+      }
+    },
+    onError: () => {
+      setIsCheckingUsername(false);
+      setErrorMessage("An error occurred while checking the username.");
+    },
+  });
 
   const _handleUsernameChange = (inputUsername) => {
     setUsername(inputUsername);
@@ -53,11 +65,12 @@ const SetUsername = ({ route, navigation }) => {
       /^[A-Za-z0-9_]+$/.test(inputUsername)
     ) {
       setIsCheckingUsername(true);
-      checkUsername({ variables: { keyword: inputUsername } });
+      checkUsername({ variables: { username: inputUsername } });
     } else {
       setIsCheckingUsername(false);
     }
   };
+
   // username 변경에 대한 유효성 검사
   useEffect(() => {
     let newErrorMessage = "";
@@ -76,24 +89,11 @@ const SetUsername = ({ route, navigation }) => {
       setErrorMessage(newErrorMessage);
     }
 
-    if (username.length >= 3) {
+    if (username.length >= 3 && !newErrorMessage && !isCheckingUsername) {
       setIsCheckingUsername(true);
-      checkUsername({ variables: { keyword: username } });
-    } else {
-      setIsCheckingUsername(false);
+      checkUsername({ variables: { username } });
     }
   }, [username]);
-
-  // 서버 쿼리 결과에 따른 에러 메시지 설정
-  useEffect(() => {
-    if (!loading && isCheckingUsername) {
-      setIsCheckingUsername(false);
-      const usernameExists = data?.searchUsers?.length > 0;
-      if (usernameExists) {
-        setErrorMessage("Your username is already taken. Please try another.");
-      }
-    }
-  }, [data, loading, isCheckingUsername]);
 
   useEffect(() => {
     setDisabled(
