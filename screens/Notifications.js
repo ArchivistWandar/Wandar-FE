@@ -1,93 +1,155 @@
 import React from "react";
-import { FlatList, TouchableOpacity, View } from "react-native";
+import {
+  TouchableOpacity,
+  View,
+  Text,
+  Image,
+  FlatList,
+  ActivityIndicator,
+} from "react-native";
 import styled from "styled-components/native";
-import { Container } from "../components/Shared";
+import { Container, LoadingContainer } from "../components/Shared";
 import { Ionicons } from "@expo/vector-icons";
+import { gql, useQuery } from "@apollo/client";
 
-const notificationsData = [
-  {
-    id: "1",
-    type: "post",
-    username: "hyeinlee.leeeeeee",
-    postImage: require("./../assets/images/jeju.png"),
-    profileImage: require("./../assets/images/profile1.png"),
-  },
-  {
-    id: "2",
-    type: "record",
-    username: "iamlily",
-    postImage: require("./../assets/images/busan.png"),
-    profileImage: require("./../assets/images/profile2.png"),
-  },
-  {
-    id: "3",
-    type: "land",
-    username: "dankim",
-    landname: "Beach Paradise",
-    profileImage: require("./../assets/images/profile3.png"),
-  },
-  {
-    id: "4",
-    type: "suggestion",
-    text: "Find new friends",
-    profileImage: require("./../assets/logo.png"),
-  },
-  {
-    id: "5",
-    type: "suggestion",
-    text: "Upload Wandar Record & archive memories!",
-    profileImage: require("./../assets/logo.png"),
-  },
-];
+const SEE_NOTIFICATIONS_QUERY = gql`
+  query SeeNotifications {
+    seeNotifications {
+      posts {
+        photos {
+          photo
+        }
+        user {
+          username
+          avatar
+        }
+        createdAt
+      }
+      lands {
+        user {
+          username
+          avatar
+        }
+        landname
+        createdAt
+      }
+      records {
+        photos {
+          photo
+        }
+        user {
+          username
+          avatar
+        }
+        createdAt
+      }
+    }
+  }
+`;
 
 const Notifications = ({ navigation }) => {
+  const { data, loading, error } = useQuery(SEE_NOTIFICATIONS_QUERY);
+
   const goToFollowRequests = () => {
     navigation.navigate("FollowRequests");
   };
 
   const renderItem = ({ item }) => {
-    switch (item.type) {
-      case "post":
+    const { type, content } = item;
+
+    switch (type) {
+      case "posts":
         return (
           <NotificationItem>
-            <ProfileImage source={item.profileImage} />
+            <ProfileImage source={{ uri: content.user.avatar }} />
             <NotificationText>
-              <Username>{item.username}</Username> uploaded a new post.
+              <Username>{content.user.username}</Username> uploaded a new post.
             </NotificationText>
-            <PostImage source={item.postImage} />
+            <PostImage source={{ uri: content.photos[0].photo }} />
           </NotificationItem>
         );
-      case "record":
+      case "records":
         return (
           <NotificationItem>
-            <ProfileImage source={item.profileImage} />
+            <ProfileImage source={{ uri: content.user.avatar }} />
             <NotificationText>
-              <Username>{item.username}</Username> uploaded a new Record.
+              <Username>{content.user.username}</Username> uploaded a new
+              Record.
             </NotificationText>
-            <PostImage source={item.postImage} />
+            <PostImage source={{ uri: content.photos[0].photo }} />
           </NotificationItem>
         );
-      case "land":
+      case "lands":
         return (
           <NotificationItem>
-            <ProfileImage source={item.profileImage} />
+            <ProfileImage source={{ uri: content.user.avatar }} />
             <NotificationText>
-              <Username>{item.username}</Username> created a new land{" "}
-              <Landname>{item.landname}</Landname>.
+              <Username>{content.user.username}</Username> created a new land{" "}
+              <Landname>{content.landname}</Landname>.
             </NotificationText>
-          </NotificationItem>
-        );
-      case "suggestion":
-        return (
-          <NotificationItem>
-            <ProfileImage source={item.profileImage} resizeMode="contain" />
-            <NotificationText>{item.text}</NotificationText>
           </NotificationItem>
         );
       default:
         return null;
     }
   };
+
+  // 데이터를 불러오는 중이거나 에러가 발생한 경우에 대한 처리
+  if (loading) {
+    return (
+      <Container>
+        <TouchableOpacity
+          style={{
+            padding: 20,
+            flexDirection: "row",
+            alignItems: "center",
+          }}
+          onPress={goToFollowRequests}
+        >
+          <View
+            style={{
+              margin: 5,
+              alignItems: "center",
+              marginLeft: 10,
+              marginRight: 30,
+            }}
+          >
+            <Ionicons name="person-add" size={24} color={"white"} />
+          </View>
+          <View style={{ flexDirection: "column" }}>
+            <NotificationText>
+              <Username>Follow requests</Username>
+            </NotificationText>
+            <NotificationText style={{ color: "grey" }}>
+              Approve or ignore requests
+            </NotificationText>
+          </View>
+        </TouchableOpacity>
+        <View
+          style={{ borderColor: "rgba(255,255,255, 0.1)", borderTopWidth: 1 }}
+        ></View>
+        <LoadingContainer>
+          <ActivityIndicator size={"small"} color={"white"} />
+        </LoadingContainer>
+      </Container>
+    );
+  }
+
+  if (error) {
+    return <Text>Error: {error.message}</Text>;
+  }
+
+  // 알림 데이터를 배열로 변환하고 최신순으로 정렬
+  const notifications = data.seeNotifications
+    .flatMap((notification) => [
+      ...notification.posts.map((post) => ({ type: "posts", content: post })),
+      ...notification.lands.map((land) => ({ type: "lands", content: land })),
+      ...notification.records.map((record) => ({
+        type: "records",
+        content: record,
+      })),
+    ])
+    .sort((a, b) => Number(b.content.createdAt) - Number(a.content.createdAt));
 
   return (
     <Container>
@@ -122,8 +184,8 @@ const Notifications = ({ navigation }) => {
         style={{ borderColor: "rgba(255,255,255, 0.1)", borderTopWidth: 1 }}
       ></View>
       <NotificationList
-        data={notificationsData}
-        keyExtractor={(item) => item.id}
+        data={notifications}
+        keyExtractor={(item, index) => index.toString()}
         renderItem={renderItem}
       />
     </Container>
