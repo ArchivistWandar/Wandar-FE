@@ -3,6 +3,7 @@ import { Container } from "../components/Shared";
 import UserList from "../components/friendsNav/UserList";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { currentUsernameVar } from "../apollo";
+import { Alert } from "react-native";
 
 const SEARCH_USERS = gql`
   query SearchUsers($keyword: String!) {
@@ -25,6 +26,7 @@ const SEND_FRIEND_REQUEST = gql`
 `;
 
 const BrowseTab = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const loggedInUsername = currentUsernameVar(); // Fetch the current logged-in username
   const [keyword, setKeyword] = useState("");
   const [addingFriendUsername, setAddingFriendUsername] = useState(null);
@@ -36,6 +38,12 @@ const BrowseTab = () => {
 
   const [sendFriendRequest] = useMutation(SEND_FRIEND_REQUEST);
 
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
+
   const handleSearch = (text) => {
     setKeyword(text);
     if (text.length > 0) {
@@ -43,27 +51,36 @@ const BrowseTab = () => {
     }
   };
 
-  const handleSendFriendRequest = (username) => {
-    if (username === loggedInUsername) {
-      alert("You cannot send a friend request to yourself.");
-      return;
-    }
-    setAddingFriendUsername(username); // Set the username when sending a request
+  // ...other imports
 
-    sendFriendRequest({ variables: { username } })
-      .then(({ data }) => {
-        if (data.sendFriendRequest.ok) {
-          alert("Friend request sent!");
-        } else {
-          alert("Error: " + data.sendFriendRequest.error);
-        }
-      })
-      .catch((error) => {
-        alert("An error occurred: " + error.message);
-      })
-      .finally(() => {
-        setAddingFriendUsername(null); // Reset after the request is completed or failed
-      });
+  const handleSendFriendRequest = (username) => {
+    const sendRequest = () => {
+      setAddingFriendUsername(username); // Set the username when sending a request
+
+      sendFriendRequest({ variables: { username } })
+        .then(({ data }) => {
+          if (data.sendFriendRequest.ok) {
+            alert("Friend request sent!");
+          } else {
+            alert("Error: " + data.sendFriendRequest.error);
+          }
+        })
+        .catch((error) => {
+          alert("An error occurred: " + error.message);
+        })
+        .finally(() => {
+          setAddingFriendUsername(null); // Reset after the request is completed or failed
+        });
+    };
+
+    Alert.alert(
+      "Send Friend Request",
+      `Are you sure you want to send a friend request to ${username}?`,
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Send Request", onPress: sendRequest },
+      ]
+    );
   };
 
   // Format the data for UserList
@@ -84,6 +101,8 @@ const BrowseTab = () => {
         loading={loading}
         addingFriendUsername={addingFriendUsername}
         friend={false}
+        refreshing={refreshing} // Pass the state
+        onRefresh={onRefresh} // Pass the function
       />
     </Container>
   );

@@ -21,6 +21,7 @@ export const SEE_FRIENDS = gql`
 `;
 
 const FriendsTab = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const username = currentUsernameVar();
   const [searchKeyword, setSearchKeyword] = useState("");
   const { requestProcessed } = useContext(RequestProcessedContext);
@@ -29,6 +30,12 @@ const FriendsTab = () => {
   const { data, loading, error, refetch } = useQuery(SEE_FRIENDS, {
     variables: { username: username },
   });
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
 
   // Assuming you have a state or context that changes when a mutation occurs
   useEffect(() => {
@@ -71,6 +78,8 @@ const FriendsTab = () => {
         onSearch={handleSearch}
         onAddFriend={null}
         addingFriendUsername={null}
+        refreshing={refreshing} // Pass the state
+        onRefresh={onRefresh} // Pass the function
       />
     </Container>
   );
