@@ -3,16 +3,19 @@ import { ActivityIndicator, FlatList, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { Container } from "../Shared";
+import { currentUsernameVar } from "../../apollo";
 
 const UserList = ({
   data,
-  friend,
   onSearch,
   onAddFriend,
   addingFriendUsername,
+  friend,
 }) => {
   const renderItem = ({ item }) => {
     const isAddingThisFriend = item.username === addingFriendUsername;
+    const isFriendOrSelf =
+      item.isFriend || item.username === currentUsernameVar();
 
     return (
       <PostItem>
@@ -25,7 +28,7 @@ const UserList = ({
         </PostDetails>
         {friend ? (
           <Ionicons name="chevron-forward" size={24} color={"white"} />
-        ) : (
+        ) : !isFriendOrSelf ? (
           <TouchableOpacity onPress={() => onAddFriend(item.username)}>
             {isAddingThisFriend ? (
               <ActivityIndicator size="small" color="white" />
@@ -33,7 +36,7 @@ const UserList = ({
               <Ionicons name="person-add" size={24} color={"white"} />
             )}
           </TouchableOpacity>
-        )}
+        ) : null}
       </PostItem>
     );
   };

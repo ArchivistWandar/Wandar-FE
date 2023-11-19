@@ -10,6 +10,7 @@ const SEARCH_USERS = gql`
       id
       username
       avatar
+      isFriend
     }
   }
 `;
@@ -81,8 +82,8 @@ const BrowseTab = () => {
         onSearch={handleSearch}
         onAddFriend={handleSendFriendRequest}
         loading={loading}
-        friend={false}
         addingFriendUsername={addingFriendUsername}
+        friend={false}
       />
     </Container>
   );
