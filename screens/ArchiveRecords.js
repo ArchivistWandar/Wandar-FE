@@ -2,34 +2,63 @@ import React from "react";
 import { FlatList, TouchableOpacity } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import { Container } from "../components/Shared";
+import { Container, LoadingContainer, formatDate } from "../components/Shared";
+import { gql, useQuery } from "@apollo/client";
+import { ActivityIndicator } from "react-native";
+import { currentUsernameVar } from "../apollo";
 
-const postData = [
-  {
-    id: "1",
-    title: "2023 Jeju 🍊",
-    date: "Aug 5, 2023",
-    photoCount: 12,
-    isPrivate: false,
-    image: require("../assets/images/jeju.png"),
-  },
-  {
-    id: "2",
-    title: "Busan 🌊",
-    date: "July 21, 2023",
-    photoCount: 8,
-    isPrivate: true,
-    image: require("../assets/images/busan.png"),
-  },
-];
+const SEE_RECORD_QUERY = gql`
+  query SeeRecord($username: String!) {
+    seeRecord(username: $username) {
+      photos {
+        photo
+      }
+      id
+      theme
+      isMine
+      isPublic
+      createdAt
+      title
+    }
+  }
+`;
 
 const ArchiveRecords = ({ navigation }) => {
-  const goToRecordDetail = () => {
-    navigation.navigate("RecordDetail");
+  const { data, loading, error } = useQuery(SEE_RECORD_QUERY, {
+    variables: { username: currentUsernameVar() }, // replace with actual username
+  });
+
+  if (loading) {
+    return (
+      <LoadingContainer>
+        <ActivityIndicator size="small" color="white" />
+      </LoadingContainer>
+    );
+  }
+
+  if (error) {
+    return <Text>Error! {error.message}</Text>;
+  }
+
+  const postData = data.seeRecord
+    .map((record) => ({
+      id: record.id,
+      title: record.title,
+      date: formatDate(record.createdAt),
+      photoCount: record.photos.length,
+      isPrivate: !record.isPublic,
+      image: { uri: record.photos[0].photo },
+      timestamp: record.createdAt, // Save the original timestamp for sorting
+    }))
+    .sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp)); // Sort by timestamp in descending order
+
+  const goToRecordDetail = (id) => {
+    navigation.navigate("RecordDetail", { id });
   };
+
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity onPress={goToRecordDetail}>
+      <TouchableOpacity onPress={() => goToRecordDetail(item.id)}>
         <PostItem>
           <PostImage source={item.image} />
           <PostDetails>

@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import styled from "styled-components/native";
-import { Container, LoadingContainer } from "../../components/Shared";
+import {
+  Container,
+  LoadingContainer,
+  formatDate,
+} from "../../components/Shared";
 import { ActivityIndicator, RefreshControl, ScrollView } from "react-native";
 import { gql, useQuery } from "@apollo/client";
 
@@ -58,15 +62,6 @@ const MyTimeline = () => {
       </LoadingContainer>
     );
   }
-
-  const formatDate = (timestamp) => {
-    const date = new Date(parseInt(timestamp));
-    return date.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-  };
 
   // Extract timeline data from query response
   const timelineData = [...data.seeMypage.records].sort(

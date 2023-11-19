@@ -12,3 +12,12 @@ export const LoadingContainer = styled.View`
   align-items: center;
   justify-content: center;
 `;
+
+export const formatDate = (timestamp) => {
+  const date = new Date(parseInt(timestamp));
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  });
+};
