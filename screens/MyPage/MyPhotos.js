@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
   Image,
   useWindowDimensions,
+  RefreshControl,
 } from "react-native";
 import { gql, useQuery } from "@apollo/client";
 import { Container, LoadingContainer } from "../../components/Shared";
@@ -21,6 +22,7 @@ const SEE_PHOTOS_QUERY = gql`
         id
       }
       isMine
+      createdAt
     }
   }
 `;
@@ -29,13 +31,19 @@ const MyPhotos = () => {
   const username = currentUsernameVar();
   const numColumns = 3;
   const { width } = useWindowDimensions();
+  const [refreshing, setRefreshing] = useState(false);
 
-  const { data, loading, error } = useQuery(SEE_PHOTOS_QUERY, {
+  const { data, loading, error, refetch } = useQuery(SEE_PHOTOS_QUERY, {
     variables: { username: username },
     fetchPolicy: "network-only",
   });
 
-  // Display loading container until all photos are loaded
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
+
   if (loading || !data?.seePhotos) {
     return (
       <LoadingContainer>
@@ -44,8 +52,13 @@ const MyPhotos = () => {
     );
   }
 
-  const photos = data.seePhotos
+  // Sort the photos by a timestamp field in descending order
+  const sortedPhotos = data.seePhotos
     .filter((photo) => photo.record && photo.record.id)
+    .sort(
+      (a, b) =>
+        new Date(parseInt(b.createdAt)) - new Date(parseInt(a.createdAt))
+    )
     .map((photo) => ({
       ...photo,
       key: photo.record.id.toString(),
@@ -63,9 +76,16 @@ const MyPhotos = () => {
     <Container>
       <FlatList
         numColumns={numColumns}
-        data={photos}
+        data={sortedPhotos}
         keyExtractor={(item) => item.key}
         renderItem={renderItem}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="white"
+          />
+        }
       />
     </Container>
   );

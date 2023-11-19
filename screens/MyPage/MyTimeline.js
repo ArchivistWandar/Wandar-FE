@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components/native";
 import { Container, LoadingContainer } from "../../components/Shared";
-import { ActivityIndicator } from "react-native";
+import { ActivityIndicator, RefreshControl, ScrollView } from "react-native";
 import { gql, useQuery } from "@apollo/client";
 
 const MY_PAGE = gql`
@@ -12,12 +12,16 @@ const MY_PAGE = gql`
           photo
         }
         createdAt
+        title
+        id
       }
       posts {
         photos {
           photo
         }
         createdAt
+        title
+        id
       }
       lands {
         landname
@@ -28,9 +32,16 @@ const MY_PAGE = gql`
 `;
 
 const MyTimeline = () => {
+  const [refreshing, setRefreshing] = useState(false);
   const { data, loading, refetch, error } = useQuery(MY_PAGE, {
     fetchPolicy: "network-only",
   });
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
 
   if (loading) {
     return (
@@ -42,9 +53,9 @@ const MyTimeline = () => {
 
   if (error) {
     return (
-      <Container>
+      <LoadingContainer>
         <Text>Error: {error.message}</Text>
-      </Container>
+      </LoadingContainer>
     );
   }
 
@@ -58,13 +69,18 @@ const MyTimeline = () => {
   };
 
   // Extract timeline data from query response
-  const timelineData = data.seeMypage.records.sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  const timelineData = [...data.seeMypage.records].sort(
+    (a, b) => new Date(parseInt(b.createdAt)) - new Date(parseInt(a.createdAt))
   );
 
   return (
     <Container>
-      <TimelineContainer>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        contentContainerStyle={{ padding: 16 }}
+      >
         {timelineData.map((item, index) => (
           <TimelineItem key={index}>
             {/* Display first photo from each record */}
@@ -75,6 +91,7 @@ const MyTimeline = () => {
                 </LeftContent>
                 <RightContent record={true}>
                   <NotificationText>New Wandar Record</NotificationText>
+                  {item.title ? <LandNames>{item.title}</LandNames> : null}
                   <DateText>{formatDate(item.createdAt)}</DateText>
                 </RightContent>
               </NotificationBox>
@@ -83,15 +100,10 @@ const MyTimeline = () => {
             {/* Logic for posts and lands can be added here if needed */}
           </TimelineItem>
         ))}
-      </TimelineContainer>
+      </ScrollView>
     </Container>
   );
 };
-
-const TimelineContainer = styled.ScrollView`
-  flex: 1;
-  padding: 16px;
-`;
 
 const TimelineItem = styled.View`
   margin-bottom: 20px;
@@ -127,6 +139,12 @@ const NotificationText = styled.Text`
   font-size: 14px;
   font-family: "JostBoldItalic";
   color: black;
+`;
+
+const LandNames = styled.Text`
+  font-size: 14px;
+  color: grey;
+  font-family: "JostMedium";
 `;
 
 const DateText = styled.Text`
