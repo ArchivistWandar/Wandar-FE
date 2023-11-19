@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Container, LoadingContainer } from "../components/Shared";
+import { Container, LoadingContainer, formatDate } from "../components/Shared";
 import UserList from "../components/friendsNav/UserList";
 import { gql, useQuery } from "@apollo/client";
 import { currentUsernameVar } from "../apollo";
@@ -45,20 +45,13 @@ const FriendsTab = () => {
     ) || [];
 
   const transformedData = filteredFriends.map((friend) => {
-    const lastUpdateDate = new Date(parseInt(friend.lastUpdate));
-    const formattedDate = lastUpdateDate.toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-    });
-
     return {
       id: friend.username,
       username: friend.username,
       avatar: friend.avatar
         ? { uri: friend.avatar }
         : require("../assets/images/profile8.png"),
-      lastUpdate: formattedDate,
+      lastUpdate: formatDate(friend.lastUpdate),
     };
   });
 

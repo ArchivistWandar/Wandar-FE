@@ -1,10 +1,14 @@
-import React from "react";
-import { FlatList, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+} from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { Container, LoadingContainer, formatDate } from "../components/Shared";
 import { gql, useQuery } from "@apollo/client";
-import { ActivityIndicator } from "react-native";
 import { currentUsernameVar } from "../apollo";
 
 const SEE_RECORD_QUERY = gql`
@@ -24,9 +28,16 @@ const SEE_RECORD_QUERY = gql`
 `;
 
 const ArchiveRecords = ({ navigation }) => {
-  const { data, loading, error } = useQuery(SEE_RECORD_QUERY, {
+  const { data, loading, error, refetch } = useQuery(SEE_RECORD_QUERY, {
     variables: { username: currentUsernameVar() }, // replace with actual username
   });
+
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
 
   if (loading) {
     return (
@@ -82,6 +93,13 @@ const ArchiveRecords = ({ navigation }) => {
         data={postData}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="white"
+          />
+        }
       />
     </Container>
   );

@@ -10,6 +10,7 @@ import {
   TextInput,
   Dimensions,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
@@ -32,7 +33,17 @@ const GET_RECORD_QUERY = gql`
   }
 `;
 
+const DELETE_RECORD_MUTATION = gql`
+  mutation DeleteRecord($deleteRecordId: Int!) {
+    deleteRecord(id: $deleteRecordId) {
+      ok
+      error
+    }
+  }
+`;
+
 const RecordDetail = ({ navigation, route }) => {
+  // GetRecord
   const { data, loading, error } = useQuery(GET_RECORD_QUERY, {
     variables: { getRecordId: route.params.id },
   });
@@ -41,6 +52,32 @@ const RecordDetail = ({ navigation, route }) => {
   const [title, setTitle] = useState("Loading...");
   const [theme, setTheme] = useState(null);
   const [assets, setAssets] = useState([]);
+
+  // DeleteRecord
+  const [deleteRecordMutation] = useMutation(DELETE_RECORD_MUTATION, {
+    variables: { deleteRecordId: route.params.id },
+    onCompleted: (response) => {
+      if (response.deleteRecord.ok) {
+        navigation.navigate("ArchiveRecords");
+      } else {
+        alert("Failed to delete the record.");
+      }
+    },
+    onError: (error) => {
+      alert(`An error occurred: ${error.message}`);
+    },
+  });
+
+  const handleDelete = () => {
+    Alert.alert(
+      "Delete Record",
+      "Are you sure you want to delete this record?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Delete", onPress: () => deleteRecordMutation() },
+      ]
+    );
+  };
 
   useEffect(() => {
     if (data && data.getRecord) {
@@ -83,8 +120,18 @@ const RecordDetail = ({ navigation, route }) => {
             }}
           />
         ),
+      headerRight: () => (
+        <TouchableOpacity onPress={handleDelete}>
+          <Ionicons
+            name="trash-outline"
+            size={24}
+            color="white"
+            style={{ marginRight: "5%" }}
+          />
+        </TouchableOpacity>
+      ),
     });
-  }, [theme, title]);
+  }, [navigation, theme, title, handleDelete]);
 
   if (loading) {
     return (
