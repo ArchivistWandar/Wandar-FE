@@ -13,6 +13,14 @@ export const LoadingContainer = styled.View`
   justify-content: center;
 `;
 
+export const HeaderRightText = styled.Text`
+  color: ${colors.yellow};
+  font-size: 16px;
+  font-weight: 600;
+  margin-right: 10px;
+  font-family: "JostSemiBold";
+`;
+
 export const formatDate = (timestamp) => {
   const date = new Date(parseInt(timestamp));
   return date.toLocaleDateString("en-US", {

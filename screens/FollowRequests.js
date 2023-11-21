@@ -1,12 +1,18 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useQuery, gql, useMutation } from "@apollo/client";
-import { ActivityIndicator, FlatList, Text } from "react-native";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  Text,
+} from "react-native";
 import styled from "styled-components/native";
 import { Container, LoadingContainer } from "../components/Shared";
 import { colors } from "../colors";
 import { RequestProcessedContext } from "../components/RequestProcessedProvider";
 import { SEE_FRIENDS } from "./FriendsTab";
 import { currentUsernameVar } from "../apollo";
+import { Skeleton } from "moti/skeleton";
 
 // GraphQL Query
 const SEE_FRIEND_REQUEST = gql`
@@ -36,7 +42,9 @@ const ACCEPT_OR_DECLINE_FRIEND_REQUEST = gql`
 `;
 
 const FollowRequests = ({ navigation }) => {
-  const { data, loading, error } = useQuery(SEE_FRIEND_REQUEST, {
+  const [refreshing, setRefreshing] = useState(false);
+  const [loadingImages, setLoadingImages] = useState({});
+  const { data, loading, error, refetch } = useQuery(SEE_FRIEND_REQUEST, {
     fetchPolicy: "network-only",
   });
   const { setRequestProcessed } = useContext(RequestProcessedContext);
@@ -62,6 +70,20 @@ const FollowRequests = ({ navigation }) => {
       },
     }
   );
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
+
+  const handleImageLoadStart = (username) => {
+    setLoadingImages((prev) => ({ ...prev, [username]: true }));
+  };
+
+  const handleImageLoadEnd = (username) => {
+    setLoadingImages((prev) => ({ ...prev, [username]: false }));
+  };
 
   const handleConfirm = (username) => {
     acceptOrDeclineFriendRequest({
@@ -133,32 +155,51 @@ const FollowRequests = ({ navigation }) => {
       <RequestList
         data={data?.seeFriendRequest}
         keyExtractor={(item, index) => String(index)}
-        renderItem={({ item }) => (
-          <RequestItem>
-            <ProfileImage
-              source={
-                item.requestSender.avatar
-                  ? { uri: item.requestSender.avatar }
-                  : require("./../assets/images/profile8.png")
-              }
-            />
-            <Username>{item.requestSender.username}</Username>
-            <ButtonsContainer>
-              <RequestButtonContainer
-                color={colors.blue}
-                onPress={() => handleConfirm(item.requestSender.username)}
-              >
-                <RequestButton>Confirm</RequestButton>
-              </RequestButtonContainer>
-              <RequestButtonContainer
-                color="rgba(255,255,255,0.1)"
-                onPress={() => handleDelete(item.requestSender.username)}
-              >
-                <RequestButton>Delete</RequestButton>
-              </RequestButtonContainer>
-            </ButtonsContainer>
-          </RequestItem>
-        )}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="white"
+          />
+        }
+        renderItem={({ item }) => {
+          const isLoading = loadingImages[item.requestSender.username];
+          const avatarUri = item.requestSender.avatar
+            ? { uri: item.requestSender.avatar }
+            : require("./../assets/images/profile8.png");
+          return (
+            <RequestItem>
+              {isLoading ? (
+                <Skeleton colorMode="dark" width={50} height={50} radius={25} />
+              ) : null}
+              <ProfileImage
+                source={avatarUri}
+                onLoadStart={() =>
+                  handleImageLoadStart(item.requestSender.username)
+                }
+                onLoadEnd={() =>
+                  handleImageLoadEnd(item.requestSender.username)
+                }
+                style={isLoading ? { position: "absolute", opacity: 0 } : {}}
+              />
+              <Username>{item.requestSender.username}</Username>
+              <ButtonsContainer>
+                <RequestButtonContainer
+                  color={colors.blue}
+                  onPress={() => handleConfirm(item.requestSender.username)}
+                >
+                  <RequestButton>Confirm</RequestButton>
+                </RequestButtonContainer>
+                <RequestButtonContainer
+                  color="rgba(255,255,255,0.1)"
+                  onPress={() => handleDelete(item.requestSender.username)}
+                >
+                  <RequestButton>Delete</RequestButton>
+                </RequestButtonContainer>
+              </ButtonsContainer>
+            </RequestItem>
+          );
+        }}
       />
     </Container>
   );

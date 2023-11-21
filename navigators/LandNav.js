@@ -4,6 +4,7 @@ import Land from "../screens/Land";
 import FriendSelect from "../screens/FriendSelect";
 import LandDetail from "../screens/LandDetail";
 import LandArchiveNav from "./LandArchiveNav";
+import LandAdd from "../screens/LandAdd";
 
 const Stack = createStackNavigator();
 
@@ -28,6 +29,11 @@ const LandNav = () => {
         name="FriendSelect"
         options={{ headerTransparent: true, headerTitle: "" }}
         component={FriendSelect}
+      />
+      <Stack.Screen
+        name="LandAdd"
+        options={{ headerTransparent: true, headerTitle: "" }}
+        component={LandAdd}
       />
       <Stack.Screen
         name="LandDetail"

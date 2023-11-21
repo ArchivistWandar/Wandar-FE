@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   FlatList,
@@ -9,6 +9,7 @@ import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { Container, LoadingContainer } from "../Shared";
 import { currentUsernameVar } from "../../apollo";
+import { Skeleton } from "moti/skeleton";
 
 const UserList = ({
   data,
@@ -20,16 +21,35 @@ const UserList = ({
   onRefresh,
   loading,
 }) => {
+  const [loadingImages, setLoadingImages] = useState({}); // State to track loading images
+
+  const handleImageLoadStart = (id) => {
+    setLoadingImages((prev) => ({ ...prev, [id]: true }));
+  };
+
+  const handleImageLoadEnd = (id) => {
+    setLoadingImages((prev) => ({ ...prev, [id]: false }));
+  };
+
   const renderItem = ({ item }) => {
     const isAddingThisFriend = item.username === addingFriendUsername;
     const isFriendOrSelf =
       item.isFriend || item.username === currentUsernameVar();
     const isSentButPending = item.isPending === "sentButPending";
     const isReceivedButPending = item.isPending === "receivedButPending";
+    const isImageLoading = loadingImages[item.id];
 
     return (
       <PostItem>
-        <PostImage source={item.avatar} />
+        {isImageLoading && (
+          <Skeleton colorMode="dark" width={70} height={70} radius={35} />
+        )}
+        <PostImage
+          source={item.avatar}
+          onLoadStart={() => handleImageLoadStart(item.id)}
+          onLoadEnd={() => handleImageLoadEnd(item.id)}
+          style={isImageLoading ? { position: "absolute", opacity: 0 } : {}}
+        />
         <PostDetails>
           <PostTitle>{item.username}'s lands</PostTitle>
           {item.lastUpdate ? (
@@ -78,7 +98,11 @@ const UserList = ({
       </SearchContainer>
       {loading === true ? (
         <LoadingContainer>
-          <ActivityIndicator size="small" color="white" />
+          <ActivityIndicator
+            size="small"
+            color="white"
+            style={{ marginBottom: "80%" }}
+          />
         </LoadingContainer>
       ) : (
         <FlatList
@@ -125,11 +149,11 @@ const PostImage = styled.Image`
   width: 70px;
   height: 70px;
   border-radius: 35px;
-  margin-right: 22px;
 `;
 
 const PostDetails = styled.View`
   flex: 1;
+  margin-left: 22px;
 `;
 
 const PostTitle = styled.Text`

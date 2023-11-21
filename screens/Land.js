@@ -1,8 +1,9 @@
 import React from "react";
 import { Container } from "../components/Shared";
 import styled from "styled-components/native";
-import { TouchableOpacity } from "react-native";
+import { Text, TouchableOpacity } from "react-native";
 import TempLand from "../components/TempLand";
+import { Ionicons } from "@expo/vector-icons";
 
 const Land = ({ navigation }) => {
   const goToFriendsSelect = () => {
@@ -11,6 +12,9 @@ const Land = ({ navigation }) => {
   const goToLandDetail = () => {
     navigation.navigate("LandDetail");
   };
+  const goToLandAdd = () => {
+    navigation.navigate("LandAdd");
+  };
   return (
     <Container>
       <TouchableOpacity onPress={goToLandDetail}></TouchableOpacity>
@@ -18,6 +22,9 @@ const Land = ({ navigation }) => {
       <PlaneButton onPress={goToFriendsSelect}>
         <PlaneImage source={require("../assets/images/planeButton.png")} />
       </PlaneButton>
+      <LandAddButton onPress={goToLandAdd}>
+        <Ionicons name="add" size={40} color="#fff" />
+      </LandAddButton>
     </Container>
   );
 };
@@ -40,4 +47,9 @@ const PlaneImage = styled.Image`
   height: 100px;
 `;
 
+const LandAddButton = styled.TouchableOpacity`
+  position: absolute;
+  bottom: 40px;
+  left: 20px;
+`;
 export default Land;
