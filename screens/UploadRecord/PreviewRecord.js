@@ -21,6 +21,7 @@ import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
 import { gql, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
+import { HeaderRightText } from "../../components/Shared";
 
 const CREATE_RECORD_MUTATION = gql`
   mutation CreateRecord(
@@ -82,14 +83,6 @@ const EditableHeaderTitle = ({ initialTitle, textColor, setTitle }) => {
     </TouchableOpacity>
   );
 };
-
-const HeaderRightText = styled.Text`
-  color: ${colors.yellow};
-  font-size: 16px;
-  font-weight: 600;
-  margin-right: 10px;
-  font-family: "JostSemiBold";
-`;
 
 const PreviewRecord = ({ navigation, route }) => {
   const windowWidth = Dimensions.get("window").width;

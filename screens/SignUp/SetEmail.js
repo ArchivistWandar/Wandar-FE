@@ -13,7 +13,7 @@ import {
 import { View } from "react-native";
 import { Container } from "../../components/Shared";
 
-const SetUsername = ({ navigation }) => {
+const SetEmail = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState(false);
   const [disabled, setDisabled] = useState(true);
@@ -70,4 +70,4 @@ const SetUsername = ({ navigation }) => {
   );
 };
 
-export default SetUsername;
+export default SetEmail;

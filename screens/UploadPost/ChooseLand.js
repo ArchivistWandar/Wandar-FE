@@ -6,24 +6,24 @@ import {
   TouchableOpacity,
   View,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
-import { Container } from "../../components/Shared";
+import { Container, LoadingContainer } from "../../components/Shared";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../../colors";
 import styled from "styled-components/native";
+import { gql, useQuery } from "@apollo/client";
+import { currentUsernameVar } from "../../apollo";
 
-const lands = [
-  {
-    id: "1",
-    name: "Jeju 🍊",
-    image: require("../../assets/images/land1.webp"),
-  },
-  {
-    id: "2",
-    name: "Daily 🌈",
-    image: require("../../assets/images/land2.png"),
-  },
-];
+const SEE_LAND_QUERY = gql`
+  query SeeLand($username: String!) {
+    seeLand(username: $username) {
+      landname
+      composition
+      isMine
+    }
+  }
+`;
 
 const HeaderRightText = styled.Text`
   color: ${colors.yellow};
@@ -39,13 +39,18 @@ export default function ChooseLand({ route, navigation }) {
   const { selectedPhotos, memoText } = route.params;
   const [selectedLandIndex, setSelectedLandIndex] = useState(0);
 
+  const username = currentUsernameVar();
+  const { data, loading, error } = useQuery(SEE_LAND_QUERY, {
+    variables: { username },
+  });
+
   const HeaderRight = () => (
     <TouchableOpacity
       onPress={() =>
         navigation.navigate("Preview", {
           selectedPhotos,
           memoText: memoText,
-          selectedLand: lands[selectedLandIndex], // Adjust for 0-based array
+          selectedLand: lands?.[selectedLandIndex],
         })
       }
     >
@@ -79,6 +84,36 @@ export default function ChooseLand({ route, navigation }) {
       animated: true,
     });
   };
+
+  if (loading) {
+    return (
+      <LoadingContainer>
+        <ActivityIndicator size="small" color="white" />
+      </LoadingContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <Container>
+        <Text>Error loading lands: {error.message}</Text>
+      </Container>
+    );
+  }
+
+  if (!data?.seeLand || data.seeLand.length === 0) {
+    return (
+      <Container>
+        <Text>No lands available</Text>
+      </Container>
+    );
+  }
+
+  const lands = data?.seeLand.map((land) => ({
+    id: land.landname, // Assuming each land has a unique name
+    name: land.landname,
+    image: require("../../assets/images/land1.webp"),
+  }));
   return (
     <Container>
       <View
