@@ -149,17 +149,28 @@ const FollowRequests = ({ navigation }) => {
     );
   if (data?.seeFriendRequest.length === 0) {
     return (
-      <LoadingContainer>
-        <Text
-          style={{
-            color: "white",
-            textAlign: "center",
-            fontFamily: "JostMedium",
-          }}
-        >
-          Nothing to show
-        </Text>
-      </LoadingContainer>
+      <ScrollView
+        contentContainerStyle={{
+          flex: 1,
+          justifyContent: "center",
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        style={{ backgroundColor: colors.backgroundColor }}
+      >
+        <LoadingContainer>
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              fontFamily: "JostMedium",
+            }}
+          >
+            Nothing to show
+          </Text>
+        </LoadingContainer>
+      </ScrollView>
     );
   }
 

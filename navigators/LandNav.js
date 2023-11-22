@@ -40,11 +40,7 @@ const LandNav = () => {
               }}
               style={{ marginRight: "6%" }}
             >
-              <Ionicons
-                name="person-remove-outline"
-                color={"white"}
-                size={24}
-              />
+              <Ionicons name="ellipsis-vertical" color={"white"} size={20} />
             </TouchableOpacity>
           ),
         })}

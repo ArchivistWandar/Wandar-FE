@@ -21,6 +21,8 @@ import { Ionicons } from "@expo/vector-icons";
 import { gql, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
 import { HeaderRightText } from "../../components/Shared";
+import { currentUsernameVar } from "../../apollo";
+import { SEE_RECORD_QUERY } from "../ArchiveRecords";
 
 const CREATE_RECORD_MUTATION = gql`
   mutation CreateRecord(
@@ -161,6 +163,12 @@ const PreviewRecord = ({ navigation, route }) => {
         { text: "Retry", onPress: handleUpload },
       ]);
     },
+    refetchQueries: [
+      {
+        query: SEE_RECORD_QUERY,
+        variables: { username: currentUsernameVar() },
+      },
+    ],
   });
 
   const handleUpload = () => {

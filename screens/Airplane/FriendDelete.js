@@ -17,6 +17,7 @@ import {
 import { SEE_FRIENDS } from "./FriendsTab";
 import { currentUsernameVar } from "../../apollo";
 import { RequestButton, RequestButtonContainer } from "../FollowRequests";
+import { ScrollView } from "react-native";
 
 const DELETE_FRIEND = gql`
   mutation DeleteFriend($username: String!) {
@@ -113,17 +114,28 @@ const FriendDelete = () => {
 
   if (data?.seeFriends.length === 0) {
     return (
-      <LoadingContainer>
-        <Text
-          style={{
-            color: "white",
-            textAlign: "center",
-            fontFamily: "JostMedium",
-          }}
-        >
-          Nothing to show
-        </Text>
-      </LoadingContainer>
+      <ScrollView
+        contentContainerStyle={{
+          flex: 1,
+          justifyContent: "center",
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        style={{ backgroundColor: colors.backgroundColor }}
+      >
+        <LoadingContainer>
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              fontFamily: "JostMedium",
+            }}
+          >
+            Nothing to show
+          </Text>
+        </LoadingContainer>
+      </ScrollView>
     );
   }
 

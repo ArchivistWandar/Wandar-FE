@@ -121,7 +121,7 @@ const RecordDetail = ({ navigation, route }) => {
         <TouchableOpacity onPress={handleDelete}>
           <Ionicons
             name="ellipsis-vertical"
-            size={24}
+            size={20}
             color="white"
             style={{ marginRight: "5%" }}
           />

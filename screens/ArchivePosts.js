@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
+  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -13,8 +14,9 @@ import { Container, LoadingContainer } from "../components/Shared";
 import { gql, useQuery } from "@apollo/client";
 import { currentUsernameVar } from "../apollo";
 import { Skeleton } from "moti/skeleton";
+import { colors } from "../colors";
 
-const SEE_POSTS_QUERY = gql`
+export const SEE_POSTS_QUERY = gql`
   query SeePosts($username: String!) {
     seePosts(username: $username) {
       land {
@@ -129,17 +131,28 @@ const ArchivePosts = ({ navigation }) => {
   }
   if (data?.seePosts.length === 0) {
     return (
-      <LoadingContainer>
-        <Text
-          style={{
-            color: "white",
-            textAlign: "center",
-            fontFamily: "JostMedium",
-          }}
-        >
-          Nothing to show
-        </Text>
-      </LoadingContainer>
+      <ScrollView
+        contentContainerStyle={{
+          flex: 1,
+          justifyContent: "center",
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        style={{ backgroundColor: colors.backgroundColor }}
+      >
+        <LoadingContainer>
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              fontFamily: "JostMedium",
+            }}
+          >
+            Nothing to show
+          </Text>
+        </LoadingContainer>
+      </ScrollView>
     );
   }
 
@@ -163,6 +176,9 @@ const ArchivePosts = ({ navigation }) => {
 
 const IconContainer = styled.View`
   padding-left: 10px; /* Add left padding */
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 5px;
 `;
 
 const PostItem = styled.View`
@@ -194,6 +210,7 @@ const DateAndPrivacy = styled.View`
   flex-direction: row;
   align-items: center;
   margin-bottom: 4px;
+  margin-right: 15px;
 `;
 
 const DateText = styled.Text`
