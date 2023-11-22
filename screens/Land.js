@@ -38,7 +38,7 @@ const RealLand = styled.View`
 
 const PlaneButton = styled.TouchableOpacity`
   position: absolute;
-  bottom: 20px;
+  bottom: 100px;
   right: 20px;
 `;
 
@@ -49,7 +49,7 @@ const PlaneImage = styled.Image`
 
 const LandAddButton = styled.TouchableOpacity`
   position: absolute;
-  bottom: 40px;
+  bottom: 100px;
   left: 20px;
 `;
 export default Land;
