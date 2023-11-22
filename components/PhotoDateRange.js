@@ -36,7 +36,7 @@ function PhotoDateRange({ photos, textStyle, onDateRangeCalculated }) {
     const oldestDate = new Date(Math.min(...creationDates));
     const newestDate = new Date(Math.max(...creationDates));
     const formatter = new Intl.DateTimeFormat("en-US", {
-      month: "long",
+      month: "short",
       day: "numeric",
       year: "numeric",
     });

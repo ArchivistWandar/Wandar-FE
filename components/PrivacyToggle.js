@@ -40,7 +40,7 @@ const PrivacyToggle = ({ isPublic, onSelectSwitch, selectionColor }) => {
         style={{
           flex: 1,
           backgroundColor:
-            active === 2 ? selectionColor : colors.backgroundColor,
+            active === 1 ? selectionColor : colors.backgroundColor,
           borderRadius: 25,
           justifyContent: "center",
           alignItems: "center",
@@ -49,7 +49,7 @@ const PrivacyToggle = ({ isPublic, onSelectSwitch, selectionColor }) => {
         <Ionicons
           name="people"
           size={14}
-          color={active === 2 ? colors.backgroundColor : selectionColor}
+          color={active === 1 ? colors.backgroundColor : selectionColor}
         />
       </TouchableOpacity>
       <TouchableOpacity
@@ -58,7 +58,7 @@ const PrivacyToggle = ({ isPublic, onSelectSwitch, selectionColor }) => {
         style={{
           flex: 1,
           backgroundColor:
-            active === 1 ? selectionColor : colors.backgroundColor,
+            active === 2 ? selectionColor : colors.backgroundColor,
           borderRadius: 25,
           justifyContent: "center",
           alignItems: "center",
@@ -67,7 +67,7 @@ const PrivacyToggle = ({ isPublic, onSelectSwitch, selectionColor }) => {
         <Ionicons
           name="lock-closed"
           size={14}
-          color={active === 1 ? colors.backgroundColor : selectionColor}
+          color={active === 2 ? colors.backgroundColor : selectionColor}
         />
       </TouchableOpacity>
     </View>

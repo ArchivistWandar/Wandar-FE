@@ -52,7 +52,7 @@ export default function Preview({ route, navigation }) {
     route.params;
   const [createPost, { loading, error }] = useMutation(CREATE_POST_MUTATION);
   const [photoDateRange, setPhotoDateRange] = useState("");
-  const [isPublic, setIsPublic] = useState(true);
+  const [isPublic, setIsPublic] = useState(false);
 
   const handleToggleSelection = (newPublicStatus) => {
     setIsPublic(newPublicStatus);

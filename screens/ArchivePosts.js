@@ -29,6 +29,7 @@ const SEE_POSTS_QUERY = gql`
       caption
       createdAt
       title
+      id
     }
   }
 `;
@@ -45,20 +46,20 @@ const ArchivePosts = ({ navigation }) => {
     setRefreshing(false);
   };
 
-  const goToPostDetail = () => {
-    navigation.navigate("PostDetail");
+  const goToPostDetail = (id) => {
+    navigation.navigate("PostDetail", { id });
   };
 
   const sortedPosts = data?.seePosts
     .map((post) => ({
       ...post,
-      createdAtTimestamp: new Date(post.createdAt).getTime(), // Convert createdAt to a timestamp
+      createdAtTimestamp: new Date(parseInt(post.createdAt)).getTime(), // Convert createdAt to a timestamp
     }))
     .sort((a, b) => b.createdAtTimestamp - a.createdAtTimestamp); // Sort by createdAt in descending order
 
   const renderItem = ({ item }) => {
     return (
-      <TouchableOpacity onPress={goToPostDetail}>
+      <TouchableOpacity onPress={() => goToPostDetail(item.id)}>
         <PostItem>
           <PostImage source={{ uri: item.photos[0].photo }} />
           <PostDetails>

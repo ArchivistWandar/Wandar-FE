@@ -13,7 +13,7 @@ const ButtonContainer = styled.View`
   flex: 1;
   justify-content: flex-end;
   margin-right: 20px;
-  margin-bottom: 60px;
+  margin-bottom: 10%;
   margin-left: 20px;
 `;
 
@@ -22,7 +22,7 @@ const WelcomeMessage = styled.Text`
   text-align: center;
   font-family: "JostMediumItalic";
   font-size: 24px;
-  margin-top: 130px;
+  margin-top: 30%;
 `;
 
 export default function Welcome({ navigation }) {
@@ -34,7 +34,7 @@ export default function Welcome({ navigation }) {
       <WelcomeMessage>
         Design, Capture, & Share. {"\n"} Wandar Your World
       </WelcomeMessage>
-      <View style={{ flex: 1, justifyContent: "center", marginTop: "20%" }}>
+      <View style={{ flex: 1, justifyContent: "center", marginTop: "15%" }}>
         <Image
           source={require("../assets/Maskgroup.png")}
           resizeMode="contain"
