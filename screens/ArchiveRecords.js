@@ -6,6 +6,7 @@ import {
   RefreshControl,
   View,
   Text,
+  ScrollView,
 } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -13,8 +14,9 @@ import { Container, LoadingContainer, formatDate } from "../components/Shared";
 import { gql, useQuery } from "@apollo/client";
 import { currentUsernameVar } from "../apollo";
 import { Skeleton } from "moti/skeleton";
+import { colors } from "../colors";
 
-const SEE_RECORD_QUERY = gql`
+export const SEE_RECORD_QUERY = gql`
   query SeeRecord($username: String!) {
     seeRecord(username: $username) {
       photos {
@@ -69,17 +71,28 @@ const ArchiveRecords = ({ navigation }) => {
   }
   if (data?.seeRecord.length === 0) {
     return (
-      <LoadingContainer>
-        <Text
-          style={{
-            color: "white",
-            textAlign: "center",
-            fontFamily: "JostMedium",
-          }}
-        >
-          Nothing to show
-        </Text>
-      </LoadingContainer>
+      <ScrollView
+        contentContainerStyle={{
+          flex: 1,
+          justifyContent: "center",
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        style={{ backgroundColor: colors.backgroundColor }}
+      >
+        <LoadingContainer>
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              fontFamily: "JostMedium",
+            }}
+          >
+            Nothing to show
+          </Text>
+        </LoadingContainer>
+      </ScrollView>
     );
   }
 

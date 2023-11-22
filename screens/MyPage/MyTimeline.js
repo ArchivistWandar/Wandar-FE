@@ -106,7 +106,6 @@ const MyTimeline = ({ navigation }) => {
       navigation.navigate("PostDetail", { id: item.id });
     }
   };
-
   return (
     <Container>
       <ScrollView

@@ -29,8 +29,8 @@ const MyPage = ({ navigation }) => {
   const HeaderRight = () => (
     <TouchableOpacity onPress={confirmLogOut}>
       <Ionicons
-        name="log-out-outline"
-        size={30}
+        name="ellipsis-vertical"
+        size={20}
         color="#fff"
         style={{ marginRight: "5%" }}
       />

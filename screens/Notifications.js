@@ -219,10 +219,10 @@ const Notifications = ({ navigation }) => {
             <Ionicons name="person-add" size={24} color={"white"} />
           </View>
           <View style={{ flexDirection: "column" }}>
-            <NotificationText>
+            <NotificationText style={{ marginLeft: "12%" }}>
               <Username>Follow requests</Username>
             </NotificationText>
-            <NotificationText style={{ color: "grey" }}>
+            <NotificationText style={{ color: "grey", marginLeft: "12%" }}>
               Approve or ignore requests
             </NotificationText>
           </View>
@@ -285,10 +285,10 @@ const Notifications = ({ navigation }) => {
               <Ionicons name="person-add" size={24} color={"white"} />
             </View>
             <View style={{ flexDirection: "column" }}>
-              <NotificationText>
+              <NotificationText style={{ marginLeft: "12%" }}>
                 <Username>Follow requests</Username>
               </NotificationText>
-              <NotificationText style={{ color: "grey" }}>
+              <NotificationText style={{ color: "grey", marginLeft: "12%" }}>
                 Approve or ignore requests
               </NotificationText>
             </View>
@@ -359,16 +359,15 @@ const Notifications = ({ navigation }) => {
                   margin: 5,
                   alignItems: "center",
                   marginLeft: 10,
-                  marginRight: 30,
                 }}
               >
                 <Ionicons name="person-add" size={24} color={"white"} />
               </View>
               <View style={{ flexDirection: "column" }}>
-                <NotificationText>
+                <NotificationText style={{ marginLeft: "12%" }}>
                   <Username>Follow requests</Username>
                 </NotificationText>
-                <NotificationText style={{ color: "grey" }}>
+                <NotificationText style={{ color: "grey", marginLeft: "12%" }}>
                   Approve or ignore requests
                 </NotificationText>
               </View>
@@ -404,7 +403,7 @@ const NotificationText = styled.Text`
   font-family: "JostMedium";
   color: white;
   font-size: 13px;
-  margin-left: 15px;
+  margin-left: 5%;
   margin-right: 15px;
 `;
 

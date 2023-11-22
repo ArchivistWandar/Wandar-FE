@@ -14,6 +14,8 @@ import PhotoDateRange from "../../components/PhotoDateRange";
 import PrivacyToggle from "../../components/PrivacyToggle";
 import { gql, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
+import { SEE_POSTS_QUERY } from "../ArchivePosts";
+import { currentUsernameVar } from "../../apollo";
 
 const MemoContainer = styled.View`
   margin: 25px;
@@ -81,22 +83,41 @@ export default function Preview({ route, navigation }) {
         isPublic,
         isPublished,
       },
+      refetchQueries: [
+        {
+          query: SEE_POSTS_QUERY,
+          variables: { username: currentUsernameVar() },
+        },
+      ],
     })
       .then(({ data }) => {
         if (data.createPost.ok) {
           setIsUploading(false);
           Alert.alert("Success", `Post uploaded successfully`, [
             {
-              text: "Go to previous page",
-              onPress: () =>
-                navigation.navigate("Tabs", { screen: "TabArchive" }),
+              text: "Go to Archive page",
+              onPress: () => {
+                // Navigate to the ArchivePosts screen inside the ArchiveNav navigator
+                navigation.navigate("Tabs", {
+                  screen: "TabArchive",
+                  params: {
+                    screen: "ArchiveNav",
+                    params: {
+                      tab: "Posts",
+                    },
+                  },
+                });
+              },
             },
           ]);
         } else {
+          setIsUploading(false);
+          Alert.alert("Fail", `Failed in post upload`);
           console.error(data.createPost.error);
         }
       })
       .catch((err) => {
+        Alert.alert("Fail", `Failed in post upload`);
         console.error("Mutation error: ", err);
       });
   };
