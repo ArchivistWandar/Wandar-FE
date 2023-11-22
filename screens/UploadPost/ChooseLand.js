@@ -135,8 +135,8 @@ export default function ChooseLand({ route, navigation }) {
                 source={land.image}
                 style={{
                   width: windowWidth * 0.6,
-                  marginTop: "35%",
-                  height: 200,
+                  marginTop: "30%",
+                  height: 150,
                 }}
                 resizeMode="contain"
               />
