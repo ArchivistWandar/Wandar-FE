@@ -378,7 +378,7 @@ const Notifications = ({ navigation }) => {
             ></View>
           </>
         }
-        ListFooterComponent={<View style={{ height: 20 }} />} // Optional: Footer for extra spacing
+        ListFooterComponent={<View style={{ height: 100 }} />} // Optional: Footer for extra spacing
       />
     </Container>
   );

@@ -6,6 +6,7 @@ import {
   RefreshControl,
   ScrollView,
   Text,
+  View,
 } from "react-native";
 import styled from "styled-components/native";
 import { Container, LoadingContainer } from "../components/Shared";
@@ -225,6 +226,7 @@ const FollowRequests = ({ navigation }) => {
             </RequestItem>
           );
         }}
+        ListFooterComponent={<View style={{ height: 100 }} />}
       />
     </Container>
   );

@@ -17,7 +17,7 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 const MemoContainer = styled.View`
   margin: 25px;
   margin-top: 0px;
-  margin-bottom: 50px;
+  margin-bottom: 100px;
 `;
 
 const DELETE_POST_MUTATION = gql`
@@ -151,7 +151,7 @@ export default function PostDetail({ route, navigation }) {
           style={{
             flex: 1,
             alignItems: "center",
-            marginTop: "20%",
+            marginTop: "30%",
             justifyContent: "center",
             flexDirection: "row",
             gap: 10,

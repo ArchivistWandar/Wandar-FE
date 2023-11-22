@@ -5,6 +5,7 @@ import {
   RefreshControl,
   Text,
   TouchableOpacity,
+  View,
 } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
@@ -113,6 +114,7 @@ const UserList = ({
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
+          ListFooterComponent={<View style={{ height: 100 }} />}
         />
       ) : (
         <LoadingContainer>
