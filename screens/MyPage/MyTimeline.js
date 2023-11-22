@@ -189,6 +189,7 @@ const MyTimeline = ({ navigation }) => {
             {/* Additional types can be added here */}
           </TimelineItem>
         ))}
+        <View style={{ paddingBottom: 100 }} />
       </ScrollView>
     </Container>
   );

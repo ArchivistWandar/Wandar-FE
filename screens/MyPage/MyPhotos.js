@@ -7,6 +7,7 @@ import {
   RefreshControl,
   Text,
   TouchableOpacity,
+  View,
 } from "react-native";
 import { gql, useQuery } from "@apollo/client";
 import { Container, LoadingContainer } from "../../components/Shared";
@@ -125,6 +126,7 @@ const MyPhotos = ({ navigation }) => {
             tintColor="white"
           />
         }
+        ListFooterComponent={<View style={{ height: 100 }} />}
       />
     </Container>
   );

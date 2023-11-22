@@ -169,6 +169,7 @@ const ArchivePosts = ({ navigation }) => {
             tintColor="white"
           />
         }
+        ListFooterComponent={<View style={{ height: 100 }} />}
       />
     </Container>
   );

@@ -7,7 +7,7 @@ import {
 import UserList from "../../components/friendsNav/UserList";
 import { gql, useQuery } from "@apollo/client";
 import { currentUsernameVar } from "../../apollo";
-import { ActivityIndicator, Text } from "react-native";
+import { ActivityIndicator, Text, View } from "react-native";
 import { RequestProcessedContext } from "../../components/RequestProcessedProvider";
 
 export const SEE_FRIENDS = gql`
