@@ -123,7 +123,7 @@ const RecordDetail = ({ navigation, route }) => {
       headerRight: () => (
         <TouchableOpacity onPress={handleDelete}>
           <Ionicons
-            name="trash-outline"
+            name="ellipsis-vertical"
             size={24}
             color="white"
             style={{ marginRight: "5%" }}

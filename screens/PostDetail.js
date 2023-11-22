@@ -109,7 +109,7 @@ export default function PostDetail({ route, navigation }) {
           ) : (
             <TouchableOpacity onPress={handleDelete}>
               <Ionicons
-                name="trash-outline"
+                name="ellipsis-vertical"
                 size={24}
                 color="white"
                 style={{ marginRight: "5%" }}
@@ -178,6 +178,7 @@ export default function PostDetail({ route, navigation }) {
             marginTop: "1%",
           }}
         ></View>
+
         <Collage selectedPhotoUris={transformedPhotos} />
         <MemoContainer>
           <Text

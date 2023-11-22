@@ -10,6 +10,7 @@ import {
   RefreshControl,
   ScrollView,
   Text,
+  View,
 } from "react-native";
 import { gql, useQuery } from "@apollo/client";
 import { Skeleton } from "moti/skeleton";
@@ -32,9 +33,13 @@ const MY_PAGE = gql`
         createdAt
         title
         id
+        land {
+          landname
+        }
       }
       lands {
         landname
+        createdAt
       }
       lastUpdate
     }
@@ -79,54 +84,99 @@ const MyTimeline = () => {
   }
 
   // Extract timeline data from query response
-  const timelineData = [...data.seeMypage.records].sort(
+  const timelineData = [];
+  if (data && data.seeMypage) {
+    timelineData.push(
+      ...data.seeMypage.records.map((record) => ({ ...record, type: "record" }))
+    );
+    timelineData.push(
+      ...data.seeMypage.posts.map((post) => ({ ...post, type: "post" }))
+    );
+    // Add "start" event here if applicable
+  }
+
+  timelineData.sort(
     (a, b) => new Date(parseInt(b.createdAt)) - new Date(parseInt(a.createdAt))
   );
 
   return (
     <Container>
       <ScrollView
-        contentContainerStyle={{
-          padding: 16, // Adjust this value as needed
-        }}
         refreshControl={
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }
       >
         {timelineData.map((item, index) => (
           <TimelineItem key={index}>
-            {/* Display first photo from each record */}
-            {item.photos && item.photos.length > 0 && (
+            {item.type === "record" && (
               <NotificationBox>
-                <LeftContent>
+                <View style={{ position: "relative" }}>
                   {loadingImages[item.id] && (
                     <Skeleton
                       colorMode="light"
-                      width={50}
-                      height={50}
+                      width={40}
+                      height={40}
                       radius={6}
                     />
                   )}
                   <PostImage
                     source={{ uri: item.photos[0].photo }}
-                    style={
-                      loadingImages[item.id]
-                        ? { position: "absolute", opacity: 0 }
-                        : {}
-                    }
+                    style={loadingImages[item.id] ? { opacity: 0 } : {}}
                     onLoadStart={() => handleImageLoadStart(item.id)}
                     onLoadEnd={() => handleImageLoadEnd(item.id)}
                   />
-                </LeftContent>
-                <RightContent record={true}>
+                </View>
+                <LeftContent>
                   <NotificationText>New Wandar Record</NotificationText>
-                  {item.title ? <LandNames>{item.title}</LandNames> : null}
-                  <DateText>{formatDate(item.createdAt)}</DateText>
-                </RightContent>
+                  {item.title && <LandNames>{item.title}</LandNames>}
+                </LeftContent>
+                <DateText>{formatDate(item.createdAt)}</DateText>
               </NotificationBox>
             )}
 
-            {/* Logic for posts and lands can be added here if needed */}
+            {item.type === "post" && (
+              <NotificationBox post={true}>
+                <View style={{ position: "relative" }}>
+                  {loadingImages[item.id] && (
+                    <Skeleton
+                      colorMode="dark"
+                      width={40}
+                      height={40}
+                      radius={6}
+                    />
+                  )}
+                  <PostImage
+                    post={true}
+                    source={{ uri: item.photos[0].photo }} // Replace with actual photo uri
+                    style={loadingImages[item.id] ? { opacity: 0 } : {}}
+                    onLoadStart={() => handleImageLoadStart(item.id)}
+                    onLoadEnd={() => handleImageLoadEnd(item.id)}
+                  />
+                </View>
+                <LeftContent>
+                  <NotificationText post={true}>New post</NotificationText>
+                  <LandName post={true}>in Land {item.land.landname}</LandName>
+                </LeftContent>
+                <DateText post={true}>{formatDate(item.createdAt)}</DateText>
+              </NotificationBox>
+            )}
+
+            {/* {item.type === "start" && (
+              <NotificationBox>
+                <LeftContent>
+                  <PostImage
+                    source={require("../../assets/logo.png")}
+                    resizeMode="contain"
+                  />
+                </LeftContent>
+                <RightContent>
+                  <NotificationText>Started Wandar</NotificationText>
+                  <DateText>{formatDate(item.createdAt)}</DateText>
+                </RightContent>
+              </NotificationBox>
+            )} */}
+
+            {/* Additional types can be added here */}
           </TimelineItem>
         ))}
       </ScrollView>
@@ -135,43 +185,37 @@ const MyTimeline = () => {
 };
 
 const TimelineItem = styled.View`
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
+  margin: 20px 20px 0px 20px;
 `;
 
-const NotificationBox = styled.View`
+const NotificationBox = styled.TouchableOpacity`
   flex-direction: row;
-  border-color: transparent;
-  background-color: white;
+  border-width: 1px;
+  border-color: ${(props) => (props.post ? "white" : "transparent")};
+  background-color: ${(props) => (props.post ? "transparent" : "white")};
   border-radius: 10px;
-  height: 66px;
-  position: relative;
+  height: 60px;
+  padding: 9px;
 `;
 
 const LeftContent = styled.View`
-  flex: 1;
-  padding-left: 10px;
-  /* align-items: center; */
-  justify-content: center;
+  margin-left: 10px;
 `;
 const PostImage = styled.Image`
-  width: 50px;
-  height: 50px;
+  width: 40px;
+  height: 40px;
   border-radius: 6px;
-`;
-const RightContent = styled.View`
-  flex: 6;
-  justify-content: center;
-  padding-left: 15px;
 `;
 
 const NotificationText = styled.Text`
   font-size: 14px;
   font-family: "JostBoldItalic";
-  color: black;
+  color: ${(props) => (props.post ? "white" : "black")};
 `;
 
 const LandNames = styled.Text`
-  font-size: 14px;
+  font-size: 12px;
   color: grey;
   font-family: "JostMedium";
 `;
@@ -179,11 +223,17 @@ const LandNames = styled.Text`
 const DateText = styled.Text`
   font-family: "JostMedium";
   font-size: 14px;
-  color: black;
+  color: ${(props) => (props.post ? "white" : "black")};
   margin-top: auto;
   position: absolute;
   bottom: 10px;
   right: 15px;
+`;
+
+const LandName = styled.Text`
+  font-size: 12px;
+  color: grey;
+  font-family: "JostMedium";
 `;
 
 export default MyTimeline;
