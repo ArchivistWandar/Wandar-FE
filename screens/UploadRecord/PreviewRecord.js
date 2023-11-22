@@ -15,7 +15,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { colors } from "../../colors";
-import styled from "styled-components/native";
 import { themes } from "../../components/RecordTheme";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";

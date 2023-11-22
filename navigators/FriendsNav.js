@@ -3,8 +3,8 @@ import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import { Ionicons } from "@expo/vector-icons";
 import { colors } from "../colors";
-import FriendsTab from "../screens/FriendsTab";
-import BrowseTab from "../screens/BrowseTab";
+import FriendsTab from "../screens/Airplane/FriendsTab";
+import BrowseTab from "../screens/Airplane/BrowseTab";
 
 const Tab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator();

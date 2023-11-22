@@ -6,12 +6,14 @@ import {
   FlatList,
   ActivityIndicator,
   RefreshControl,
+  ScrollView,
 } from "react-native";
 import styled from "styled-components/native";
 import { Container, LoadingContainer } from "../components/Shared";
 import { Ionicons } from "@expo/vector-icons";
 import { gql, useQuery } from "@apollo/client";
 import { Skeleton } from "moti/skeleton";
+import { colors } from "../colors";
 
 const SEE_NOTIFICATIONS_QUERY = gql`
   query SeeNotifications {
@@ -236,7 +238,78 @@ const Notifications = ({ navigation }) => {
   }
 
   if (error) {
-    return <Text>Error: {error.message}</Text>;
+    return (
+      <LoadingContainer>
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontFamily: "JostMedium",
+          }}
+        >
+          Error! {error.message}
+        </Text>
+      </LoadingContainer>
+    );
+  }
+
+  if (data?.seeNotifications && data.seeNotifications.length === 0) {
+    return (
+      <ScrollView
+        contentContainerStyle={{
+          flex: 1,
+          justifyContent: "center",
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        style={{ backgroundColor: colors.backgroundColor }}
+      >
+        <Container>
+          <TouchableOpacity
+            style={{
+              padding: 20,
+              flexDirection: "row",
+              alignItems: "center",
+            }}
+            onPress={goToFollowRequests}
+          >
+            <View
+              style={{
+                margin: 5,
+                alignItems: "center",
+                marginLeft: 10,
+                marginRight: 30,
+              }}
+            >
+              <Ionicons name="person-add" size={24} color={"white"} />
+            </View>
+            <View style={{ flexDirection: "column" }}>
+              <NotificationText>
+                <Username>Follow requests</Username>
+              </NotificationText>
+              <NotificationText style={{ color: "grey" }}>
+                Approve or ignore requests
+              </NotificationText>
+            </View>
+          </TouchableOpacity>
+          <View
+            style={{ borderColor: "rgba(255,255,255, 0.1)", borderTopWidth: 1 }}
+          ></View>
+          <LoadingContainer>
+            <Text
+              style={{
+                color: "white",
+                textAlign: "center",
+                fontFamily: "JostMedium",
+              }}
+            >
+              Nothing to show
+            </Text>
+          </LoadingContainer>
+        </Container>
+      </ScrollView>
+    );
   }
 
   // 알림 데이터를 배열로 변환하고 최신순으로 정렬

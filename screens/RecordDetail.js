@@ -5,9 +5,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   Text,
-  TouchableWithoutFeedback,
   Platform,
-  TextInput,
   Dimensions,
   ActivityIndicator,
   Alert,
@@ -15,7 +13,6 @@ import {
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { ReactNativeFile } from "apollo-upload-client";
 import { LoadingContainer } from "../components/Shared";
 import { themes } from "../components/RecordTheme";
 import { colors } from "../colors";
@@ -143,7 +140,15 @@ const RecordDetail = ({ navigation, route }) => {
   if (error) {
     return (
       <LoadingContainer>
-        <Text>Error: {error.message}</Text>
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontFamily: "JostMedium",
+          }}
+        >
+          Error! {error.message}
+        </Text>
       </LoadingContainer>
     );
   }

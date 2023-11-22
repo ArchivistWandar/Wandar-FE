@@ -10,7 +10,6 @@ import {
 import { Container, HeaderRightText } from "../../components/Shared";
 import Collage from "../../components/Collage";
 import styled from "styled-components/native";
-import { Ionicons } from "@expo/vector-icons";
 import PhotoDateRange from "../../components/PhotoDateRange";
 import PrivacyToggle from "../../components/PrivacyToggle";
 import { gql, useMutation } from "@apollo/client";

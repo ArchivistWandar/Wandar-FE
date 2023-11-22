@@ -10,7 +10,7 @@ import styled from "styled-components/native";
 import { Container, LoadingContainer } from "../components/Shared";
 import { colors } from "../colors";
 import { RequestProcessedContext } from "../components/RequestProcessedProvider";
-import { SEE_FRIENDS } from "./FriendsTab";
+import { SEE_FRIENDS } from "./Airplane/FriendsTab";
 import { currentUsernameVar } from "../apollo";
 import { Skeleton } from "moti/skeleton";
 
@@ -133,7 +133,20 @@ const FollowRequests = ({ navigation }) => {
         <ActivityIndicator size="small" color="white" />
       </LoadingContainer>
     );
-  if (error) return <Text>Error: {error.message}</Text>;
+  if (error)
+    return (
+      <LoadingContainer>
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontFamily: "JostMedium",
+          }}
+        >
+          Error: {error.message}
+        </Text>
+      </LoadingContainer>
+    );
   if (data?.seeFriendRequest.length === 0) {
     return (
       <LoadingContainer>

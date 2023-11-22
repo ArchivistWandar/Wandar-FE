@@ -32,9 +32,9 @@ const DELETE_POST_MUTATION = gql`
 const GET_POST_QUERY = gql`
   query GetPost($getPostId: Int!) {
     getPost(id: $getPostId) {
-      # photos {
-      #   photo
-      # }
+      photos {
+        photo
+      }
       land {
         landname
       }
@@ -85,8 +85,7 @@ export default function PostDetail({ route, navigation }) {
 
   useEffect(() => {
     if (data && data.getPost) {
-      const { land } = data.getPost;
-      const { photos } = route.params;
+      const { land, photos } = data.getPost;
       navigation.setOptions({
         headerTitle: () => (
           <Text

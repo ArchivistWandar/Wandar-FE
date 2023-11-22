@@ -6,6 +6,7 @@ import {
   useWindowDimensions,
   RefreshControl,
   Text,
+  TouchableOpacity,
 } from "react-native";
 import { gql, useQuery } from "@apollo/client";
 import { Container, LoadingContainer } from "../../components/Shared";
@@ -28,7 +29,7 @@ const SEE_PHOTOS_QUERY = gql`
   }
 `;
 
-const MyPhotos = () => {
+const MyPhotos = ({ navigation }) => {
   const username = currentUsernameVar();
   const numColumns = 3;
   const { width } = useWindowDimensions();
@@ -91,13 +92,24 @@ const MyPhotos = () => {
         new Date(parseInt(b.createdAt)) - new Date(parseInt(a.createdAt))
     );
 
-  const renderItem = ({ item }) => (
-    <Image
-      source={{ uri: item.photo }}
-      style={{ width: width / numColumns, height: width / numColumns }}
-      resizeMode="cover"
-    />
-  );
+  const renderItem = ({ item }) => {
+    const navigateToDetail = () => {
+      if (item.record && item.record.id) {
+        navigation.navigate("RecordDetail", { id: item.record.id });
+      } else if (item.post && item.post.id) {
+        navigation.navigate("PostDetail", { id: item.post.id });
+      }
+    };
+    return (
+      <TouchableOpacity onPress={navigateToDetail}>
+        <Image
+          source={{ uri: item.photo }}
+          style={{ width: width / numColumns, height: width / numColumns }}
+          resizeMode="cover"
+        />
+      </TouchableOpacity>
+    );
+  };
 
   return (
     <Container>

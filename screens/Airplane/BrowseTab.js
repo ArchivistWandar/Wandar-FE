@@ -1,11 +1,9 @@
 import React, { useState } from "react";
-import { Container, LoadingContainer } from "../components/Shared";
-import UserList from "../components/friendsNav/UserList";
+import { Container } from "../../components/Shared";
+import UserList from "../../components/friendsNav/UserList";
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { currentUsernameVar } from "../apollo";
+import { currentUsernameVar } from "../../apollo";
 import { Alert } from "react-native";
-import { ActivityIndicator } from "react-native";
-import { Text } from "react-native";
 
 const SEARCH_USERS = gql`
   query SearchUsers($keyword: String!) {
@@ -94,7 +92,7 @@ const BrowseTab = () => {
         ...user,
         avatar: user.avatar
           ? { uri: user.avatar }
-          : require("../assets/images/profile8.png"),
+          : require("../../assets/images/profile8.png"),
       }))
     : [];
 

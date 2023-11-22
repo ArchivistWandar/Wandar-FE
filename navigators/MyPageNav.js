@@ -4,6 +4,8 @@ import MyPage from "../screens/MyPage/MyPage";
 import MyInfoEdit from "../screens/MyPage/MyInfoEdit";
 import MyProfileEdit from "../screens/MyPage/MyProfileEdit";
 import { colors } from "../colors";
+import PostDetail from "../screens/PostDetail";
+import RecordDetail from "../screens/RecordDetail";
 
 const Stack = createStackNavigator();
 
@@ -40,6 +42,16 @@ const MyPageNav = () => {
         name="MyProfileEdit"
         options={{ headerTransparent: true, headerTitle: "" }}
         component={MyProfileEdit}
+      />
+      <Stack.Screen
+        name="PostDetail"
+        component={PostDetail}
+        options={{ headerTransparent: true, headerTitle: "" }}
+      />
+      <Stack.Screen
+        name="RecordDetail"
+        component={RecordDetail}
+        options={{ headerTransparent: true, headerTitle: "" }}
       />
     </Stack.Navigator>
   );

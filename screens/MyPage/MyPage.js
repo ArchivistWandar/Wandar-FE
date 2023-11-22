@@ -6,7 +6,7 @@ import { logUserOut } from "../../apollo";
 import { useEffect } from "react";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { gql, useQuery, useApolloClient } from "@apollo/client";
+import { useApolloClient } from "@apollo/client";
 import { Alert } from "react-native";
 
 const MyPage = ({ navigation }) => {
@@ -44,7 +44,7 @@ const MyPage = ({ navigation }) => {
   return (
     <Container>
       <MyInfo navigation={navigation} />
-      <MyPageTabNav />
+      <MyPageTabNav navigation={navigation} />
     </Container>
   );
 };

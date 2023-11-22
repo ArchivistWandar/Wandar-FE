@@ -112,12 +112,21 @@ const ArchivePosts = ({ navigation }) => {
         <ActivityIndicator size="small" color="white" />
       </LoadingContainer>
     );
-  if (error)
+  if (error) {
     return (
-      <Container>
-        <Text>Error: {error.message}</Text>
-      </Container>
+      <LoadingContainer>
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontFamily: "JostMedium",
+          }}
+        >
+          Error! {error.message}
+        </Text>
+      </LoadingContainer>
     );
+  }
   if (data?.seePosts.length === 0) {
     return (
       <LoadingContainer>

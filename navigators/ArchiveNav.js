@@ -32,7 +32,6 @@ const ArchiveNav = () => {
         component={PostDetail}
         options={{ headerTransparent: true, headerTitle: "" }}
       />
-      {/* Add the RecordDetail screen */}
       <Stack.Screen
         name="RecordDetail"
         component={RecordDetail}

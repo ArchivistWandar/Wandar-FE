@@ -10,7 +10,7 @@ import MyPhotos from "../screens/MyPage/MyPhotos";
 const Tab = createMaterialTopTabNavigator();
 const Stack = createStackNavigator();
 
-const MyPageTabNav = ({ records, posts, lands, lastUpdate }) => {
+const MyPageTabNav = ({ navigation }) => {
   return (
     <Tab.Navigator
       screenOptions={{
@@ -42,14 +42,7 @@ const MyPageTabNav = ({ records, posts, lands, lastUpdate }) => {
             }}
           >
             <Stack.Screen name="MyTimeline" options={{ headerShown: false }}>
-              {() => (
-                <MyTimeline
-                  records={records}
-                  posts={posts}
-                  lands={lands}
-                  lastUpdate={lastUpdate}
-                />
-              )}
+              {() => <MyTimeline navigation={navigation} />}
             </Stack.Screen>
           </Stack.Navigator>
         )}
@@ -74,14 +67,7 @@ const MyPageTabNav = ({ records, posts, lands, lastUpdate }) => {
             }}
           >
             <Stack.Screen name="MyPhotos" options={{ headerShown: false }}>
-              {() => (
-                <MyPhotos
-                  records={records}
-                  posts={posts}
-                  lands={lands}
-                  lastUpdate={lastUpdate}
-                />
-              )}
+              {() => <MyPhotos navigation={navigation} />}
             </Stack.Screen>
           </Stack.Navigator>
         )}
