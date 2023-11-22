@@ -46,7 +46,7 @@ const MY_PAGE = gql`
   }
 `;
 
-const MyTimeline = () => {
+const MyTimeline = ({ navigation }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [loadingImages, setLoadingImages] = useState({});
   const { data, loading, refetch, error } = useQuery(MY_PAGE, {
@@ -99,6 +99,14 @@ const MyTimeline = () => {
     (a, b) => new Date(parseInt(b.createdAt)) - new Date(parseInt(a.createdAt))
   );
 
+  const navigateToDetail = (item) => {
+    if (item.type === "record" && item.id) {
+      navigation.navigate("RecordDetail", { id: item.id });
+    } else if (item.type === "post" && item.id) {
+      navigation.navigate("PostDetail", { id: item.id });
+    }
+  };
+
   return (
     <Container>
       <ScrollView
@@ -109,7 +117,7 @@ const MyTimeline = () => {
         {timelineData.map((item, index) => (
           <TimelineItem key={index}>
             {item.type === "record" && (
-              <NotificationBox>
+              <NotificationBox onPress={() => navigateToDetail(item)}>
                 <View style={{ position: "relative" }}>
                   {loadingImages[item.id] && (
                     <Skeleton
@@ -135,7 +143,10 @@ const MyTimeline = () => {
             )}
 
             {item.type === "post" && (
-              <NotificationBox post={true}>
+              <NotificationBox
+                post={true}
+                onPress={() => navigateToDetail(item)}
+              >
                 <View style={{ position: "relative" }}>
                   {loadingImages[item.id] && (
                     <Skeleton

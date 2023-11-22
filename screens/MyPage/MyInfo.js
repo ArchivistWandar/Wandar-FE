@@ -3,8 +3,9 @@ import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Skeleton } from "moti/skeleton";
-import { View } from "react-native";
+import { Text, View } from "react-native";
 import { gql, useQuery } from "@apollo/client";
+import { Container, LoadingContainer } from "../../components/Shared";
 
 const SEE_MY_INFO_QUERY = gql`
   query SeeMyInfo {
@@ -55,6 +56,18 @@ const MyInfo = ({ navigation }) => {
       </UserInfoBox>
     );
   }
+  if (error)
+    return (
+      <Text
+        style={{
+          color: "white",
+          textAlign: "center",
+          fontFamily: "JostMedium",
+        }}
+      >
+        Error: {error.message}
+      </Text>
+    );
 
   const { username, avatar, totalFriends } = data.seeMyInfo;
 
