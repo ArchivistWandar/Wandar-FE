@@ -1,67 +1,128 @@
-import React from "react";
-import { FlatList, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import { Container } from "../components/Shared";
+import { Container, LoadingContainer, formatDate } from "../components/Shared";
+import { gql, useQuery } from "@apollo/client";
+import { currentUsernameVar } from "../apollo";
 
-const postData = [
-  {
-    id: "1",
-    landName: "Jeju 🍊",
-    date: "Aug 3, 2023 ~ Aug 19, 2023",
-    isPrivate: false,
-    contents:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem Ipsum is simply dummy text of the has been the industry's standard dummy text.",
-    image: require("../assets/images/jeju.png"),
-  },
-  {
-    id: "2",
-    landName: "Daily 🫧",
-    date: "July 1, 2023 ~ July 18, 2023",
-    isPrivate: true,
-    contents:
-      "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem Ipsum is simply dummy text of the has been the industry's standard dummy text.",
-    image: require("../assets/images/busan.png"),
-  },
-  // Add more post data here
-];
+const SEE_POSTS_QUERY = gql`
+  query SeePosts($username: String!) {
+    seePosts(username: $username) {
+      land {
+        landname
+      }
+      photos {
+        photo
+      }
+      user {
+        username
+      }
+      isMine
+      isPublic
+      caption
+      createdAt
+      title
+    }
+  }
+`;
 
 const ArchivePosts = ({ navigation }) => {
+  const { data, loading, error, refetch } = useQuery(SEE_POSTS_QUERY, {
+    variables: { username: currentUsernameVar() }, // Replace with the appropriate username
+  });
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
+  };
+
   const goToPostDetail = () => {
     navigation.navigate("PostDetail");
   };
+
+  const sortedPosts = data?.seePosts
+    .map((post) => ({
+      ...post,
+      createdAtTimestamp: new Date(post.createdAt).getTime(), // Convert createdAt to a timestamp
+    }))
+    .sort((a, b) => b.createdAtTimestamp - a.createdAtTimestamp); // Sort by createdAt in descending order
+
   const renderItem = ({ item }) => {
     return (
       <TouchableOpacity onPress={goToPostDetail}>
         <PostItem>
-          <PostImage source={item.image} />
+          <PostImage source={{ uri: item.photos[0].photo }} />
           <PostDetails>
-            <LandName>{item.landName}</LandName>
+            <LandName>{item.land.landname}</LandName>
             <DateAndPrivacy>
-              <DateText numberOfLines={1}>{item.date}</DateText>
-              {item.isPrivate ? (
-                <IconContainer>
-                  <Ionicons name="lock-closed" size={15} color={"white"} />
-                </IconContainer>
-              ) : (
+              <DateText numberOfLines={1}>{item.title}</DateText>
+              {item.isPublic ? (
                 <IconContainer>
                   <Ionicons name="people" size={15} color={"white"} />
                 </IconContainer>
+              ) : (
+                <IconContainer>
+                  <Ionicons name="lock-closed" size={15} color={"white"} />
+                </IconContainer>
               )}
             </DateAndPrivacy>
-            <Contents numberOfLines={2}>{item.contents}</Contents>
+            <Contents numberOfLines={2}>{item.caption}</Contents>
           </PostDetails>
         </PostItem>
       </TouchableOpacity>
     );
   };
 
+  if (loading)
+    return (
+      <LoadingContainer>
+        <ActivityIndicator size="small" color="white" />
+      </LoadingContainer>
+    );
+  if (error)
+    return (
+      <Container>
+        <Text>Error: {error.message}</Text>
+      </Container>
+    );
+  if (data?.seePosts.length === 0) {
+    return (
+      <LoadingContainer>
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontFamily: "JostMedium",
+          }}
+        >
+          Nothing to show
+        </Text>
+      </LoadingContainer>
+    );
+  }
+
   return (
     <Container>
       <FlatList
-        data={postData}
-        keyExtractor={(item) => item.id}
+        data={sortedPosts}
+        keyExtractor={(item) => item.createdAt} // Use a unique identifier from the item
         renderItem={renderItem}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="white"
+          />
+        }
       />
     </Container>
   );
@@ -76,12 +137,12 @@ const PostItem = styled.View`
   align-items: center;
   padding: 20px;
   border-bottom-width: 1px; /* Add border line */
-  border-color: #717171; /* Border color */
+  border-color: rgba(255, 255, 255, 0.1); /* Border color */
 `;
 
 const PostImage = styled.Image`
-  width: 100px;
-  height: 100px;
+  width: 90px;
+  height: 90px;
   border-radius: 10px;
   margin-right: 15px;
 `;

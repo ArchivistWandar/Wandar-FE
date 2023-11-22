@@ -5,6 +5,7 @@ import {
   Image,
   useWindowDimensions,
   RefreshControl,
+  Text,
 } from "react-native";
 import { gql, useQuery } from "@apollo/client";
 import { Container, LoadingContainer } from "../../components/Shared";
@@ -51,18 +52,41 @@ const MyPhotos = () => {
       </LoadingContainer>
     );
   }
+  if (data?.seePhotos.length === 0) {
+    return (
+      <LoadingContainer>
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontFamily: "JostMedium",
+          }}
+        >
+          Nothing to show
+        </Text>
+      </LoadingContainer>
+    );
+  }
 
   // Sort the photos by a timestamp field in descending order
   const sortedPhotos = data.seePhotos
-    .filter((photo) => photo.record && photo.record.id)
-    .sort(
-      (a, b) =>
-        new Date(parseInt(b.createdAt)) - new Date(parseInt(a.createdAt))
-    )
-    .map((photo) => ({
-      ...photo,
-      key: photo.record.id.toString(),
-    }));
+    .flatMap((photo) => {
+      let photos = [];
+      if (photo.record && photo.record.id) {
+        photos.push({
+          ...photo,
+          key: `record-${photo.record.id}`,
+        });
+      }
+      if (photo.post && photo.post.id) {
+        photos.push({
+          ...photo,
+          key: `post-${photo.post.id}`,
+        });
+      }
+      return photos;
+    })
+    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
 
   const renderItem = ({ item }) => (
     <Image

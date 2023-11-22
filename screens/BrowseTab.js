@@ -5,6 +5,7 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { currentUsernameVar } from "../apollo";
 import { Alert } from "react-native";
 import { ActivityIndicator } from "react-native";
+import { Text } from "react-native";
 
 const SEARCH_USERS = gql`
   query SearchUsers($keyword: String!) {
@@ -33,7 +34,7 @@ const BrowseTab = () => {
   const [keyword, setKeyword] = useState("");
   const [addingFriendUsername, setAddingFriendUsername] = useState(null);
 
-  const { data, loading, refetch } = useQuery(SEARCH_USERS, {
+  const { data, loading, refetch, error } = useQuery(SEARCH_USERS, {
     variables: { keyword: keyword },
     skip: keyword.length === 0,
   });

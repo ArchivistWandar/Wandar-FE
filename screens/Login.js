@@ -61,6 +61,9 @@ const Login = ({ route: { params } }) => {
     } = data;
     if (ok) {
       await logUserIn(token, watch("username"));
+    } else {
+      // Display an alert if login is not successful
+      alert("Login failed. Please check your username and password.");
     }
   };
 

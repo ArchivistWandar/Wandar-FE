@@ -53,7 +53,34 @@ const ArchiveRecords = ({ navigation }) => {
   }
 
   if (error) {
-    return <Text>Error! {error.message}</Text>;
+    return (
+      <LoadingContainer>
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontFamily: "JostMedium",
+          }}
+        >
+          Error! {error.message}
+        </Text>
+      </LoadingContainer>
+    );
+  }
+  if (data?.seeRecord.length === 0) {
+    return (
+      <LoadingContainer>
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontFamily: "JostMedium",
+          }}
+        >
+          Nothing to show
+        </Text>
+      </LoadingContainer>
+    );
   }
 
   const postData = data.seeRecord
@@ -134,7 +161,7 @@ const PostItem = styled.View`
   flex-direction: row;
   align-items: center;
   border-bottom-width: 1px; /* Add border line */
-  border-color: #717171; /* Border color */
+  border-color: rgba(255, 255, 255, 0.1); /* Border color */
   padding: 22px; /* Add some padding to separate items */
 `;
 
