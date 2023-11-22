@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
   Alert,
   View,
@@ -87,6 +87,7 @@ const EditableHeaderTitle = ({ initialTitle, textColor, setTitle }) => {
 const PreviewRecord = ({ navigation, route }) => {
   const windowWidth = Dimensions.get("window").width;
   const [title, setTitle] = useState("New record");
+  const titleRef = useRef("New record");
 
   const [theme, setTheme] = useState({
     backgroundColor: "#202020",
@@ -98,6 +99,10 @@ const PreviewRecord = ({ navigation, route }) => {
 
   // State to manage upload status
   const [isUploading, setIsUploading] = useState(false);
+
+  useEffect(() => {
+    titleRef.current = title;
+  }, [title]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -173,7 +178,7 @@ const PreviewRecord = ({ navigation, route }) => {
     // Use the mutation with the prepared variables
     createRecordMutation({
       variables: {
-        title: title,
+        title: titleRef.current,
         photos: photoFiles,
         theme: theme.name,
         isPublic: true,
@@ -197,9 +202,7 @@ const PreviewRecord = ({ navigation, route }) => {
         ),
     });
   }, [navigation, theme, route.params.result.assets, isUploading]);
-  useEffect(() => {
-    console.log(title);
-  }, [title]);
+
   return (
     <View
       style={{
