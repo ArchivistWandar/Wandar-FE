@@ -1,7 +1,6 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Image,
-  ScrollView,
   Text,
   TouchableOpacity,
   View,
@@ -14,11 +13,13 @@ import { colors } from "../../colors";
 import styled from "styled-components/native";
 import { gql, useQuery } from "@apollo/client";
 import { currentUsernameVar } from "../../apollo";
+import Swiper from "react-native-swiper";
 
 const SEE_LAND_QUERY = gql`
   query SeeLand($username: String!) {
     seeLand(username: $username) {
       landname
+      id
       composition
       isMine
     }
@@ -51,8 +52,10 @@ export default function ChooseLand({ route, navigation }) {
           selectedPhotos,
           memoText: memoText,
           selectedLand: lands?.[selectedLandIndex],
+          selectedLandId: lands?.[selectedLandIndex].id,
         })
       }
+      disabled={loading}
     >
       <HeaderRightText>Next</HeaderRightText>
     </TouchableOpacity>
@@ -61,29 +64,6 @@ export default function ChooseLand({ route, navigation }) {
   useEffect(() => {
     navigation.setOptions({ headerRight: HeaderRight });
   }, [selectedLandIndex]);
-
-  const handleScroll = (event) => {
-    const newSelectedIndex = Math.round(
-      event.nativeEvent.contentOffset.x / windowWidth
-    );
-    setSelectedLandIndex(newSelectedIndex);
-  };
-
-  const scrollViewRef = useRef(); // Create a ref
-
-  const handleScrollLeft = () => {
-    scrollViewRef.current.scrollTo({
-      x: windowWidth * (selectedLandIndex - 1),
-      animated: true,
-    });
-  };
-
-  const handleScrollRight = () => {
-    scrollViewRef.current.scrollTo({
-      x: windowWidth * (selectedLandIndex + 1),
-      animated: true,
-    });
-  };
 
   if (loading) {
     return (
@@ -110,10 +90,11 @@ export default function ChooseLand({ route, navigation }) {
   }
 
   const lands = data?.seeLand.map((land) => ({
-    id: land.landname, // Assuming each land has a unique name
+    id: land.id,
     name: land.landname,
     image: require("../../assets/images/land1.webp"),
   }));
+
   return (
     <Container>
       <View
@@ -133,69 +114,45 @@ export default function ChooseLand({ route, navigation }) {
         >
           Choose a land for your upload
         </Text>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-          }}
-        >
-          <TouchableOpacity onPress={handleScrollLeft}>
-            <Ionicons name="chevron-back" size={30} color="#fff" />
-          </TouchableOpacity>
-          <ScrollView
-            ref={scrollViewRef}
-            horizontal
-            pagingEnabled
-            onScroll={handleScroll}
-            scrollEventThrottle={16}
-            showsHorizontalScrollIndicator={false}
-          >
-            {lands.map((land) => (
-              <View
-                style={{
-                  width: windowWidth * 0.8,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-                key={land.id}
-              >
-                <Image
-                  source={land.image}
-                  style={{ width: "70%", height: "70%" }}
-                  resizeMode="contain"
-                />
-                <Text
-                  style={{
-                    fontSize: 20,
-                    marginBottom: 40,
-                    fontFamily: "JostSemiBold",
-                    color: "white",
-                  }}
-                >
-                  {land.name}
-                </Text>
-              </View>
-            ))}
-          </ScrollView>
-          <TouchableOpacity onPress={handleScrollRight}>
+        <Swiper
+          style={{ height: 300 }}
+          showsButtons={true}
+          loop={false}
+          dotColor="grey"
+          activeDotColor="white"
+          onIndexChanged={(index) => setSelectedLandIndex(index)}
+          nextButton={
             <Ionicons name="chevron-forward" size={30} color="#fff" />
-          </TouchableOpacity>
-        </View>
-        <View
-          style={{
-            flexDirection: "row",
-            justifyContent: "center",
-          }}
+          }
+          prevButton={<Ionicons name="chevron-back" size={30} color="#fff" />}
         >
           {lands.map((land, index) => (
-            <Text
-              key={index}
-              style={{ margin: 3, color: "white", fontSize: 10 }}
+            <View
+              key={land.id}
+              style={{ justifyContent: "center", alignItems: "center" }}
             >
-              {selectedLandIndex === index ? "●" : "○"}
-            </Text>
+              <Image
+                source={land.image}
+                style={{
+                  width: windowWidth * 0.6,
+                  marginTop: "35%",
+                  height: 200,
+                }}
+                resizeMode="contain"
+              />
+              <Text
+                style={{
+                  fontSize: 20,
+                  marginTop: 20,
+                  fontFamily: "JostSemiBold",
+                  color: "white",
+                }}
+              >
+                {land.name}
+              </Text>
+            </View>
           ))}
-        </View>
+        </Swiper>
       </View>
     </Container>
   );

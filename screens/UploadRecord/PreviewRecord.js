@@ -144,12 +144,7 @@ const PreviewRecord = ({ navigation, route }) => {
           {
             text: "Go to Archive Records",
             onPress: () =>
-              navigation.navigate("ArchiveNav", { screen: "ArchiveRecords" }),
-          },
-          {
-            text: "View Record Detail",
-            onPress: () =>
-              navigation.navigate("ArchiveNav", { screen: "RecordDetail" }),
+              navigation.navigate("Tabs", { screen: "TabArchive" }),
           },
         ]
       );

@@ -34,7 +34,12 @@ const LandAdd = ({ navigation }) => {
     onCompleted: (data) => {
       setIsUploading(false);
       if (data.createLand.ok) {
-        Alert.alert("Success", `Land ${landname} created successfully`);
+        Alert.alert("Success", `Land ${landname} created successfully`, [
+          {
+            text: "Go to previous page",
+            onPress: () => navigation.navigate("Land", { screen: "Land" }),
+          },
+        ]);
         // Optionally navigate back or to another screen
       } else {
         Alert.alert("Error", data.createLand.error);

@@ -3,6 +3,7 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
+  Text,
   TouchableOpacity,
 } from "react-native";
 import styled from "styled-components/native";
@@ -104,7 +105,7 @@ const UserList = ({
             style={{ marginBottom: "80%" }}
           />
         </LoadingContainer>
-      ) : (
+      ) : data.length !== 0 ? (
         <FlatList
           data={data}
           keyExtractor={(item) => item.id}
@@ -113,6 +114,18 @@ const UserList = ({
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }
         />
+      ) : (
+        <LoadingContainer>
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              fontFamily: "JostMedium",
+            }}
+          >
+            Nothing to show
+          </Text>
+        </LoadingContainer>
       )}
     </Container>
   );

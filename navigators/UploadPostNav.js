@@ -87,19 +87,6 @@ const UploadPostNav = () => {
         name="Preview"
         options={({ navigation }) => ({
           headerTitle: "New post",
-          headerRight: () => (
-            <TouchableOpacity>
-              <Text
-                style={{
-                  color: "#FFEE74",
-                  marginRight: 16,
-                  fontFamily: "JostSemiBold",
-                }}
-              >
-                Upload
-              </Text>
-            </TouchableOpacity>
-          ),
         })}
         component={Preview}
       />
