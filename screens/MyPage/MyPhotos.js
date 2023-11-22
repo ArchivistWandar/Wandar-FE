@@ -86,7 +86,10 @@ const MyPhotos = () => {
       }
       return photos;
     })
-    .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    .sort(
+      (a, b) =>
+        new Date(parseInt(b.createdAt)) - new Date(parseInt(a.createdAt))
+    );
 
   const renderItem = ({ item }) => (
     <Image

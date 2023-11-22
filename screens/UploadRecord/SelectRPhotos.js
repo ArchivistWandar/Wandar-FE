@@ -23,11 +23,8 @@ const SelectRPhotos = ({ navigation }) => {
   };
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      pickImage();
-    });
-
-    return unsubscribe;
+    // Directly call pickImage when the component mounts
+    pickImage();
   }, [navigation]);
 
   return (

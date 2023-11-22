@@ -235,14 +235,14 @@ const ButtonsContainer = styled.View`
   flex-direction: row;
 `;
 
-const RequestButtonContainer = styled.TouchableOpacity`
+export const RequestButtonContainer = styled.TouchableOpacity`
   background-color: ${(props) => props.color || "white"};
   padding: 4px 10px;
   border-radius: 5px;
   margin-left: 10px;
 `;
 
-const RequestButton = styled.Text`
+export const RequestButton = styled.Text`
   font-family: "JostMedium";
   color: white;
   font-size: 12px;

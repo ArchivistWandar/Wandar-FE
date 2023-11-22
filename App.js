@@ -3,6 +3,7 @@ import { isLoaded, useFonts } from "expo-font";
 import LoggedOutNav from "./navigators/LoggedOutNav";
 import { NavigationContainer } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
+import * as ImagePicker from "expo-image-picker";
 import LoggedInNav from "./navigators/LoggedInNav";
 import { LogBox } from "react-native";
 import { ApolloProvider, useReactiveVar } from "@apollo/client";

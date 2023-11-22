@@ -32,9 +32,9 @@ const DELETE_POST_MUTATION = gql`
 const GET_POST_QUERY = gql`
   query GetPost($getPostId: Int!) {
     getPost(id: $getPostId) {
-      photos {
-        photo
-      }
+      # photos {
+      #   photo
+      # }
       land {
         landname
       }
@@ -53,6 +53,7 @@ export default function PostDetail({ route, navigation }) {
   const { loading, error, data } = useQuery(GET_POST_QUERY, {
     variables: { getPostId: route.params.id },
   });
+
   // DeleteRecord
   const [deletePostMutation] = useMutation(DELETE_POST_MUTATION, {
     variables: { deletePostId: route.params.id },
@@ -84,7 +85,8 @@ export default function PostDetail({ route, navigation }) {
 
   useEffect(() => {
     if (data && data.getPost) {
-      const { photos, land } = data.getPost;
+      const { land } = data.getPost;
+      const { photos } = route.params;
       navigation.setOptions({
         headerTitle: () => (
           <Text
