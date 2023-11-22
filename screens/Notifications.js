@@ -213,7 +213,6 @@ const Notifications = ({ navigation }) => {
               margin: 5,
               alignItems: "center",
               marginLeft: 10,
-              marginRight: 30,
             }}
           >
             <Ionicons name="person-add" size={24} color={"white"} />
@@ -279,7 +278,6 @@ const Notifications = ({ navigation }) => {
                 margin: 5,
                 alignItems: "center",
                 marginLeft: 10,
-                marginRight: 30,
               }}
             >
               <Ionicons name="person-add" size={24} color={"white"} />

@@ -4,6 +4,7 @@ import {
   ActivityIndicator,
   FlatList,
   RefreshControl,
+  ScrollView,
   Text,
 } from "react-native";
 import styled from "styled-components/native";
