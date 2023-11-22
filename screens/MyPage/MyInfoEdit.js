@@ -3,12 +3,7 @@ import * as ImagePicker from "expo-image-picker";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import AuthButton from "../../components/auth/AuthButton";
-import {
-  ActivityIndicator,
-  ScrollView,
-  TouchableOpacity,
-  View,
-} from "react-native";
+import { ActivityIndicator, ScrollView, TouchableOpacity } from "react-native";
 import ProfileEditContainer from "../../components/ProfileEditContainer";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";

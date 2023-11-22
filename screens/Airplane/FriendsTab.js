@@ -1,10 +1,14 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Container, LoadingContainer, formatDate } from "../components/Shared";
-import UserList from "../components/friendsNav/UserList";
+import {
+  Container,
+  LoadingContainer,
+  formatDate,
+} from "../../components/Shared";
+import UserList from "../../components/friendsNav/UserList";
 import { gql, useQuery } from "@apollo/client";
-import { currentUsernameVar } from "../apollo";
-import { ActivityIndicator } from "react-native";
-import { RequestProcessedContext } from "../components/RequestProcessedProvider";
+import { currentUsernameVar } from "../../apollo";
+import { ActivityIndicator, Text } from "react-native";
+import { RequestProcessedContext } from "../../components/RequestProcessedProvider";
 
 export const SEE_FRIENDS = gql`
   query SeeFriends($username: String!) {
@@ -57,7 +61,7 @@ const FriendsTab = () => {
       username: friend.username,
       avatar: friend.avatar
         ? { uri: friend.avatar }
-        : require("../assets/images/profile8.png"),
+        : require("../../assets/images/profile8.png"),
       lastUpdate: formatDate(friend.lastUpdate),
     };
   });
@@ -66,6 +70,21 @@ const FriendsTab = () => {
     return (
       <LoadingContainer>
         <ActivityIndicator size="small" color="white" />
+      </LoadingContainer>
+    );
+  }
+  if (error) {
+    return (
+      <LoadingContainer>
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontFamily: "JostMedium",
+          }}
+        >
+          Error! {error.message}
+        </Text>
       </LoadingContainer>
     );
   }

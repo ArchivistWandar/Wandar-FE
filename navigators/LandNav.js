@@ -1,11 +1,11 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import Land from "../screens/Land";
-import FriendSelect from "../screens/FriendSelect";
+import FriendSelect from "../screens/Airplane/FriendSelect";
 import LandDetail from "../screens/LandDetail";
 import LandArchiveNav from "./LandArchiveNav";
 import LandAdd from "../screens/LandAdd";
-import FriendDelete from "../screens/FriendDelete";
+import FriendDelete from "../screens/Airplane/FriendDelete";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native";
 
@@ -55,7 +55,7 @@ const LandNav = () => {
         options={{
           headerTransparent: true,
           headerTitle: "Friends",
-          headerTitleStyle: { fontFamily: "JostMedium" },
+          headerTitleStyle: { fontFamily: "JostSemiBold", fontSize: 16 },
         }}
         component={FriendDelete}
       />

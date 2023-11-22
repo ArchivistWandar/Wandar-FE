@@ -6,23 +6,28 @@ import {
   Image,
   View,
   RefreshControl,
+  Alert,
 } from "react-native";
 import { gql, useQuery, useMutation } from "@apollo/client";
-import { Container, LoadingContainer, formatDate } from "../components/Shared";
+import {
+  Container,
+  LoadingContainer,
+  formatDate,
+} from "../../components/Shared";
 import { SEE_FRIENDS } from "./FriendsTab";
-import { currentUsernameVar } from "../apollo";
-import { RequestButton, RequestButtonContainer } from "./FollowRequests";
+import { currentUsernameVar } from "../../apollo";
+import { RequestButton, RequestButtonContainer } from "../FollowRequests";
 
-const UNFOLLOW_USER = gql`
-  mutation UnfollowUser($username: String!) {
-    unfollowUser(username: $username) {
+const DELETE_FRIEND = gql`
+  mutation DeleteFriend($username: String!) {
+    deleteFriend(username: $username) {
       ok
       error
     }
   }
 `;
 
-const FriendItem = ({ friend, onUnfollow }) => {
+const FriendItem = ({ friend, onUnfollow, isUnfollowing }) => {
   return (
     <View
       style={{
@@ -43,8 +48,13 @@ const FriendItem = ({ friend, onUnfollow }) => {
       <RequestButtonContainer
         color="rgba(255,255,255,0.1)"
         onPress={() => onUnfollow(friend.username)}
+        disabled={isUnfollowing}
       >
-        <RequestButton>Unfollow</RequestButton>
+        {isUnfollowing ? (
+          <ActivityIndicator size="small" color="white" />
+        ) : (
+          <RequestButton>Unfollow</RequestButton>
+        )}
       </RequestButtonContainer>
     </View>
   );
@@ -55,11 +65,15 @@ const FriendDelete = () => {
   const { data, loading, refetch } = useQuery(SEE_FRIENDS, {
     variables: { username: currentUsernameVar() },
   });
+  const [unfollowingUsername, setUnfollowingUsername] = useState(null);
 
-  const [unfollowUser] = useMutation(UNFOLLOW_USER, {
+  const [unfollowUser] = useMutation(DELETE_FRIEND, {
     onCompleted: () => {
-      // Refetch the list after a successful unfollow
       refetch();
+      setUnfollowingUsername(null); // Reset after unfollowing
+    },
+    onError: () => {
+      setUnfollowingUsername(null); // Reset in case of error
     },
   });
 
@@ -70,7 +84,23 @@ const FriendDelete = () => {
   };
 
   const handleUnfollow = (username) => {
-    unfollowUser({ variables: { username } });
+    Alert.alert(
+      `Unfollow ${username}`,
+      `Are you sure you want to unfollow ${username}?`,
+      [
+        {
+          text: "Cancel",
+          style: "cancel",
+        },
+        {
+          text: "Unfollow",
+          onPress: () => {
+            setUnfollowingUsername(username); // Set the currently unfollowing username
+            unfollowUser({ variables: { username } });
+          },
+        },
+      ]
+    );
   };
 
   if (loading) {
@@ -102,7 +132,7 @@ const FriendDelete = () => {
     username: friend.username,
     avatar: friend.avatar
       ? { uri: friend.avatar }
-      : require("../assets/images/profile8.png"),
+      : require("../../assets/images/profile8.png"),
     lastUpdate: formatDate(friend.lastUpdate),
   }));
 
@@ -113,7 +143,11 @@ const FriendDelete = () => {
         data={transformedData}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
-          <FriendItem friend={item} onUnfollow={handleUnfollow} />
+          <FriendItem
+            friend={item}
+            onUnfollow={handleUnfollow}
+            isUnfollowing={item.username === unfollowingUsername}
+          />
         )}
         refreshControl={
           <RefreshControl
