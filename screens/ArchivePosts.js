@@ -5,12 +5,14 @@ import {
   RefreshControl,
   Text,
   TouchableOpacity,
+  View,
 } from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import { Container, LoadingContainer, formatDate } from "../components/Shared";
+import { Container, LoadingContainer } from "../components/Shared";
 import { gql, useQuery } from "@apollo/client";
 import { currentUsernameVar } from "../apollo";
+import { Skeleton } from "moti/skeleton";
 
 const SEE_POSTS_QUERY = gql`
   query SeePosts($username: String!) {
@@ -39,6 +41,7 @@ const ArchivePosts = ({ navigation }) => {
     variables: { username: currentUsernameVar() }, // Replace with the appropriate username
   });
   const [refreshing, setRefreshing] = useState(false);
+  const [loadingImages, setLoadingImages] = useState({});
 
   const onRefresh = async () => {
     setRefreshing(true);
@@ -46,8 +49,8 @@ const ArchivePosts = ({ navigation }) => {
     setRefreshing(false);
   };
 
-  const goToPostDetail = (id) => {
-    navigation.navigate("PostDetail", { id });
+  const goToPostDetail = (id, photos) => {
+    navigation.navigate("PostDetail", { id, photos });
   };
 
   const sortedPosts = data?.seePosts
@@ -57,11 +60,31 @@ const ArchivePosts = ({ navigation }) => {
     }))
     .sort((a, b) => b.createdAtTimestamp - a.createdAtTimestamp); // Sort by createdAt in descending order
 
+  const handleImageLoadStart = (id) => {
+    setLoadingImages((prev) => ({ ...prev, [id]: true }));
+  };
+
+  const handleImageLoadEnd = (id) => {
+    setLoadingImages((prev) => ({ ...prev, [id]: false }));
+  };
+
   const renderItem = ({ item }) => {
+    const isImageLoading = loadingImages[item.id];
+
     return (
-      <TouchableOpacity onPress={() => goToPostDetail(item.id)}>
+      <TouchableOpacity onPress={() => goToPostDetail(item.id, item.photos)}>
         <PostItem>
-          <PostImage source={{ uri: item.photos[0].photo }} />
+          <View style={{ position: "relative", marginRight: "6%" }}>
+            {isImageLoading && (
+              <Skeleton colorMode="dark" width={90} height={90} radius={10} />
+            )}
+            <PostImage
+              source={{ uri: item.photos[0].photo }}
+              style={isImageLoading ? { position: "absolute", opacity: 0 } : {}}
+              onLoadStart={() => handleImageLoadStart(item.id)}
+              onLoadEnd={() => handleImageLoadEnd(item.id)}
+            />
+          </View>
           <PostDetails>
             <LandName>{item.land.landname}</LandName>
             <DateAndPrivacy>
@@ -145,7 +168,6 @@ const PostImage = styled.Image`
   width: 90px;
   height: 90px;
   border-radius: 10px;
-  margin-right: 15px;
 `;
 
 const PostDetails = styled.View`

@@ -102,7 +102,7 @@ const UserList = ({
           <ActivityIndicator
             size="small"
             color="white"
-            style={{ marginBottom: "80%" }}
+            style={{ marginBottom: "60%" }}
           />
         </LoadingContainer>
       ) : data.length !== 0 ? (
@@ -121,6 +121,7 @@ const UserList = ({
               color: "white",
               textAlign: "center",
               fontFamily: "JostMedium",
+              marginBottom: "60%",
             }}
           >
             Nothing to show

@@ -5,6 +5,9 @@ import FriendSelect from "../screens/FriendSelect";
 import LandDetail from "../screens/LandDetail";
 import LandArchiveNav from "./LandArchiveNav";
 import LandAdd from "../screens/LandAdd";
+import FriendDelete from "../screens/FriendDelete";
+import { Ionicons } from "@expo/vector-icons";
+import { TouchableOpacity } from "react-native";
 
 const Stack = createStackNavigator();
 
@@ -27,8 +30,34 @@ const LandNav = () => {
       />
       <Stack.Screen
         name="FriendSelect"
-        options={{ headerTransparent: true, headerTitle: "" }}
+        options={({ navigation }) => ({
+          headerTransparent: true,
+          headerTitle: "",
+          headerRight: () => (
+            <TouchableOpacity
+              onPress={() => {
+                navigation.navigate("FriendDelete");
+              }}
+              style={{ marginRight: "6%" }}
+            >
+              <Ionicons
+                name="person-remove-outline"
+                color={"white"}
+                size={24}
+              />
+            </TouchableOpacity>
+          ),
+        })}
         component={FriendSelect}
+      />
+      <Stack.Screen
+        name="FriendDelete"
+        options={{
+          headerTransparent: true,
+          headerTitle: "Friends",
+          headerTitleStyle: { fontFamily: "JostMedium" },
+        }}
+        component={FriendDelete}
       />
       <Stack.Screen
         name="LandAdd"
