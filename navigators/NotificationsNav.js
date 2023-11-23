@@ -3,6 +3,8 @@ import { createStackNavigator } from "@react-navigation/stack";
 import { colors } from "../colors";
 import Notifications from "../screens/Notifications";
 import FollowRequests from "../screens/FollowRequests";
+import PostDetail from "../screens/PostDetail";
+import RecordDetail from "../screens/RecordDetail";
 
 const Stack = createStackNavigator();
 
@@ -36,6 +38,22 @@ const NotificationsNav = () => {
           headerTitle: "Follow requests",
         }}
         component={FollowRequests}
+      />
+      <Stack.Screen
+        name="PostDetail"
+        options={{
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        component={PostDetail}
+      />
+      <Stack.Screen
+        name="RecordDetail"
+        options={{
+          headerTransparent: true,
+          headerTitle: "",
+        }}
+        component={RecordDetail}
       />
     </Stack.Navigator>
   );

@@ -21,6 +21,7 @@ const GET_RECORD_QUERY = gql`
   query GetRecord($getRecordId: Int!) {
     getRecord(id: $getRecordId) {
       title
+      isMine
       theme
       createdAt
       photos {
@@ -88,47 +89,51 @@ const RecordDetail = ({ navigation, route }) => {
   }, [data]);
 
   useEffect(() => {
-    navigation.setOptions({
-      headerTintColor: Platform.OS === "ios" ? "white" : theme?.textColor,
-      headerTitle: () => (
-        <Text
-          style={{
-            color: "white",
-            fontFamily: "JostSemiBold",
-            fontSize: 15,
-          }}
-        >
-          {title}
-        </Text>
-      ),
-      headerBackground: () =>
-        Platform.OS === "ios" ? (
-          <BlurView
-            tint="dark"
-            intensity={50}
-            style={StyleSheet.absoluteFill}
-          />
-        ) : (
-          <View
+    if (data?.getRecord) {
+      const { isMine } = data.getRecord;
+      navigation.setOptions({
+        headerTintColor: Platform.OS === "ios" ? "white" : theme?.textColor,
+        headerTitle: () => (
+          <Text
             style={{
-              backgroundColor: theme
-                ? theme.backgroundColor
-                : "rgba(0, 0, 0, 0.5)",
+              color: "white",
+              fontFamily: "JostSemiBold",
+              fontSize: 15,
             }}
-          />
+          >
+            {title}
+          </Text>
         ),
-      headerRight: () => (
-        <TouchableOpacity onPress={handleDelete}>
-          <Ionicons
-            name="ellipsis-vertical"
-            size={20}
-            color="white"
-            style={{ marginRight: "5%" }}
-          />
-        </TouchableOpacity>
-      ),
-    });
-  }, [navigation, theme, title, handleDelete]);
+        headerBackground: () =>
+          Platform.OS === "ios" ? (
+            <BlurView
+              tint="dark"
+              intensity={50}
+              style={StyleSheet.absoluteFill}
+            />
+          ) : (
+            <View
+              style={{
+                backgroundColor: theme
+                  ? theme.backgroundColor
+                  : "rgba(0, 0, 0, 0.5)",
+              }}
+            />
+          ),
+        headerRight: () =>
+          isMine ? (
+            <TouchableOpacity onPress={handleDelete}>
+              <Ionicons
+                name="ellipsis-vertical"
+                size={20}
+                color="white"
+                style={{ marginRight: "5%" }}
+              />
+            </TouchableOpacity>
+          ) : null,
+      });
+    }
+  }, [navigation, theme, title, handleDelete, data?.getRecord]);
 
   if (loading) {
     return (

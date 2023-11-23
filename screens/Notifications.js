@@ -27,6 +27,7 @@ const SEE_NOTIFICATIONS_QUERY = gql`
           avatar
         }
         createdAt
+        id
       }
       lands {
         user {
@@ -45,6 +46,7 @@ const SEE_NOTIFICATIONS_QUERY = gql`
           avatar
         }
         createdAt
+        id
       }
     }
   }
@@ -82,6 +84,14 @@ const Notifications = ({ navigation }) => {
     setAvatarLoading((prev) => ({ ...prev, [id]: false }));
   };
 
+  const navigateToPostDetail = (postId) => {
+    navigation.navigate("PostDetail", { id: postId });
+  };
+
+  const navigateToRecordDetail = (recordId) => {
+    navigation.navigate("RecordDetail", { id: recordId });
+  };
+
   const renderItem = ({ item }) => {
     const { type, content } = item;
     const imageId = `${type}-${content.createdAt}`; // Unique ID for each image
@@ -90,7 +100,7 @@ const Notifications = ({ navigation }) => {
     switch (type) {
       case "posts":
         return (
-          <NotificationItem>
+          <NotificationItem onPress={() => navigateToPostDetail(content.id)}>
             {avatarLoading[avatarId] && (
               <Skeleton colorMode="dark" width={50} height={50} radius={25} />
             )}
@@ -128,7 +138,7 @@ const Notifications = ({ navigation }) => {
         );
       case "records":
         return (
-          <NotificationItem>
+          <NotificationItem onPress={() => navigateToRecordDetail(content.id)}>
             {avatarLoading[avatarId] && (
               <Skeleton colorMode="dark" width={50} height={50} radius={25} />
             )}

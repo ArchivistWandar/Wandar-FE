@@ -99,22 +99,24 @@ export default function PostDetail({ route, navigation }) {
           </Text>
         ),
         headerRight: () =>
-          isDeleting ? (
-            <ActivityIndicator
-              size="small"
-              color="white"
-              style={{ marginRight: "10%" }}
-            />
-          ) : (
-            <TouchableOpacity onPress={handleDelete}>
-              <Ionicons
-                name="ellipsis-vertical"
-                size={20}
+          isMine ? ( // Conditional rendering based on isMine
+            isDeleting ? (
+              <ActivityIndicator
+                size="small"
                 color="white"
-                style={{ marginRight: "5%" }}
+                style={{ marginRight: "10%" }}
               />
-            </TouchableOpacity>
-          ),
+            ) : (
+              <TouchableOpacity onPress={handleDelete}>
+                <Ionicons
+                  name="ellipsis-vertical"
+                  size={20}
+                  color="white"
+                  style={{ marginRight: "5%" }}
+                />
+              </TouchableOpacity>
+            )
+          ) : null,
       });
       Promise.all(
         photos.map(
@@ -142,7 +144,7 @@ export default function PostDetail({ route, navigation }) {
       </LoadingContainer>
     );
 
-  const { caption, isPublic, title } = data.getPost;
+  const { caption, isPublic, title, isMine } = data.getPost;
 
   return (
     <Container>
