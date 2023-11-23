@@ -53,18 +53,18 @@ const ImageSlideUpPanel = () => {
 
   const images = [
     // 이미지 배열
-    { id: 1, asset: require('../assets/barImage/bell.png') },
-    { id: 2, asset: require('../assets/barImage/plate.png') },
-    { id: 3, asset: require('../assets/barImage/table.png') },
-    { id: 4, asset: require('../assets/barImage/wreath.png') },
-    { id: 5, asset: require('../assets/barImage/bell.png') },
-    { id: 6, asset: require('../assets/barImage/plate.png') },
-    { id: 7, asset: require('../assets/barImage/table.png') },
-    { id: 8, asset: require('../assets/barImage/wreath.png') },
-    { id: 9, asset: require('../assets/barImage/bell.png') },
-    { id: 10, asset: require('../assets/barImage/plate.png') },
-    { id: 11, asset: require('../assets/barImage/table.png') },
-    { id: 12, asset: require('../assets/barImage/wreath.png') }
+    { id: 1, asset: require('../assets/barImage/bell.png'), objName: "bell" },
+    { id: 2, asset: require('../assets/barImage/plate.png'), objName: "plate" },
+    { id: 3, asset: require('../assets/barImage/table.png'), objName: "table" },
+    { id: 4, asset: require('../assets/barImage/wreath.png'), objName: "wreath" },
+    { id: 5, asset: require('../assets/barImage/bell.png'), objName: "bell" },
+    { id: 6, asset: require('../assets/barImage/plate.png'), objName: "plate" },
+    { id: 7, asset: require('../assets/barImage/table.png'), objName: "table" },
+    { id: 8, asset: require('../assets/barImage/wreath.png'), objName: "wreath" },
+    { id: 9, asset: require('../assets/barImage/bell.png'), objName: "bell" },
+    { id: 10, asset: require('../assets/barImage/plate.png'), objName: "plate" },
+    { id: 11, asset: require('../assets/barImage/table.png'), objName: "table" },
+    { id: 12, asset: require('../assets/barImage/wreath.png'), objName: "wreath" }
 
   ];
   images.forEach((image) => {

@@ -6,6 +6,7 @@ import TempLand from "../components/TempLand";
 import Bell from "../Bell-b-christmas.jsx";
 import ImageSlideUpPanel from "../components/SlideUpModal.js";
 import { useRoute } from '@react-navigation/native';
+import SelectedImageComponent from "../components/object.js";
 
 const Land = ({ navigation }) => {
   const route = useRoute();
@@ -23,7 +24,7 @@ const Land = ({ navigation }) => {
     if (route.params?.selectedImage) {
       // 전달된 selectedImage 파라미터가 있으면 상태 업데이트
       setSelectedImage(route.params.selectedImage);
-      console.log(selectedImage)
+
     }
   }, [route.params]);
 
