@@ -29,7 +29,7 @@ export const logUserOut = async (client) => {
 };
 
 const uploadHttpLink = createUploadLink({
-  uri: "https://able-caryn-wandar-archivist.koyeb.app/graphql",
+  uri: process.env.HOST_URI,
   headers: {
     "apollo-require-preflight": true,
   },
