@@ -212,6 +212,7 @@ const NotificationBox = styled.TouchableOpacity`
 
 const LeftContent = styled.View`
   margin-left: 10px;
+  justify-content: center;
 `;
 const PostImage = styled.Image`
   width: 40px;
