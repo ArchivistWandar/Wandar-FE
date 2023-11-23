@@ -50,3 +50,4 @@ In the project directory, you can run:
   - [x] Edit Profile Image
 - [ ] 10. Connect to Backend
   - [x] Set-Up
+- [x] 11. Handle apollo.js
