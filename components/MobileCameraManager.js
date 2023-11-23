@@ -46,61 +46,61 @@ class MobileCameraManager {
       console.log("touch event detected");
 
       const touch = event.nativeEvent.touches[0];
-      const touchX = (touch.pageX / window.innerWidth) * 2 - 1;
-      const touchY = -(touch.pageY / window.innerHeight) * 2 + 1;
+      // const touchX = (touch.pageX / window.innerWidth) * 2 - 1;
+      // const touchY = -(touch.pageY / window.innerHeight) * 2 + 1;
 
-      const cameraHalfWidth = (this.camera.right - this.camera.left) / 2;
-      const cameraHalfHeight = (this.camera.top - this.camera.bottom) / 2;
+      // const cameraHalfWidth = (this.camera.right - this.camera.left) / 2;
+      // const cameraHalfHeight = (this.camera.top - this.camera.bottom) / 2;
 
-      const worldX = touchX * cameraHalfWidth;
-      const worldZ = touchY * cameraHalfHeight;
+      // const worldX = touchX * cameraHalfWidth;
+      // const worldZ = touchY * cameraHalfHeight;
 
-      const worldPosition = new THREE.Vector3(worldX, 0, worldZ);
+      // const worldPosition = new THREE.Vector3(worldX, 0, worldZ);
 
-      console.log("touch x", touchX, "touch y", touchY);
-      console.log("world x", worldX, "world z", worldZ);
-      console.log(
-        "worldx = touchx * ",
-        this.camera.right - this.camera.left,
-        " / 2 + ",
-        this.camera.position.x
-      );
-      console.log(
-        "worldz = touchy * ",
-        this.camera.top - this.camera.bottom,
-        " / 2 + ",
-        this.camera.position.z
-      );
-      console.log("camera position", this.camera.position);
+      // console.log("touch x", touchX, "touch y", touchY);
+      // console.log("world x", worldX, "world z", worldZ);
+      // console.log(
+      //   "worldx = touchx * ",
+      //   this.camera.right - this.camera.left,
+      //   " / 2 + ",
+      //   this.camera.position.x
+      // );
+      // console.log(
+      //   "worldz = touchy * ",
+      //   this.camera.top - this.camera.bottom,
+      //   " / 2 + ",
+      //   this.camera.position.z
+      // );
+      // console.log("camera position", this.camera.position);
 
       // 가장 가까운 모델 찾기
-      let closestModel = null;
-      let minDistance = Infinity;
+      // let closestModel = null;
+      // let minDistance = Infinity;
 
-      this.scene.children.forEach((model, index) => {
-        // console.log("model type", model.type)
-        if (model.type === "Group") {
-          const distance = model.position.distanceTo(worldPosition);
-          console.log("distance", distance);
-          console.log("worldPosition:", worldPosition);
-          console.log("modelPosition:", model.position);
-          console.log("\n");
-          console.log("\n");
-          console.log("\n");
-          console.log("\n");
-          if (distance < minDistance) {
-            closestModel = model;
-            minDistance = distance;
-          }
-        }
-      });
+      // this.scene.children.forEach((model, index) => {
+      //   // console.log("model type", model.type)
+      //   if (model.type === "Group") {
+      //     const distance = model.position.distanceTo(worldPosition);
+      //     // console.log("distance", distance);
+      //     // console.log("worldPosition:", worldPosition);
+      //     // console.log("modelPosition:", model.position);
+      //     // console.log("\n");
+      //     // console.log("\n");
+      //     // console.log("\n");
+      //     // console.log("\n");
+      //     if (distance < minDistance) {
+      //       closestModel = model;
+      //       minDistance = distance;
+      //     }
+      //   }
+      // });
 
-      // 임계값 확인 및 선택
-      if (minDistance < THRESHOLD) {
-        this.selectedModel = closestModel;
-      } else {
-        this.selectedModel = null;
-      }
+      // // 임계값 확인 및 선택
+      // if (minDistance < THRESHOLD) {
+      //   this.selectedModel = closestModel;
+      // } else {
+      //   this.selectedModel = null;
+      // }
 
       this.initialTouch = { x: touch.pageX, y: touch.pageY };
     } else if (event.nativeEvent.touches.length === 2) {

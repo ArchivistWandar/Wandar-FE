@@ -1,3 +1,4 @@
+// TempLand.js
 import React, { useEffect, useRef, useState } from "react";
 import { GLView } from "expo-gl";
 import { Renderer } from "expo-three";
@@ -16,13 +17,7 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { Asset } from "expo-asset";
 import MobileCameraManager from "./MobileCameraManager.js";
 import SlideUpModal from "./SlideUpModal";
-import {
-  Image,
-  View,
-  TouchableOpacity,
-  Text,
-  PanResponder,
-} from "react-native";
+import { Image, View, TouchableOpacity, Text, PanResponder } from "react-native";
 import * as THREE from "three";
 import assetsMap from "../AssetsMap.js";
 
@@ -41,55 +36,57 @@ export default function TempLand({ selectedImage }) {
   const modelOffset = 5; // 모델 간의 간격
 
   const sceneRef = useRef(null);
-  const textureRef = useRef();
+  // const textureRef = useRef();
   const cameraManagerRef = useRef(null);
   const cameraControlsRef = useRef(null);
 
   const raycaster = useRef(new THREE.Raycaster());
   const touchPosition = useRef(new THREE.Vector2());
 
+
   async function loadTextures() {
-    const textureLoader = new TextureLoader();
+    const textureLoader = new THREE.TextureLoader();
     let albedo, emissive;
 
-    try {
-      albedo = await new Promise((resolve, reject) => {
-        textureLoader.load(
-          Asset.fromModule(require("../assets/glbTexture/universal.png")).uri,
-          resolve,
-          undefined,
-          reject
-        );
-      });
+    // try {
+    //   albedo = await new Promise((resolve, reject) => {
+    //     textureLoader.load(
+    //       Asset.fromModule(require("../assets/glbTexture/universal.png")).uri,
+    //       resolve,
+    //       undefined,
+    //       reject
+    //     );
+    //   });
 
-      textureLoader.load("path/to/your/image.jpg", (texture) => {
-        textureRef.current = texture;
+    //   // textureLoader.load('path/to/your/image.jpg', (texture) => {
+    //   //   textureRef.current = texture;
 
-        // 씬이 이미 생성된 경우 텍스처 적용
-        if (sceneRef.current) {
-          sceneRef.current.background = texture;
-        }
-      });
+    //   //   // 씬이 이미 생성된 경우 텍스처 적용
+    //   //   if (sceneRef.current) {
+    //   //     sceneRef.current.background = texture;
+    //   //   }
+    //   // });
 
-      emissive = await new Promise((resolve, reject) => {
-        textureLoader.load(
-          Asset.fromModule(require("../assets/glbTexture/emission.png")).uri,
-          resolve,
-          undefined,
-          reject
-        );
-      });
-    } catch (error) {
-      console.error("Error loading textures:", error);
-    }
+    //   emissive = await new Promise((resolve, reject) => {
+    //     textureLoader.load(
+    //       Asset.fromModule(require("../assets/glbTexture/emission.png")).uri,
+    //       resolve,
+    //       undefined,
+    //       reject
+    //     );
+    //   });
+    // } catch (error) {
+    //   console.error("Error loading textures:", error);
+    // }
 
-    setTextures({ albedo, emissive });
+    // setTextures({ albedo, emissive });
+    setTexturesLoaded(true);
   }
 
   // 모델 로드 함수
   async function loadModel() {
     try {
-      await Asset.loadAsync(require("../assets/glbAsset2/table.glb"));
+      await Asset.loadAsync(require("../assets/glbAsset2/mapbase2.glb"));
       setModelLoaded(true);
     } catch (error) {
       console.error("Error loading model:", error);
@@ -136,7 +133,7 @@ export default function TempLand({ selectedImage }) {
         );
       }
     });
-  }, [modelLoaded, textures]);
+  }, [modelLoaded, texturesLoaded]);
 
   useEffect(() => {
     // 모델 로딩 함수 정의
@@ -147,7 +144,9 @@ export default function TempLand({ selectedImage }) {
         }
 
         const modelName = selectedImage.objName;
+        console.log(selectedImage.objName)
         const modelPath = assetsMap[modelName];
+        console.log(modelPath)
         const gltfLoader = new GLTFLoader();
 
         gltfLoader.load(
@@ -160,40 +159,40 @@ export default function TempLand({ selectedImage }) {
     };
 
     // 모델 로딩 후 scene에 추가
-    loadModel()
-      .then((gltf) => {
-        if (sceneRef.current) {
-          const object = gltf.scene;
-          object.traverse((child) => {
-            if (child.isMesh) {
-              child.material.map = textures.albedo;
-              child.material.emissiveMap = textures.emissive;
-              child.material.emissive = new THREE.Color(0xffffff);
-              child.material.emissiveIntensity = 1;
-              child.material.needsUpdate = true;
-            }
-          });
+    loadModel().then(gltf => {
+      if (sceneRef.current) {
+        const object = gltf.scene;
+        console.log(object)
+        object.traverse((child) => {
+          if (child.isMesh) {
+            // child.material.map = textures.albedo;
+            // child.material.emissiveMap = textures.emissive;
+            // child.material.emissive = new THREE.Color(0xffffff);
+            // child.material.emissiveIntensity = 1;
+            child.material.needsUpdate = true;
+          }
+        });
 
-          object.scale.set(10, 10, 10);
-          object.position.set(
-            modelPosition.x,
-            modelPosition.y,
-            modelPosition.z
-          );
-          sceneRef.current.add(object);
+        object.scale.set(10, 10, 10);
+        object.position.set(modelPosition.x, modelPosition.y, modelPosition.z);
+        sceneRef.current.add(object);
 
-          // 다음 모델 위치 업데이트
-          setModelPosition((prevPos) => ({
-            x: prevPos.x,
-            y: prevPos.y,
-            z: prevPos.z + modelOffset,
-          }));
-        }
-      })
-      .catch((error) => {
-        console.error("Error loading model:", error);
-      });
+        // 다음 모델 위치 업데이트
+        setModelPosition(prevPos => ({
+          x: prevPos.x,
+          y: prevPos.y,
+          z: prevPos.z + modelOffset,
+        }));
+      }
+    }).catch(error => {
+      console.error("Error loading model:", error);
+    });
+
   }, [selectedImage]); // Dependency array includes selectedImage
+
+
+
+
 
   useEffect(() => {
     console.log("Model loaded state:", modelLoaded);
@@ -258,27 +257,27 @@ export default function TempLand({ selectedImage }) {
     })
   ).current;
 
+
+
   const onContextCreate = async (gl) => {
     const { drawingBufferWidth: width, drawingBufferHeight: height } = gl;
     const aspect = width / height;
     const sceneColor = 0x6ad6f0;
 
-    const renderer = new Renderer({ gl });
+    const renderer = new Renderer({ gl, alpha: true });
     renderer.setSize(width, height);
-    renderer.setClearColor(sceneColor);
+    renderer.setClearColor(0x000000, 0);
 
-    if (!renderer.extensions.get("EXT_color_buffer_float")) {
-      console.warn(
-        "EXT_color_buffer_float not supported. Fallback to alternative methods."
-      );
+    if (!renderer.extensions.get('EXT_color_buffer_float')) {
+      console.warn('EXT_color_buffer_float not supported. Fallback to alternative methods.');
       // 대체 렌더링 방법이나 기능 사용
     }
 
     const scene = new Scene();
     sceneRef.current = scene;
-    if (textureRef.current) {
-      sceneRef.current.background = textureRef.current;
-    }
+    // if (textureRef.current) {
+    //   sceneRef.current.background = textureRef.current;
+    // }
     //scene.fog = new Fog(sceneColor, 1, 10000);
     scene.add(new GridHelper(10, 10));
 
@@ -295,12 +294,8 @@ export default function TempLand({ selectedImage }) {
 
     const cameraControls = new CameraControls(orthoCamera, gl.canvas);
     cameraControlsRef.current = cameraControls;
-    cameraManagerRef.current = new MobileCameraManager(
-      orthoCamera,
-      scene,
-      frustumSize,
-      aspect
-    );
+    cameraManagerRef.current = new MobileCameraManager(orthoCamera, scene, frustumSize, aspect);
+
 
     // const ambientLight = new AmbientLight(255);
     // scene.add(ambientLight);
@@ -315,12 +310,12 @@ export default function TempLand({ selectedImage }) {
     // scene.add(spotLight);
 
     // 환경 광 (Ambient Light) 조정
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7); // 강도를 0.1로 줄임
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.8); // 강도를 0.1로 줄임
     scene.add(ambientLight);
 
     // 직접 광 (Direct Light) 조정
-    const directLight = new THREE.DirectionalLight(0x9fc5e8, 0.5); // 부드러운 색상, 강도 0.5
-    directLight.position.set(0.5, 1, 0.5).normalize();
+    const directLight = new THREE.DirectionalLight(0xfff2b2, 0.8); // 부드러운 색상, 강도 0.5
+    directLight.position.set(-3, 5,-3).normalize();
     scene.add(directLight);
 
     // 부드러운 그림자 설정
@@ -332,12 +327,16 @@ export default function TempLand({ selectedImage }) {
     // 포그 추가
     scene.fog = new THREE.FogExp2(0xffffff, 0.002); // 흰색 포그, 밀도 0.002
 
+
+
+
     console.log(modelLoaded);
     console.log(textures.albedo);
     console.log(textures.emissive);
     const direction = new THREE.Vector3();
     orthoCamera.getWorldDirection(direction);
     console.log(direction); // 카메라가 바라보는 방향
+
 
     let clock = new THREE.Clock();
     const render = () => {
@@ -369,6 +368,7 @@ export default function TempLand({ selectedImage }) {
         break;
     }
   };
+
 
   const onImageClick = () => {
     // 이미지 클릭 시 3D 오브젝트를 로드하는 로직을 구현하세요.
@@ -403,6 +403,7 @@ export default function TempLand({ selectedImage }) {
 
   return (
     <View style={{ flex: 1 }}>
+
       <GLView
         {...panResponder.panHandlers}
         onStartShouldSetResponder={() => true}
@@ -412,6 +413,7 @@ export default function TempLand({ selectedImage }) {
         style={{ flex: 1 }}
         onContextCreate={onContextCreate}
       />
+
     </View>
   );
 }
