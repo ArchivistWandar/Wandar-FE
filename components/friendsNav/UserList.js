@@ -1,23 +1,84 @@
-import React from "react";
-import { FlatList } from "react-native";
+import React, { useState } from "react";
+import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import { Container } from "../Shared";
+import { Container, LoadingContainer } from "../Shared";
+import { currentUsernameVar } from "../../apollo";
+import { Skeleton } from "moti/skeleton";
 
-const UserList = ({ data, friend }) => {
+const UserList = ({
+  data,
+  onSearch,
+  onAddFriend,
+  addingFriendUsername,
+  friend,
+  refreshing,
+  onRefresh,
+  loading,
+}) => {
+  const [loadingImages, setLoadingImages] = useState({}); // State to track loading images
+
+  const handleImageLoadStart = (id) => {
+    setLoadingImages((prev) => ({ ...prev, [id]: true }));
+  };
+
+  const handleImageLoadEnd = (id) => {
+    setLoadingImages((prev) => ({ ...prev, [id]: false }));
+  };
+
   const renderItem = ({ item }) => {
+    const isAddingThisFriend = item.username === addingFriendUsername;
+    const isFriendOrSelf =
+      item.isFriend || item.username === currentUsernameVar();
+    const isSentButPending = item.isPending === "sentButPending";
+    const isReceivedButPending = item.isPending === "receivedButPending";
+    const isImageLoading = loadingImages[item.id];
+
     return (
       <PostItem>
-        <PostImage source={item.image} />
+        {isImageLoading && (
+          <Skeleton colorMode="dark" width={70} height={70} radius={35} />
+        )}
+        <PostImage
+          source={item.avatar}
+          onLoadStart={() => handleImageLoadStart(item.id)}
+          onLoadEnd={() => handleImageLoadEnd(item.id)}
+          style={isImageLoading ? { position: "absolute", opacity: 0 } : {}}
+        />
         <PostDetails>
           <PostTitle>{item.username}'s lands</PostTitle>
-          <PostDate>Last update: {item.lastUpdate}</PostDate>
+          {item.lastUpdate ? (
+            <PostDate>Last update: {item.lastUpdate}</PostDate>
+          ) : null}
         </PostDetails>
         {friend ? (
           <Ionicons name="chevron-forward" size={24} color={"white"} />
-        ) : (
-          <Ionicons name="person-add" size={24} color={"white"} />
-        )}
+        ) : !isFriendOrSelf ? (
+          <>
+            {isAddingThisFriend ? (
+              <ActivityIndicator size="small" color="white" />
+            ) : isSentButPending ? (
+              <InfoContainer>
+                <InfoText>Pending</InfoText>
+              </InfoContainer>
+            ) : isReceivedButPending ? (
+              <InfoContainer>
+                <InfoText>Request Received</InfoText>
+              </InfoContainer>
+            ) : (
+              <TouchableOpacity onPress={() => onAddFriend(item.username)}>
+                <Ionicons name="person-add" size={24} color={"white"} />
+              </TouchableOpacity>
+            )}
+          </>
+        ) : null}
       </PostItem>
     );
   };
@@ -31,13 +92,44 @@ const UserList = ({ data, friend }) => {
           color="white"
           style={{ marginRight: 10 }}
         />
-        <SearchInput placeholder="Search..." placeholderTextColor="#777" />
+        <SearchInput
+          placeholder="Search..."
+          placeholderTextColor="#777"
+          onChangeText={onSearch}
+        />
       </SearchContainer>
-      <FlatList
-        data={data}
-        keyExtractor={(item) => item.id}
-        renderItem={renderItem}
-      />
+      {loading === true ? (
+        <LoadingContainer>
+          <ActivityIndicator
+            size="small"
+            color="white"
+            style={{ marginBottom: "60%" }}
+          />
+        </LoadingContainer>
+      ) : data.length !== 0 ? (
+        <FlatList
+          data={data}
+          keyExtractor={(item) => item.id}
+          renderItem={renderItem}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
+          ListFooterComponent={<View style={{ height: 100 }} />}
+        />
+      ) : (
+        <LoadingContainer>
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              fontFamily: "JostMedium",
+              marginBottom: "60%",
+            }}
+          >
+            Nothing to show
+          </Text>
+        </LoadingContainer>
+      )}
     </Container>
   );
 };
@@ -73,11 +165,11 @@ const PostImage = styled.Image`
   width: 70px;
   height: 70px;
   border-radius: 35px;
-  margin-right: 22px;
 `;
 
 const PostDetails = styled.View`
   flex: 1;
+  margin-left: 22px;
 `;
 
 const PostTitle = styled.Text`
@@ -92,6 +184,19 @@ const PostDate = styled.Text`
   font-size: 12px;
   color: #bbb;
   margin-bottom: 4px;
+`;
+
+const InfoContainer = styled.View`
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: 5px;
+  margin-left: 10px;
+`;
+
+const InfoText = styled.Text`
+  font-family: "JostMedium";
+  color: white;
+  font-size: 12px;
 `;
 
 export default UserList;

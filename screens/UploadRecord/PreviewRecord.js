@@ -1,5 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import {
+  Alert,
   View,
   Image,
   StyleSheet,
@@ -11,30 +12,59 @@ import {
   Platform,
   TextInput,
   Dimensions,
+  ActivityIndicator,
 } from "react-native";
 import { colors } from "../../colors";
-import styled from "styled-components/native";
 import { themes } from "../../components/RecordTheme";
 import { BlurView } from "expo-blur";
 import { Ionicons } from "@expo/vector-icons";
+import { gql, useMutation } from "@apollo/client";
+import { ReactNativeFile } from "apollo-upload-client";
+import { HeaderRightText } from "../../components/Shared";
+import { currentUsernameVar } from "../../apollo";
+import { SEE_RECORD_QUERY } from "../ArchiveRecords";
 
-const EditableHeaderTitle = ({ initialTitle, textColor }) => {
+const CREATE_RECORD_MUTATION = gql`
+  mutation CreateRecord(
+    $title: String!
+    $photos: [Upload]!
+    $theme: String!
+    $isPublic: Boolean!
+  ) {
+    createRecord(
+      title: $title
+      photos: $photos
+      theme: $theme
+      isPublic: $isPublic
+    ) {
+      ok
+    }
+  }
+`;
+
+const EditableHeaderTitle = ({ initialTitle, textColor, setTitle }) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [title, setTitle] = useState(initialTitle);
+  const [localTitle, setLocalTitle] = useState(initialTitle);
+
+  const handleEndEditing = () => {
+    if (localTitle.trim() === "") {
+      setLocalTitle(initialTitle); // Reset local title to initial title
+    } else {
+      setTitle(localTitle); // Update parent component's title state
+    }
+    setIsEditing(false);
+  };
 
   return isEditing ? (
-    <TextInput
-      value={title}
-      onChangeText={setTitle}
-      onEndEditing={() => {
-        if (title.trim() === "") {
-          setTitle(initialTitle);
-        }
-        setIsEditing(false);
-      }}
-      autoFocus
-      style={{ color: textColor, fontFamily: "JostSemiBold", fontSize: 15 }}
-    />
+    <TouchableWithoutFeedback onPress={() => Keyboard.dismiss()}>
+      <TextInput
+        value={localTitle}
+        onChangeText={setLocalTitle}
+        onEndEditing={handleEndEditing}
+        autoFocus
+        style={{ color: textColor, fontFamily: "JostSemiBold", fontSize: 15 }}
+      />
+    </TouchableWithoutFeedback>
   ) : (
     <TouchableOpacity
       onPress={() => setIsEditing(true)}
@@ -48,23 +78,17 @@ const EditableHeaderTitle = ({ initialTitle, textColor }) => {
       <Text
         style={{ color: textColor, fontFamily: "JostSemiBold", fontSize: 15 }}
       >
-        {title}
+        {localTitle}
       </Text>
       <Ionicons name="pencil" size={18} color={textColor} />
     </TouchableOpacity>
   );
 };
 
-const HeaderRightText = styled.Text`
-  color: ${colors.yellow};
-  font-size: 16px;
-  font-weight: 600;
-  margin-right: 10px;
-  font-family: "JostSemiBold";
-`;
-
 const PreviewRecord = ({ navigation, route }) => {
   const windowWidth = Dimensions.get("window").width;
+  const [title, setTitle] = useState("New record");
+  const titleRef = useRef("New record");
 
   const [theme, setTheme] = useState({
     backgroundColor: "#202020",
@@ -74,13 +98,21 @@ const PreviewRecord = ({ navigation, route }) => {
   const [modalVisible, setModalVisible] = useState(true);
   const { assets } = route.params.result;
 
+  // State to manage upload status
+  const [isUploading, setIsUploading] = useState(false);
+
+  useEffect(() => {
+    titleRef.current = title;
+  }, [title]);
+
   useEffect(() => {
     navigation.setOptions({
       headerTintColor: Platform.OS === "ios" ? "white" : theme?.textColor,
       headerTitle: () => (
         <EditableHeaderTitle
-          initialTitle="New record"
+          initialTitle={title}
           textColor={Platform.OS === "ios" ? "white" : theme?.textColor}
+          setTitle={setTitle}
         />
       ),
       headerBackground: () =>
@@ -100,26 +132,83 @@ const PreviewRecord = ({ navigation, route }) => {
           />
         ),
     });
-  }, [theme]); // theme가 변경될 때마다 이 useEffect가 실행됩니다.
+  }, [theme, title]); // theme가 변경될 때마다 이 useEffect가 실행됩니다.
   const selectTheme = (newTheme) => {
     setTheme(newTheme);
   };
 
-  const HeaderRight = () => (
-    <TouchableOpacity
-    // onPress={() =>
-    //   navigation.navigate("DecoRecord", {
-    //     selectedPhotos: route.params.result,
-    //   })
-    // }
-    >
-      <HeaderRightText>Upload</HeaderRightText>
-    </TouchableOpacity>
-  );
+  // mutation
+
+  const [createRecordMutation] = useMutation(CREATE_RECORD_MUTATION, {
+    onCompleted: (response) => {
+      setIsUploading(false); // Reset uploading status
+      // Show success alert
+      Alert.alert(
+        "Upload Successful",
+        "Your record has been successfully uploaded.",
+        [
+          {
+            text: "Go to Archive Records",
+            onPress: () =>
+              navigation.navigate("Tabs", { screen: "TabArchive" }),
+          },
+        ]
+      );
+    },
+    onError: (error) => {
+      setIsUploading(false); // Reset uploading status
+      // Show error alert
+      Alert.alert("Upload Failed", `An error occurred: ${error.message}`, [
+        { text: "Cancel", style: "cancel" },
+        { text: "Retry", onPress: handleUpload },
+      ]);
+    },
+    refetchQueries: [
+      {
+        query: SEE_RECORD_QUERY,
+        variables: { username: currentUsernameVar() },
+      },
+    ],
+  });
+
+  const handleUpload = () => {
+    setIsUploading(true);
+    // Prepare the photos as an array of ReactNativeFile objects
+    const photoFiles = route.params.result.assets.map((asset) => {
+      return new ReactNativeFile({
+        uri: asset.uri,
+        type: `image/${asset.uri.split(".").pop()}`,
+        name: asset.filename || `photo.${asset.uri.split(".").pop()}`,
+      });
+    });
+
+    // Use the mutation with the prepared variables
+    createRecordMutation({
+      variables: {
+        title: titleRef.current,
+        photos: photoFiles,
+        theme: theme.name,
+        isPublic: true,
+      },
+    });
+  };
 
   useEffect(() => {
-    navigation.setOptions({ headerRight: HeaderRight });
-  });
+    navigation.setOptions({
+      headerRight: () =>
+        isUploading ? (
+          <ActivityIndicator
+            size="small"
+            color={"white"}
+            style={{ marginRight: "10%" }}
+          />
+        ) : (
+          <TouchableOpacity onPress={handleUpload}>
+            <HeaderRightText>Upload</HeaderRightText>
+          </TouchableOpacity>
+        ),
+    });
+  }, [navigation, theme, route.params.result.assets, isUploading]);
 
   return (
     <View

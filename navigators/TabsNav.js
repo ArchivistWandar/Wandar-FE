@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import TabIcon from "../components/nav/TabIcon";
 import SharedStackNav from "./SharedStackNav";
-import { View, TouchableOpacity } from "react-native";
+import { View, TouchableOpacity, Platform } from "react-native";
+import { BlurView } from "expo-blur";
 import useMe from "../hooks/useMe";
 import { colors } from "../colors";
 import UploadPopup from "../components/nav/UploadPopup";
@@ -36,11 +37,28 @@ export default function TabsNav({ navigation }) {
           headerShown: false,
           tabBarShowLabel: false,
           tabBarStyle: {
-            backgroundColor: colors.backgroundColor,
-            borderTopColor: "rgba(255,255,255,0.5)",
+            backgroundColor:
+              Platform.OS === "ios" ? "transparent" : colors.backgroundColor,
+            borderTopColor: "rgba(255,255,255,0.2)",
+            position: "absolute", // Ensures the tabBar is positioned over the content
           },
           tabBarActiveTintColor: "#6B78B7",
           tabBarInactiveTintColor: "white",
+          tabBarBackground: () =>
+            // Setting tabBarBackground
+            Platform.OS === "ios" ? (
+              <BlurView
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                }}
+                tint="dark"
+                intensity={100}
+              />
+            ) : undefined,
         }}
       >
         <Tabs.Screen
@@ -99,7 +117,7 @@ export default function TabsNav({ navigation }) {
             ),
           }}
         >
-          {() => <SharedStackNav screenName="Notifications" />}
+          {() => <SharedStackNav screenName="NotificationsNav" />}
         </Tabs.Screen>
         <Tabs.Screen
           name="TabMyPage"

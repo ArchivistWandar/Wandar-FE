@@ -1,16 +1,30 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { isLoaded, useFonts } from "expo-font";
 import LoggedOutNav from "./navigators/LoggedOutNav";
 import { NavigationContainer } from "@react-navigation/native";
 import * as SplashScreen from "expo-splash-screen";
+import * as ImagePicker from "expo-image-picker";
 import LoggedInNav from "./navigators/LoggedInNav";
 import { LogBox } from "react-native";
+import { ApolloProvider, useReactiveVar } from "@apollo/client";
+import client, {
+  TOKEN,
+  currentUsernameVar,
+  isLoggedInVar,
+  tokenVar,
+} from "./apollo";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RequestProcessedProvider } from "./components/RequestProcessedProvider";
+import { StatusBar } from "expo-status-bar";
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
 SplashScreen.preventAutoHideAsync();
 
 export default function App() {
+  const isLoggedIn = useReactiveVar(isLoggedInVar);
+  const [isProcessed, setRequestProcessed] = useState(false);
+
   const [isFontsLoaded] = useFonts({
     JostBlack: require("./assets/fonts/Jost-Black.ttf"),
     JostBlackItalic: require("./assets/fonts/Jost-BlackItalic.ttf"),
@@ -32,6 +46,21 @@ export default function App() {
     JostThinItalic: require("./assets/fonts/Jost-ThinItalic.ttf"),
   });
 
+  // 로그인 상태 초기화 함수
+  const initializeLoginState = async () => {
+    const token = await AsyncStorage.getItem(TOKEN);
+    const username = await AsyncStorage.getItem("username");
+    if (token && username) {
+      isLoggedInVar(true);
+      tokenVar(token);
+      currentUsernameVar(username);
+    }
+  };
+
+  useEffect(() => {
+    initializeLoginState();
+  }, []);
+
   const handleOnLayout = useCallback(async () => {
     try {
       if (isFontsLoaded) {
@@ -52,11 +81,14 @@ export default function App() {
     return null;
   }
 
-  const isLoggedIn = true;
-
   return (
-    <NavigationContainer>
-      {isLoggedIn ? <LoggedInNav /> : <LoggedOutNav />}
-    </NavigationContainer>
+    <RequestProcessedProvider value={{ isProcessed, setRequestProcessed }}>
+      <ApolloProvider client={client}>
+        <NavigationContainer>
+          {isLoggedIn ? <LoggedInNav /> : <LoggedOutNav />}
+          <StatusBar style="light" />
+        </NavigationContainer>
+      </ApolloProvider>
+    </RequestProcessedProvider>
   );
 }

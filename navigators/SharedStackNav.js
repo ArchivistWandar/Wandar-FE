@@ -5,6 +5,7 @@ import { colors } from "../colors";
 import ArchiveNav from "./ArchiveNav";
 import MyPageNav from "./MyPageNav";
 import LandNav from "./LandNav";
+import NotificationsNav from "./NotificationsNav";
 
 const Stack = createStackNavigator();
 
@@ -41,8 +42,12 @@ const SharedStackNav = ({ screenName }) => {
           component={ArchiveNav}
         />
       ) : null}
-      {screenName === "Notifications" ? (
-        <Stack.Screen name={"Notifications"} component={Notifications} />
+      {screenName === "NotificationsNav" ? (
+        <Stack.Screen
+          name={"NotificationsNav"}
+          options={{ headerShown: false }}
+          component={NotificationsNav}
+        />
       ) : null}
       {screenName === "MyPageNav" ? (
         <Stack.Screen

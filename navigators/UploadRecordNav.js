@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 
 import SelectRPhotos from "../screens/UploadRecord/SelectRPhotos";
 import PreviewRecord from "../screens/UploadRecord/PreviewRecord";
+import ArchiveNav from "./ArchiveNav";
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,13 @@ const UploadRecordNav = () => {
       />
 
       <Stack.Screen name="PreviewRecord" component={PreviewRecord} />
+      <Stack.Screen
+        name="ArchiveNav"
+        component={ArchiveNav}
+        options={{
+          headerShown: false,
+        }}
+      />
     </Stack.Navigator>
   );
 };

@@ -14,7 +14,9 @@ import { Ionicons } from "@expo/vector-icons";
 import { View, TouchableOpacity } from "react-native";
 import { Container } from "../../components/Shared";
 
-const SetUsername = ({ navigation }) => {
+const SetPassword = ({ route, navigation }) => {
+  const { email } = route.params;
+
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -38,7 +40,8 @@ const SetUsername = ({ navigation }) => {
     setShowPassword((prev) => !prev);
   };
 
-  const goToUsername = () => navigation.navigate("SetUsername");
+  const goToUsername = () =>
+    navigation.navigate("SetUsername", { email: email, password: password });
 
   return (
     <Container>
@@ -75,6 +78,7 @@ const SetUsername = ({ navigation }) => {
             disabled={disabled} // Disable the button if conditions are not met
             onPress={goToUsername}
             isYellow={false}
+            loading={false}
           />
         </AuthButtonContainer>
       </AuthLayout>
@@ -82,4 +86,4 @@ const SetUsername = ({ navigation }) => {
   );
 };
 
-export default SetUsername;
+export default SetPassword;

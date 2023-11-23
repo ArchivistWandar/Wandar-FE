@@ -1,76 +1,177 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components/native";
-import { Container } from "../../components/Shared";
+import {
+  Container,
+  LoadingContainer,
+  formatDate,
+} from "../../components/Shared";
+import {
+  ActivityIndicator,
+  RefreshControl,
+  ScrollView,
+  Text,
+  View,
+} from "react-native";
+import { gql, useQuery } from "@apollo/client";
+import { Skeleton } from "moti/skeleton";
 
-// Dummy timeline data
-const timelineData = [
-  {
-    id: "1",
-    type: "post",
-    landname: "Busan 🌊",
-    date: "Aug 23, 2023",
-  },
-  {
-    id: "2",
-    type: "record",
-    landnames: ["Daily 🫧", "Jeju 🍊"],
-    date: "Aug 21, 2023",
-  },
-  {
-    id: "3",
-    type: "start",
-    date: "Aug 8, 2023",
-  },
-  // Add more timeline data here
-];
-
-const MyTimeline = () => {
-  const formatLandnames = (landnames) => {
-    if (landnames.length === 1) {
-      return `Land ${landnames[0]}`;
-    } else {
-      const formattedLandnames = landnames.join(", ");
-      const lastIndex = formattedLandnames.lastIndexOf(",");
-      return (
-        formattedLandnames.slice(0, lastIndex) +
-        " and" +
-        formattedLandnames.slice(lastIndex + 1)
-      );
+const MY_PAGE = gql`
+  query SeeMypage {
+    seeMypage {
+      records {
+        photos {
+          photo
+        }
+        createdAt
+        title
+        id
+      }
+      posts {
+        photos {
+          photo
+        }
+        createdAt
+        title
+        id
+        land {
+          landname
+        }
+      }
+      lands {
+        landname
+        createdAt
+      }
+      lastUpdate
     }
+  }
+`;
+
+const MyTimeline = ({ navigation }) => {
+  const [refreshing, setRefreshing] = useState(false);
+  const [loadingImages, setLoadingImages] = useState({});
+  const { data, loading, refetch, error } = useQuery(MY_PAGE, {
+    fetchPolicy: "network-only",
+  });
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
   };
 
+  const handleImageLoadStart = (id) => {
+    setLoadingImages((prev) => ({ ...prev, [id]: true }));
+  };
+
+  const handleImageLoadEnd = (id) => {
+    setLoadingImages((prev) => ({ ...prev, [id]: false }));
+  };
+
+  if (loading) {
+    return (
+      <LoadingContainer>
+        <ActivityIndicator size="small" color="white" />
+      </LoadingContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <LoadingContainer>
+        <Text>Error: {error.message}</Text>
+      </LoadingContainer>
+    );
+  }
+
+  // Extract timeline data from query response
+  const timelineData = [];
+  if (data && data.seeMypage) {
+    timelineData.push(
+      ...data.seeMypage.records.map((record) => ({ ...record, type: "record" }))
+    );
+    timelineData.push(
+      ...data.seeMypage.posts.map((post) => ({ ...post, type: "post" }))
+    );
+    // Add "start" event here if applicable
+  }
+
+  timelineData.sort(
+    (a, b) => new Date(parseInt(b.createdAt)) - new Date(parseInt(a.createdAt))
+  );
+
+  const navigateToDetail = (item) => {
+    if (item.type === "record" && item.id) {
+      navigation.navigate("RecordDetail", { id: item.id });
+    } else if (item.type === "post" && item.id) {
+      navigation.navigate("PostDetail", { id: item.id });
+    }
+  };
   return (
     <Container>
-      <TimelineContainer>
-        {timelineData.map((item) => (
-          <TimelineItem key={item.id}>
-            {item.type === "post" && (
-              <NotificationBox post={true}>
-                <LeftContent>
-                  <PostImage
-                    source={require("../../assets/images/jeju.png")}
-                    resizeMode="contain"
-                  />
-                </LeftContent>
-                <RightContent>
-                  <NotificationText post={true}>New post</NotificationText>
-                  <LandName post={true}>in Land {item.landname}</LandName>
-                  <DateText post={true}>{item.date}</DateText>
-                </RightContent>
-              </NotificationBox>
-            )}
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
+        {timelineData.map((item, index) => (
+          <TimelineItem key={index}>
             {item.type === "record" && (
-              <NotificationBox>
-                <RightContent record={true}>
+              <NotificationBox onPress={() => navigateToDetail(item)}>
+                <View style={{ position: "relative" }}>
+                  {loadingImages[item.id] && (
+                    <Skeleton
+                      colorMode="light"
+                      width={40}
+                      height={40}
+                      radius={6}
+                    />
+                  )}
+                  <PostImage
+                    source={{ uri: item.photos[0].photo }}
+                    style={loadingImages[item.id] ? { opacity: 0 } : {}}
+                    onLoadStart={() => handleImageLoadStart(item.id)}
+                    onLoadEnd={() => handleImageLoadEnd(item.id)}
+                  />
+                </View>
+                <LeftContent>
                   <NotificationText>New Wandar Record</NotificationText>
-                  <LandNames>
-                    for Land {formatLandnames(item.landnames)}
-                  </LandNames>
-                  <DateText>{item.date}</DateText>
-                </RightContent>
+                  {item.title && <LandNames>{item.title}</LandNames>}
+                </LeftContent>
+                <DateText>{formatDate(item.createdAt)}</DateText>
               </NotificationBox>
             )}
-            {item.type === "start" && (
+
+            {item.type === "post" && (
+              <NotificationBox
+                post={true}
+                onPress={() => navigateToDetail(item)}
+              >
+                <View style={{ position: "relative" }}>
+                  {loadingImages[item.id] && (
+                    <Skeleton
+                      colorMode="dark"
+                      width={40}
+                      height={40}
+                      radius={6}
+                    />
+                  )}
+                  <PostImage
+                    post={true}
+                    source={{ uri: item.photos[0].photo }} // Replace with actual photo uri
+                    style={loadingImages[item.id] ? { opacity: 0 } : {}}
+                    onLoadStart={() => handleImageLoadStart(item.id)}
+                    onLoadEnd={() => handleImageLoadEnd(item.id)}
+                  />
+                </View>
+                <LeftContent>
+                  <NotificationText post={true}>New post</NotificationText>
+                  <LandName post={true}>in Land {item.land.landname}</LandName>
+                </LeftContent>
+                <DateText post={true}>{formatDate(item.createdAt)}</DateText>
+              </NotificationBox>
+            )}
+
+            {/* {item.type === "start" && (
               <NotificationBox>
                 <LeftContent>
                   <PostImage
@@ -80,49 +181,38 @@ const MyTimeline = () => {
                 </LeftContent>
                 <RightContent>
                   <NotificationText>Started Wandar</NotificationText>
-                  <DateText>{item.date}</DateText>
+                  <DateText>{formatDate(item.createdAt)}</DateText>
                 </RightContent>
               </NotificationBox>
-            )}
+            )} */}
+
+            {/* Additional types can be added here */}
           </TimelineItem>
         ))}
-      </TimelineContainer>
+        <View style={{ paddingBottom: 100 }} />
+      </ScrollView>
     </Container>
   );
 };
 
-const TimelineContainer = styled.ScrollView`
-  flex: 1;
-  padding: 16px;
-`;
-
 const TimelineItem = styled.View`
-  margin-bottom: 20px;
+  /* margin-bottom: 20px; */
+  margin: 20px 20px 0px 20px;
 `;
 
-const NotificationBox = styled.View`
+const NotificationBox = styled.TouchableOpacity`
   flex-direction: row;
   border-width: 1px;
   border-color: ${(props) => (props.post ? "white" : "transparent")};
   background-color: ${(props) => (props.post ? "transparent" : "white")};
   border-radius: 10px;
-  height: ${(props) => (props.post ? "60px" : "66px")};
-  position: relative;
+  height: 60px;
+  padding: 9px;
 `;
 
 const LeftContent = styled.View`
-  flex: 1;
-  padding-left: 10px;
-  /* align-items: center; */
-  justify-content: center;
+  margin-left: 10px;
 `;
-
-const RightContent = styled.View`
-  flex: 6;
-  justify-content: center;
-  padding-left: ${(props) => (props.record ? "20px" : "5px")};
-`;
-
 const PostImage = styled.Image`
   width: 40px;
   height: 40px;
@@ -135,15 +225,9 @@ const NotificationText = styled.Text`
   color: ${(props) => (props.post ? "white" : "black")};
 `;
 
-const LandName = styled.Text`
-  font-size: 12px;
-  color: white;
-  font-family: "JostMedium";
-`;
-
 const LandNames = styled.Text`
-  font-size: 14px;
-  color: black;
+  font-size: 12px;
+  color: grey;
   font-family: "JostMedium";
 `;
 
@@ -155,6 +239,12 @@ const DateText = styled.Text`
   position: absolute;
   bottom: 10px;
   right: 15px;
+`;
+
+const LandName = styled.Text`
+  font-size: 12px;
+  color: grey;
+  font-family: "JostMedium";
 `;
 
 export default MyTimeline;

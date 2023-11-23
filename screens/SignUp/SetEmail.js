@@ -13,13 +13,15 @@ import {
 import { View } from "react-native";
 import { Container } from "../../components/Shared";
 
-const SetUsername = ({ navigation }) => {
+const SetEmail = ({ navigation }) => {
   const [email, setEmail] = useState("");
   const [errorMessage, setErrorMessage] = useState(false);
   const [disabled, setDisabled] = useState(true);
 
   const inputRef = useRef();
-  const goToPassword = () => navigation.navigate("SetPassword");
+  const goToPassword = () => {
+    navigation.navigate("SetPassword", { email: email });
+  };
 
   const _handleEmailChange = (email) => {
     const changedEmail = removeWhitespace(email);
@@ -60,6 +62,7 @@ const SetUsername = ({ navigation }) => {
             disabled={disabled}
             onPress={goToPassword}
             isYellow={false}
+            loading={false}
           />
         </AuthButtonContainer>
       </AuthLayout>
@@ -67,4 +70,4 @@ const SetUsername = ({ navigation }) => {
   );
 };
 
-export default SetUsername;
+export default SetEmail;

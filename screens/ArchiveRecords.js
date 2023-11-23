@@ -1,37 +1,142 @@
-import React from "react";
-import { FlatList, TouchableOpacity } from "react-native";
+import React, { useState } from "react";
+import {
+  FlatList,
+  TouchableOpacity,
+  ActivityIndicator,
+  RefreshControl,
+  View,
+  Text,
+  ScrollView,
+} from "react-native";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
-import { Container } from "../components/Shared";
+import { Container, LoadingContainer, formatDate } from "../components/Shared";
+import { gql, useQuery } from "@apollo/client";
+import { currentUsernameVar } from "../apollo";
+import { Skeleton } from "moti/skeleton";
+import { colors } from "../colors";
 
-const postData = [
-  {
-    id: "1",
-    title: "2023 Jeju 🍊",
-    date: "Aug 5, 2023",
-    photoCount: 12,
-    isPrivate: false,
-    image: require("../assets/images/jeju.png"),
-  },
-  {
-    id: "2",
-    title: "Busan 🌊",
-    date: "July 21, 2023",
-    photoCount: 8,
-    isPrivate: true,
-    image: require("../assets/images/busan.png"),
-  },
-];
+export const SEE_RECORD_QUERY = gql`
+  query SeeRecord($username: String!) {
+    seeRecord(username: $username) {
+      photos {
+        photo
+      }
+      id
+      theme
+      isMine
+      isPublic
+      createdAt
+      title
+    }
+  }
+`;
 
 const ArchiveRecords = ({ navigation }) => {
-  const goToRecordDetail = () => {
-    navigation.navigate("RecordDetail");
+  const { data, loading, error, refetch } = useQuery(SEE_RECORD_QUERY, {
+    variables: { username: currentUsernameVar() },
+  });
+
+  const [refreshing, setRefreshing] = useState(false);
+  const [loadingImages, setLoadingImages] = useState({});
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await refetch();
+    setRefreshing(false);
   };
-  const renderItem = ({ item }) => {
+
+  if (loading) {
     return (
-      <TouchableOpacity onPress={goToRecordDetail}>
+      <LoadingContainer>
+        <ActivityIndicator size="small" color="white" />
+      </LoadingContainer>
+    );
+  }
+
+  if (error) {
+    return (
+      <LoadingContainer>
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontFamily: "JostMedium",
+          }}
+        >
+          Error! {error.message}
+        </Text>
+      </LoadingContainer>
+    );
+  }
+  if (data?.seeRecord.length === 0) {
+    return (
+      <ScrollView
+        contentContainerStyle={{
+          flex: 1,
+          justifyContent: "center",
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        style={{ backgroundColor: colors.backgroundColor }}
+      >
+        <LoadingContainer>
+          <Text
+            style={{
+              color: "white",
+              textAlign: "center",
+              fontFamily: "JostMedium",
+            }}
+          >
+            Nothing to show
+          </Text>
+        </LoadingContainer>
+      </ScrollView>
+    );
+  }
+
+  const postData = data.seeRecord
+    .map((record) => ({
+      id: record.id,
+      title: record.title,
+      date: formatDate(record.createdAt),
+      photoCount: record.photos.length,
+      isPrivate: !record.isPublic,
+      image: { uri: record.photos[0].photo },
+      timestamp: record.createdAt,
+    }))
+    .sort((a, b) => parseInt(b.timestamp) - parseInt(a.timestamp));
+
+  const goToRecordDetail = (id) => {
+    navigation.navigate("RecordDetail", { id });
+  };
+
+  const handleImageLoadStart = (id) => {
+    setLoadingImages((prev) => ({ ...prev, [id]: true }));
+  };
+
+  const handleImageLoadEnd = (id) => {
+    setLoadingImages((prev) => ({ ...prev, [id]: false }));
+  };
+
+  const renderItem = ({ item }) => {
+    const isImageLoading = loadingImages[item.id];
+
+    return (
+      <TouchableOpacity onPress={() => goToRecordDetail(item.id)}>
         <PostItem>
-          <PostImage source={item.image} />
+          <View style={{ position: "relative", marginRight: "6%" }}>
+            {isImageLoading && (
+              <Skeleton colorMode="dark" width={70} height={70} radius={10} />
+            )}
+            <PostImage
+              source={item.image}
+              style={isImageLoading ? { position: "absolute", opacity: 0 } : {}}
+              onLoadStart={() => handleImageLoadStart(item.id)}
+              onLoadEnd={() => handleImageLoadEnd(item.id)}
+            />
+          </View>
           <PostDetails>
             <PostTitle>{item.title}</PostTitle>
             <PostDate>{item.date}</PostDate>
@@ -53,6 +158,14 @@ const ArchiveRecords = ({ navigation }) => {
         data={postData}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            tintColor="white"
+          />
+        }
+        ListFooterComponent={<View style={{ height: 100 }} />}
       />
     </Container>
   );
@@ -62,7 +175,7 @@ const PostItem = styled.View`
   flex-direction: row;
   align-items: center;
   border-bottom-width: 1px; /* Add border line */
-  border-color: #717171; /* Border color */
+  border-color: rgba(255, 255, 255, 0.1); /* Border color */
   padding: 22px; /* Add some padding to separate items */
 `;
 
@@ -70,7 +183,6 @@ const PostImage = styled.Image`
   width: 70px;
   height: 70px;
   border-radius: 10px;
-  margin-right: 22px;
 `;
 
 const PostDetails = styled.View`

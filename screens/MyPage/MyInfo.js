@@ -2,25 +2,90 @@ import React from "react";
 import styled from "styled-components/native";
 import { Ionicons } from "@expo/vector-icons";
 import { TouchableOpacity } from "react-native-gesture-handler";
+import { Skeleton } from "moti/skeleton";
+import { Text, View } from "react-native";
+import { gql, useQuery } from "@apollo/client";
+import { Container, LoadingContainer } from "../../components/Shared";
 
-const userData = {
-  id: "1",
-  username: "hyeinlee.le",
-  profileImage: require("../../assets/images/profile4.png"),
-  friendsNum: "28",
-};
+const SEE_MY_INFO_QUERY = gql`
+  query SeeMyInfo {
+    seeMyInfo {
+      username
+      avatar
+      totalFriends
+    }
+  }
+`;
+
+const defaultAvatar = require("../../assets/images/profile8.png");
 
 const MyInfo = ({ navigation }) => {
+  const { data, loading, error } = useQuery(SEE_MY_INFO_QUERY, {
+    fetchPolicy: "network-only",
+  });
+
+  if (loading) {
+    return (
+      <UserInfoBox>
+        <UserInfoContainer>
+          <View style={{ marginRight: "7%" }}>
+            <Skeleton
+              colorMode={"light"}
+              radius="round"
+              height={50}
+              width={50}
+            />
+          </View>
+          <UserDetails>
+            <View style={{ marginBottom: "4%" }}>
+              <Skeleton
+                width={80}
+                height={16}
+                colorMode={"light"}
+                radius={"round"}
+              />
+            </View>
+            <Skeleton
+              width={60}
+              height={14}
+              colorMode={"light"}
+              radius={"round"}
+            />
+          </UserDetails>
+        </UserInfoContainer>
+      </UserInfoBox>
+    );
+  }
+  if (error)
+    return (
+      <Text
+        style={{
+          color: "white",
+          textAlign: "center",
+          fontFamily: "JostMedium",
+        }}
+      >
+        Error: {error.message}
+      </Text>
+    );
+
+  const { username, avatar, totalFriends } = data.seeMyInfo;
+
   const goToMyInfoEdit = () => {
     navigation.navigate("MyInfoEdit");
   };
+
   return (
     <UserInfoBox>
       <UserInfoContainer>
-        <ProfileImage source={userData.profileImage} />
+        <ProfileImage
+          source={avatar === null ? defaultAvatar : { uri: avatar }}
+        />
+
         <UserDetails>
-          <Username>@{userData.username}</Username>
-          <FriendsNum>{userData.friendsNum} friends</FriendsNum>
+          <Username>@{username}</Username>
+
+          <FriendsNum>{totalFriends} friends</FriendsNum>
         </UserDetails>
         <TouchableOpacity onPress={goToMyInfoEdit}>
           <Ionicons name="pencil" size={20} color={"white"} />

@@ -11,6 +11,17 @@ import { styled } from "styled-components/native";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { Container } from "../components/Shared";
+import { gql, useMutation } from "@apollo/client";
+import { logUserIn } from "../apollo";
+
+const LOGIN_MUTATION = gql`
+  mutation Login($username: String!, $password: String!) {
+    login(username: $username, password: $password) {
+      ok
+      token
+    }
+  }
+`;
 
 const TextInput = styled.TextInput`
   padding: 20px 17px;
@@ -32,38 +43,70 @@ const Logo = styled.Image`
   margin-bottom: 30px;
 `;
 
-const Login = () => {
+const Login = ({ route: { params } }) => {
   const inputRef = useRef();
-  const { register, handleSubmit, setValue, watch } = useForm();
   const passwordRef = useRef();
   const [showPassword, setShowPassword] = useState(false);
 
-  const usernameValue = watch("username", ""); // Get the current value of the username field
-  const passwordValue = watch("password", ""); // Get the current value of the password field
+  const { register, handleSubmit, setValue, watch } = useForm({
+    defaultValues: {
+      username: params?.username,
+      password: params?.password,
+    },
+  });
+
+  const onCompleted = async (data) => {
+    const {
+      login: { ok, token },
+    } = data;
+    if (ok) {
+      await logUserIn(token, watch("username"));
+    } else {
+      // Display an alert if login is not successful
+      alert("Login failed. Please check your username and password.");
+    }
+  };
+
+  const [logInMutation, { loading }] = useMutation(LOGIN_MUTATION, {
+    onCompleted,
+  });
 
   const onNext = (nextOne) => {
     nextOne?.current?.focus();
   };
 
   const onValid = (data) => {
-    console.log(data);
+    if (!loading) {
+      logInMutation({
+        variables: {
+          ...data,
+        },
+      });
+    }
   };
 
   useEffect(() => {
-    register("username");
-    register("password");
+    register("username", {
+      required: true,
+    });
+    register("password", {
+      required: true,
+    });
   }, [register]);
-
-  useEffect(() => {
-    // Update the disabled state based on the values of the username and password fields
-    setDisabled(!(usernameValue && passwordValue));
-  }, [usernameValue, passwordValue]);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
 
-  const [disabled, setDisabled] = useState(true); // Initially disabled
+  useEffect(() => {
+    setValue("username", params?.username);
+    setValue("password", params?.password);
+  }, [params, setValue]);
+
+  // Watch the values to enable/disable the submit button
+  const usernameValue = watch("username");
+  const passwordValue = watch("password");
+  const isFormFilled = usernameValue && passwordValue;
 
   return (
     <Container>
@@ -78,6 +121,7 @@ const Login = () => {
           onChangeText={(text) => setValue("username", text)}
           ref={inputRef}
           onLayout={() => inputRef.current.focus()}
+          value={watch("username")}
         />
         <AuthTextBox login={true}>
           <AuthTextInput
@@ -88,6 +132,7 @@ const Login = () => {
             placeholderTextColor={"rgba(255, 255, 255, 0.6)"}
             onSubmitEditing={handleSubmit(onValid)}
             onChangeText={(text) => setValue("password", text)}
+            value={watch("password")}
           />
           <TouchableOpacity onPress={togglePasswordVisibility}>
             <Ionicons
@@ -98,7 +143,13 @@ const Login = () => {
           </TouchableOpacity>
         </AuthTextBox>
         <AuthButtonContainer>
-          <AuthButton text="Continue" disabled={disabled} isYellow={false} />
+          <AuthButton
+            text="Log In"
+            disabled={!isFormFilled}
+            isYellow={false}
+            onPress={handleSubmit(onValid)}
+            loading={loading}
+          />
         </AuthButtonContainer>
       </AuthLayout>
     </Container>
