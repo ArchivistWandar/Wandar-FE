@@ -6,6 +6,7 @@ import {
   View,
   Dimensions,
   ActivityIndicator,
+  Alert,
 } from "react-native";
 import { Container, LoadingContainer } from "../../components/Shared";
 import { Ionicons } from "@expo/vector-icons";
@@ -82,10 +83,30 @@ export default function ChooseLand({ route, navigation }) {
   }
 
   if (!data?.seeLand || data.seeLand.length === 0) {
+    Alert.alert(
+      "No Lands Found",
+      "You haven't created any lands yet. Would you like to go create one?",
+      [
+        {
+          text: "OK",
+          onPress: () =>
+            navigation.navigate("Tabs", {
+              screen: "TabLand",
+              params: {
+                screen: "LandNav",
+                params: {
+                  screen: "LandAdd",
+                },
+              },
+            }),
+        },
+      ],
+      { cancelable: false }
+    );
     return (
-      <Container>
-        <Text>No lands available</Text>
-      </Container>
+      <LoadingContainer>
+        <ActivityIndicator size="small" color="white" />
+      </LoadingContainer>
     );
   }
 
