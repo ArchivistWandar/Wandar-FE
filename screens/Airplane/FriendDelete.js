@@ -151,7 +151,7 @@ const FriendDelete = () => {
   return (
     <Container>
       <FlatList
-        style={{ marginTop: "20%" }}
+        style={{ marginTop: "30%" }}
         data={transformedData}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (

@@ -15,6 +15,7 @@ import client, {
 } from "./apollo";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { RequestProcessedProvider } from "./components/RequestProcessedProvider";
+import { StatusBar } from "expo-status-bar";
 LogBox.ignoreLogs(["Warning: ..."]); // Ignore log notification by message
 LogBox.ignoreAllLogs(); //Ignore all log notifications
 
@@ -85,6 +86,7 @@ export default function App() {
       <ApolloProvider client={client}>
         <NavigationContainer>
           {isLoggedIn ? <LoggedInNav /> : <LoggedOutNav />}
+          <StatusBar style="light" />
         </NavigationContainer>
       </ApolloProvider>
     </RequestProcessedProvider>
