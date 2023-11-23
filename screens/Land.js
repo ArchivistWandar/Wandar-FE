@@ -4,6 +4,7 @@ import styled from "styled-components/native";
 import { Text, TouchableOpacity } from "react-native";
 import TempLand from "../components/TempLand";
 import { Ionicons } from "@expo/vector-icons";
+import ImageSlideUpPanel from "../components/SlideUpModal";
 
 const Land = ({ navigation }) => {
   const goToFriendsSelect = () => {
@@ -19,6 +20,7 @@ const Land = ({ navigation }) => {
     <Container>
       <TouchableOpacity onPress={goToLandDetail}></TouchableOpacity>
       <TempLand />
+      <ImageSlideUpPanel />
       <PlaneButton onPress={goToFriendsSelect}>
         <PlaneImage source={require("../assets/images/planeButton.png")} />
       </PlaneButton>
@@ -28,13 +30,6 @@ const Land = ({ navigation }) => {
     </Container>
   );
 };
-
-const RealLand = styled.View`
-  margin: 100px;
-  width: 50px;
-  height: 50px;
-  background-color: grey;
-`;
 
 const PlaneButton = styled.TouchableOpacity`
   position: absolute;
