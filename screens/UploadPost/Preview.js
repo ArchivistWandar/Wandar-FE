@@ -16,6 +16,8 @@ import { gql, useMutation } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
 import { SEE_POSTS_QUERY } from "../ArchivePosts";
 import { currentUsernameVar } from "../../apollo";
+import { SEE_PHOTOS_QUERY } from "../MyPage/MyPhotos";
+import { MY_PAGE } from "../MyPage/MyTimeline";
 
 const MemoContainer = styled.View`
   margin: 25px;
@@ -57,7 +59,6 @@ export default function Preview({ route, navigation }) {
 
   const handleToggleSelection = (newPublicStatus) => {
     setIsPublic(newPublicStatus);
-    console.log(isPublic);
   };
 
   const handleUpload = () => {
@@ -87,6 +88,13 @@ export default function Preview({ route, navigation }) {
         {
           query: SEE_POSTS_QUERY,
           variables: { username: currentUsernameVar() },
+        },
+        {
+          query: SEE_PHOTOS_QUERY,
+          variables: { username: currentUsernameVar() },
+        },
+        {
+          query: MY_PAGE,
         },
       ],
     })

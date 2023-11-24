@@ -13,7 +13,7 @@ import { gql, useQuery } from "@apollo/client";
 import { Container, LoadingContainer } from "../../components/Shared";
 import { currentUsernameVar } from "../../apollo";
 
-const SEE_PHOTOS_QUERY = gql`
+export const SEE_PHOTOS_QUERY = gql`
   query SeePhotos($username: String!) {
     seePhotos(username: $username) {
       photo
@@ -62,6 +62,7 @@ const MyPhotos = ({ navigation }) => {
             color: "white",
             textAlign: "center",
             fontFamily: "JostMedium",
+            paddingBottom: 100,
           }}
         >
           Nothing to show

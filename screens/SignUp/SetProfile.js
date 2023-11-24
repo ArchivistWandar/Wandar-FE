@@ -53,7 +53,6 @@ const SetProfile = ({ route, navigation }) => {
   );
 
   const onValid = (data) => {
-    console.log(data);
     if (!loading) {
       createAccountMutation({
         variables: {
