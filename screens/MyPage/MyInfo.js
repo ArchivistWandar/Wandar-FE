@@ -7,7 +7,7 @@ import { Text, View } from "react-native";
 import { gql, useQuery } from "@apollo/client";
 import { Container, LoadingContainer } from "../../components/Shared";
 
-const SEE_MY_INFO_QUERY = gql`
+export const SEE_MY_INFO_QUERY = gql`
   query SeeMyInfo {
     seeMyInfo {
       username

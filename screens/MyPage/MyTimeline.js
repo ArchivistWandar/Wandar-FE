@@ -15,7 +15,7 @@ import {
 import { gql, useQuery } from "@apollo/client";
 import { Skeleton } from "moti/skeleton";
 
-const MY_PAGE = gql`
+export const MY_PAGE = gql`
   query SeeMypage {
     seeMypage {
       records {
@@ -79,6 +79,25 @@ const MyTimeline = ({ navigation }) => {
     return (
       <LoadingContainer>
         <Text>Error: {error.message}</Text>
+      </LoadingContainer>
+    );
+  }
+  if (
+    data?.seeMypage.posts.length === 0 &&
+    data?.seeMypage.records.length === 0
+  ) {
+    return (
+      <LoadingContainer>
+        <Text
+          style={{
+            color: "white",
+            textAlign: "center",
+            fontFamily: "JostMedium",
+            paddingBottom: 100,
+          }}
+        >
+          Nothing to show
+        </Text>
       </LoadingContainer>
     );
   }

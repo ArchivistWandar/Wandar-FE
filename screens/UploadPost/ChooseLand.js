@@ -16,7 +16,7 @@ import { gql, useQuery } from "@apollo/client";
 import { currentUsernameVar } from "../../apollo";
 import Swiper from "react-native-swiper";
 
-const SEE_LAND_QUERY = gql`
+export const SEE_LAND_QUERY = gql`
   query SeeLand($username: String!) {
     seeLand(username: $username) {
       landname
@@ -56,11 +56,16 @@ export default function ChooseLand({ route, navigation }) {
           selectedLandId: lands?.[selectedLandIndex].id,
         })
       }
-      disabled={loading}
     >
       <HeaderRightText>Next</HeaderRightText>
     </TouchableOpacity>
   );
+
+  useEffect(() => {
+    if (lands?.length > 0) {
+      setSelectedLandIndex(0);
+    }
+  }, [lands]);
 
   useEffect(() => {
     navigation.setOptions({ headerRight: HeaderRight });
@@ -135,45 +140,47 @@ export default function ChooseLand({ route, navigation }) {
         >
           Choose a land for your upload
         </Text>
-        <Swiper
-          style={{ height: 300 }}
-          showsButtons={true}
-          loop={false}
-          dotColor="grey"
-          activeDotColor="white"
-          onIndexChanged={(index) => setSelectedLandIndex(index)}
-          nextButton={
-            <Ionicons name="chevron-forward" size={30} color="#fff" />
-          }
-          prevButton={<Ionicons name="chevron-back" size={30} color="#fff" />}
-        >
-          {lands.map((land, index) => (
-            <View
-              key={land.id}
-              style={{ justifyContent: "center", alignItems: "center" }}
-            >
-              <Image
-                source={land.image}
-                style={{
-                  width: windowWidth * 0.6,
-                  marginTop: "30%",
-                  height: 150,
-                }}
-                resizeMode="contain"
-              />
-              <Text
-                style={{
-                  fontSize: 20,
-                  marginTop: 20,
-                  fontFamily: "JostSemiBold",
-                  color: "white",
-                }}
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <Swiper
+            style={{ height: 300 }}
+            showsButtons={true}
+            loop={false}
+            dotColor="grey"
+            activeDotColor="white"
+            onIndexChanged={(index) => setSelectedLandIndex(index)}
+            nextButton={
+              <Ionicons name="chevron-forward" size={30} color="#fff" />
+            }
+            prevButton={<Ionicons name="chevron-back" size={30} color="#fff" />}
+          >
+            {lands.map((land, index) => (
+              <View
+                key={land.id}
+                style={{ justifyContent: "center", alignItems: "center" }}
               >
-                {land.name}
-              </Text>
-            </View>
-          ))}
-        </Swiper>
+                <Image
+                  source={land.image}
+                  style={{
+                    width: windowWidth * 0.6,
+                    marginTop: "30%",
+                    height: "50%",
+                  }}
+                  resizeMode="contain"
+                />
+                <Text
+                  style={{
+                    fontSize: 20,
+                    marginTop: 20,
+                    fontFamily: "JostSemiBold",
+                    color: "white",
+                  }}
+                >
+                  {land.name}
+                </Text>
+              </View>
+            ))}
+          </Swiper>
+        </View>
       </View>
     </Container>
   );
