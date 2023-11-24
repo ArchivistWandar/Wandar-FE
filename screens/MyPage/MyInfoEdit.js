@@ -8,6 +8,7 @@ import ProfileEditContainer from "../../components/ProfileEditContainer";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { ReactNativeFile } from "apollo-upload-client";
 import { LoadingContainer } from "../../components/Shared";
+import { SEE_MY_INFO_QUERY } from "./MyInfo";
 
 export const MY_PAGE = gql`
   query SeeMypage {
@@ -104,6 +105,7 @@ const MyInfoEdit = ({ navigation }) => {
           email: email,
           password: password,
         },
+        refetchQueries: [{ query: SEE_MY_INFO_QUERY }],
       });
 
       if (response.data.editProfile.ok) {
