@@ -17,6 +17,8 @@ import {
   AuthTitle,
 } from "../components/auth/AuthShared";
 import AuthLayout from "../components/auth/AuthLayout";
+import { SEE_LAND_QUERY } from "./UploadPost/ChooseLand";
+import { currentUsernameVar } from "../apollo";
 
 const CREATE_LAND_MUTATION = gql`
   mutation CreateLand($landname: String!) {
@@ -53,7 +55,15 @@ const LandAdd = ({ navigation }) => {
       Alert.alert("Error :(", "Please enter a landname");
       return;
     }
-    createLand({ variables: { landname } });
+    createLand({
+      variables: { landname },
+      refetchQueries: [
+        {
+          query: SEE_LAND_QUERY,
+          variables: { username: currentUsernameVar() },
+        },
+      ],
+    });
   };
 
   React.useLayoutEffect(() => {

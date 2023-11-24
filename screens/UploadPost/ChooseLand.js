@@ -15,7 +15,7 @@ import { gql, useQuery } from "@apollo/client";
 import { currentUsernameVar } from "../../apollo";
 import Swiper from "react-native-swiper";
 
-const SEE_LAND_QUERY = gql`
+export const SEE_LAND_QUERY = gql`
   query SeeLand($username: String!) {
     seeLand(username: $username) {
       landname
@@ -59,6 +59,12 @@ export default function ChooseLand({ route, navigation }) {
       <HeaderRightText>Next</HeaderRightText>
     </TouchableOpacity>
   );
+
+  useEffect(() => {
+    if (lands?.length > 0) {
+      setSelectedLandIndex(0);
+    }
+  }, [lands]);
 
   useEffect(() => {
     navigation.setOptions({ headerRight: HeaderRight });
