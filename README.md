@@ -23,20 +23,20 @@ In the project directory, you can run:
   - [x] Browse Tab
   - [x] Land Archive Page
   - [ ] Three.js stuff...
-- [ ] 5. Archive
+- [x] 5. Archive
   - [x] Top Tabs Navigator
   - [x] Archive Records List Page
   - [x] Archive Posts List Page
-  - [ ] Archive Record Detail Page
-  - [ ] Archive Post Detail Page
-- [ ] 6. Upload Post
+  - [x] Archive Record Detail Page
+  - [x] Archive Post Detail Page
+- [x] 6. Upload Post
   - [x] Setting Structure
   - [x] Select Photos Page
   - [x] Photo Collage (max 4 images)
   - [x] AddMemo Page
   - [x] ChooseLand Page
   - [x] Preview Page
-- [ ] 7. Upload Record
+- [x] 7. Upload Record
   - [x] Select Photos Page
   - [x] Branches Page
   - [x] Theme
@@ -48,6 +48,4 @@ In the project directory, you can run:
   - [x] My Photos
   - [x] Edit Profile Info
   - [x] Edit Profile Image
-- [ ] 10. Connect to Backend
-  - [x] Set-Up
-- [x] 11. Handle apollo.js
+- [x] 10. Connect to Backend
