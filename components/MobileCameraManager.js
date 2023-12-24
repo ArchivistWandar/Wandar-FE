@@ -2,6 +2,7 @@
 
 import * as THREE from "three";
 import React from "react";
+import { useNavigation } from "@react-navigation/native";
 
 // 상수 정의
 const DEG2RAD = Math.PI / 180.0;
@@ -13,7 +14,7 @@ const AZIMUTH_SENSITIVITY = 0.5;
 const ELEVATION_SENSITIVITY = 0.5;
 const ZOOM_SENSITIVITY = 0.00075;
 const PAN_SENSITIVITY = -0.03;
-const THRESHOLD = 10;
+const THRESHOLD = 8;
 const Y_AXIS = new THREE.Vector3(0, 1, 0);
 
 class MobileCameraManager {
@@ -36,6 +37,7 @@ class MobileCameraManager {
     this.selectedModel = model;
   }
 
+
   // 모델 선택 해제 메서드
   deselectModel() {
     this.selectedModel = null;
@@ -46,63 +48,67 @@ class MobileCameraManager {
       console.log("touch event detected");
 
       const touch = event.nativeEvent.touches[0];
-      // const touchX = (touch.pageX / window.innerWidth) * 2 - 1;
-      // const touchY = -(touch.pageY / window.innerHeight) * 2 + 1;
+      const touchX = (touch.pageX / window.innerWidth) * 2 - 1;
+      const touchY = -(touch.pageY / window.innerHeight) * 2 + 1;
 
-      // const cameraHalfWidth = (this.camera.right - this.camera.left) / 2;
-      // const cameraHalfHeight = (this.camera.top - this.camera.bottom) / 2;
-
-      // const worldX = touchX * cameraHalfWidth;
-      // const worldZ = touchY * cameraHalfHeight;
-
-      // const worldPosition = new THREE.Vector3(worldX, 0, worldZ);
-
-      // console.log("touch x", touchX, "touch y", touchY);
-      // console.log("world x", worldX, "world z", worldZ);
-      // console.log(
-      //   "worldx = touchx * ",
-      //   this.camera.right - this.camera.left,
-      //   " / 2 + ",
-      //   this.camera.position.x
-      // );
-      // console.log(
-      //   "worldz = touchy * ",
-      //   this.camera.top - this.camera.bottom,
-      //   " / 2 + ",
-      //   this.camera.position.z
-      // );
-      // console.log("camera position", this.camera.position);
+      const cameraHalfWidth = (this.camera.right - this.camera.left) / 2;
+      const cameraHalfHeight = (this.camera.top - this.camera.bottom) / 2;
+      console.log("camera right", this.camera.right);
+      console.log("camera left", this.camera.left);
+      const worldX = touchX * cameraHalfWidth
+      const worldZ = touchY * cameraHalfHeight
+      const worldPosition = new THREE.Vector3(worldX, 0, worldZ);
+      console.log("camera position", this.camera)
 
       // 가장 가까운 모델 찾기
-      // let closestModel = null;
-      // let minDistance = Infinity;
+      let closestModel = null;
+      let minDistance = Infinity;
+      // const raycaster = new THREE.Raycaster();
 
-      // this.scene.children.forEach((model, index) => {
-      //   // console.log("model type", model.type)
-      //   if (model.type === "Group") {
-      //     const distance = model.position.distanceTo(worldPosition);
-      //     // console.log("distance", distance);
-      //     // console.log("worldPosition:", worldPosition);
-      //     // console.log("modelPosition:", model.position);
-      //     // console.log("\n");
-      //     // console.log("\n");
-      //     // console.log("\n");
-      //     // console.log("\n");
-      //     if (distance < minDistance) {
-      //       closestModel = model;
-      //       minDistance = distance;
-      //     }
-      //   }
-      // });
+      // // 터치 좌표를 정규화하여 광선의 방향 설정
+      // raycaster.setFromCamera({ x: touchX, y: touchY }, this.camera);
 
-      // // 임계값 확인 및 선택
-      // if (minDistance < THRESHOLD) {
-      //   this.selectedModel = closestModel;
-      // } else {
-      //   this.selectedModel = null;
-      // }
+      // // 쏜 광선과 교차하는 오브젝트들을 가져옴
+      // const intersects = raycaster.intersectObjects(this.scene.children, true);
+
+
+      this.scene.children.forEach((model, index) => {
+        // console.log("model type", model.type)
+        if (model.type === "Group") {
+
+
+          var boundingBox = new THREE.Box3().setFromObject(model);
+          console.log("boundingBox", boundingBox);
+
+          // 바운딩 박스의 중심 좌표 계산
+          var center = new THREE.Vector3();
+          boundingBox.getCenter(center);
+
+
+          const distance = center.distanceTo(worldPosition);
+
+          // console.log("distance", distance);
+          console.log("worldPosition:", worldPosition);
+          console.log("centerPosition:", center);
+
+          console.log("dist", distance)
+          if (distance < minDistance) {
+            closestModel = model;
+            minDistance = distance;
+          }
+        }
+      });
+
+      // 임계값 확인 및 선택
+      if (minDistance < THRESHOLD) {
+        this.selectedModel = closestModel;
+        console.log("--------------------selected Object: ")
+      } else {
+        this.deselectModel()
+      }
 
       this.initialTouch = { x: touch.pageX, y: touch.pageY };
+
     } else if (event.nativeEvent.touches.length === 2) {
       this.initialDistance = this.getDistance(event.nativeEvent.touches);
     } else if (event.nativeEvent.touches.length === 3) {
@@ -119,23 +125,29 @@ class MobileCameraManager {
   }
 
   onTouchMove(event) {
-    if (this.selectedModel && event.nativeEvent.touches.length === 1) {
+    if (this.selectedModel && event.nativeEvent.touches.length === 1 && this.initialTouch) {
       const touch = event.nativeEvent.touches[0];
 
       // 터치 좌표를 정규화
       const touchX = (touch.pageX / window.innerWidth) * 2 - 1;
       const touchZ = -(touch.pageY / window.innerHeight) * 2 + 1;
+      const deltaX = (touch.pageX - this.initialTouch.x) * 0.09 * PAN_SENSITIVITY;
+      const deltaY = (touch.pageY - this.initialTouch.y) * 0.09 * PAN_SENSITIVITY;
 
       // 카메라 시야를 고려하여 월드 좌표 계산
       const worldX = (touchX * (this.camera.right - this.camera.left)) / 2;
       const worldZ = (touchZ * (this.camera.top - this.camera.bottom)) / 2;
 
       // 모델을 드래그 방향으로 이동
-      this.selectedModel.position.x += worldX - this.selectedModel.position.x;
-      this.selectedModel.position.z += worldZ - this.selectedModel.position.z;
+      this.selectedModel.position.x += deltaX;
+      this.selectedModel.position.z += deltaY;
+
+      console.log("move selected object by:", deltaX, deltaY);
     }
 
-    if (event.nativeEvent.touches.length === 1 && this.initialTouch) {
+
+    else if (event.nativeEvent.touches.length === 1 && this.initialTouch) {
+
       // 한 손가락 터치: 패닝
       const touch = event.nativeEvent.touches[0];
       const deltaX = (touch.pageX - this.initialTouch.x) * -PAN_SENSITIVITY; // 반대 방향으로 변경

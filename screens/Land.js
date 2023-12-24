@@ -8,11 +8,14 @@ import ImageSlideUpPanel from "../components/SlideUpModal";
 import { useEffect } from "react";
 import { useRoute } from '@react-navigation/native';
 import MovingBackground from "../components/landMovingBackground";
+import MovingObjectButton from "../components/ObjectMoveButton";
 
 
 const Land = ({ navigation }) => {
   const route = useRoute();
   const [selectedImage, setSelectedImage] = useState(null);
+  const [selectedModel, setSelectedModel] = useState(null);
+
   const goToFriendsSelect = () => {
     navigation.navigate("FriendSelect");
   };
@@ -34,6 +37,7 @@ const Land = ({ navigation }) => {
     <Container>
       <TouchableOpacity onPress={goToLandDetail}></TouchableOpacity>
       <ImageSlideUpPanel />
+      <MovingObjectButton selectedObject={selectedModel} />
       <TempLand selectedImage={selectedImage} />
       <MovingBackground />
 
