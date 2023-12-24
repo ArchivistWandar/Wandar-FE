@@ -6,10 +6,12 @@ import TempLand from "../components/TempLand";
 import { Ionicons } from "@expo/vector-icons";
 import ImageSlideUpPanel from "../components/SlideUpModal";
 import { useEffect } from "react";
-import { useRoute } from '@react-navigation/native';
+import { useRoute } from "@react-navigation/native";
 import MovingBackground from "../components/landMovingBackground";
 import MovingObjectButton from "../components/ObjectMoveButton";
-
+import { SEE_LAND_QUERY } from "./UploadPost/ChooseLand";
+import { useQuery } from "@apollo/client";
+import { currentUsernameVar } from "../apollo";
 
 const Land = ({ navigation }) => {
   const route = useRoute();
@@ -29,7 +31,6 @@ const Land = ({ navigation }) => {
     if (route.params?.selectedImage) {
       // 전달된 selectedImage 파라미터가 있으면 상태 업데이트
       setSelectedImage(route.params.selectedImage);
-
     }
   }, [route.params]);
 
@@ -40,7 +41,6 @@ const Land = ({ navigation }) => {
       <MovingObjectButton selectedObject={selectedModel} />
       <TempLand selectedImage={selectedImage} />
       <MovingBackground />
-
 
       <PlaneButton onPress={goToFriendsSelect}>
         <PlaneImage source={require("../assets/images/planeButton.png")} />
