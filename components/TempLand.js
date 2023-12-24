@@ -1,7 +1,7 @@
 // TempLand.js
 import React, { useEffect, useRef, useState } from "react";
 import { GLView } from "expo-gl";
-import { Renderer } from "expo-three";
+import { Renderer, TextureLoader as ExpTL } from "expo-three";
 import {
   AmbientLight,
   PerspectiveCamera,
@@ -10,7 +10,7 @@ import {
   SpotLight,
   Fog,
   GridHelper,
-  TextureLoader,
+  ImageLoader as III,
 } from "three";
 import CameraControls from "camera-controls";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
@@ -24,15 +24,21 @@ import assetsMap from "../AssetsMap.js";
 CameraControls.install({ THREE: THREE });
 
 const modelPaths = {
-  land: require("../assets/glbAsset2/mapbase2.glb"),
+  land: require("../assets/glbAsset2/mapbase_onelayer.glb"),
 };
+
+
+
+var __albedoTextures;
+var __emissiveTextures;
 
 export default function TempLand({ selectedImage }) {
   const [modelLoaded, setModelLoaded] = useState(false);
-  const [textures, setTextures] = useState({});
-  const [modalVisible, setModalVisible] = useState(false);
+  const [albedoTextures, setAlbedoTextures] = useState({});
+  const [emissiveTextures, setEmissiveTextures] = useState({});
   const [texturesLoaded, setTexturesLoaded] = useState(false);
   const [modelPosition, setModelPosition] = useState({ x: 0, y: 8, z: 3 });
+  const [selectedModel, setSelectedModel] = useState(null);
   const modelOffset = 5; // 모델 간의 간격
 
   const sceneRef = useRef(null);
@@ -44,109 +50,186 @@ export default function TempLand({ selectedImage }) {
   const touchPosition = useRef(new THREE.Vector2());
 
 
+
+
+  //텍스차 로드 함수
   async function loadTextures() {
-    const textureLoader = new THREE.TextureLoader();
-    let albedo, emissive;
 
-    // try {
-    //   albedo = await new Promise((resolve, reject) => {
-    //     textureLoader.load(
-    //       Asset.fromModule(require("../assets/glbTexture/universal.png")).uri,
-    //       resolve,
-    //       undefined,
-    //       reject
-    //     );
-    //   });
+    const textureLoader = new ExpTL();
 
-    //   // textureLoader.load('path/to/your/image.jpg', (texture) => {
-    //   //   textureRef.current = texture;
+    var uri1 = Asset.fromModule(require("../assets/glbTexture/universal.png")).uri;
+    console.log("********* loadTextture: albedo uri=", uri1);
 
-    //   //   // 씬이 이미 생성된 경우 텍스처 적용
-    //   //   if (sceneRef.current) {
-    //   //     sceneRef.current.background = texture;
-    //   //   }
-    //   // });
+    var a = textureLoader.load(uri1);
+    __albedoTextures = a;
+    console.log('albedo texture=', __albedoTextures);
 
-    //   emissive = await new Promise((resolve, reject) => {
-    //     textureLoader.load(
-    //       Asset.fromModule(require("../assets/glbTexture/emission.png")).uri,
-    //       resolve,
-    //       undefined,
-    //       reject
-    //     );
-    //   });
-    // } catch (error) {
-    //   console.error("Error loading textures:", error);
-    // }
 
-    // setTextures({ albedo, emissive });
-    setTexturesLoaded(true);
-  }
+    var uri2 = Asset.fromModule(require("../assets/glbTexture/universal.png")).uri;
+    console.log("********** loadTextture: emissive uri=", uri2);
 
-  // 모델 로드 함수
-  async function loadModel() {
-    try {
-      await Asset.loadAsync(require("../assets/glbAsset2/mapbase2.glb"));
-      setModelLoaded(true);
-    } catch (error) {
-      console.error("Error loading model:", error);
-    }
-  }
+    var e = textureLoader.load(uri2);
+    __emissiveTextures = e;
+    console.log('emissive texture =', __emissiveTextures);
 
-  useEffect(() => {
-    // Load textures and model
-    Promise.all([loadTextures(), loadModel()]).then(() => {
-      console.log("Model loaded state:", modelLoaded);
-      console.log("Textures loaded state:", texturesLoaded);
 
-      // Check if the model and textures are loaded
-      if (modelLoaded && textures) {
-        const gltfLoader = new GLTFLoader();
+  }  // loadTextture
 
-        // Load the GLTF model
-        gltfLoader.load(
-          Asset.fromModule(require("../assets/glbAsset2/mapbase2.glb")).uri,
-          (gltf) => {
-            const model = gltf.scene;
-            model.traverse((child) => {
-              if (child.isMesh) {
-                // Apply textures if necessary
-                // child.material.map = textures.albedo;
-                // child.material.emissiveMap = textures.emissive;
-                // child.material.emissive = new THREE.Color(0xffffff);
-                // child.material.emissiveIntensity = 1;
-                child.material.needsUpdate = true;
-              }
-            });
+  /*
+  var __albedoTextures;
+  var __emissiveTextures;
 
-            model.position.set(0, 0, 0);
-            model.scale.set(5, 5, 5);
+  async function loadTextures() {
 
-            if (sceneRef.current) {
-              sceneRef.current.add(model);
-            }
-          },
-          undefined,
-          (error) => {
-            console.error("An error occurred while loading the model:", error);
-          }
-        );
-      }
+
+    let aimg = document.createElement("img");
+
+    const p1 = new Promise((resolve, reject) => {
+      aimg.onload = resolve;
+      aimg.onerror = reject;
     });
-  }, [modelLoaded, texturesLoaded]);
+    aimg.src = Asset.fromModule(require("../assets/glbTexture/universal.png")).uri;
 
+    await p1;
+
+    console.log("Image loaded successfully");
+    // console.log('albedoImage=', albedoImage);
+    var tx = new THREE.Texture(aimg);
+    tx.needsUpdate = true;
+    console.log('albedo = ', tx);
+    setAlbedoTextures({ albedo: tx });
+
+    __albedoTextures = tx;
+
+    let eimg = document.createElement("img");
+
+    const p2 = new Promise((resolve, reject) => {
+      eimg.onload = resolve;
+      eimg.onerror = reject;
+    });
+    eimg.src = Asset.fromModule(require("../assets/glbTexture/emission.png")).uri;
+
+    await p2;
+
+    console.log("Image loaded successfully");
+    // console.log('albedoImage=', albedoImage);
+    var tx = new THREE.Texture(eimg);
+    tx.needsUpdate = true;
+    console.log('emissive = ', tx);
+    setEmissiveTextures({ emissive: tx });
+
+    __emissiveTextures = tx;
+
+  }
+  */
+
+  /*
+    useEffect(() => {
+      const textureLoader = new THREE.TextureLoader();
+      console.log( 'useEffect #1 : ', Asset.fromModule(require("../assets/glbTexture/universal.png")).uri);
+   
+      textureLoader.load(
+        Asset.fromModule(require("../assets/glbTexture/universal.png")).uri,
+        (albedoAsset) => {
+          console.log(albedoAsset)
+          setAlbedoTextures({ albedo: albedoAsset })
+        },
+        undefined,
+        (error) => {
+          console.error("TEXTURE LOADING ERROR:", error);
+        }
+      );
+      textureLoader.load(
+        Asset.fromModule(require("../assets/glbTexture/emission.png")).uri,
+        (emissiveAsset) => {
+          setEmissiveTextures({ emissive: emissiveAsset })
+        },
+        undefined,
+        (error) => {
+          console.error("TEXTURE LOADING ERROR:", error);
+        }
+      );
+    }, [])
+  */
+
+
+
+
+  // component mount 시 실행되는 effect
   useEffect(() => {
+
+
+    /*
+    // 모델과 텍스처가 이미 로드되었는지 확인
+    if (!modelLoaded || !texturesLoaded) {
+      // 모델 또는 텍스처가 로드되지 않았다면, 로드 프로세스 시작
+      Promise.all([loadTextures(), loadModel()]).then(() => {
+        // 모델과 텍스처 로드 완료
+        console.log("Model and textures loaded");
+      });
+    }
+  
+    // 모델과 텍스처가 이미 로드되었다면, 씬에 추가
+    */
+
+    console.log('1st useEffect');
+    console.log('textture URI = ', Asset.fromModule(require("../assets/glbTexture/universal.png")).uri);
+    console.log('gltf URI= ', Asset.fromModule(require("../assets/glbAsset2/mapbase_onelayer.glb")).uri);
+
+    loadTextures();
+
+    let xxx;
+    const gltfLoader = new GLTFLoader();
+    gltfLoader.load(
+      Asset.fromModule(require("../assets/glbAsset2/mapbase_onelayer.glb")).uri,
+      (gltf) => {
+        const model = gltf.scene;
+        xxx = gltf;
+
+        console.log('gltfLoad: ../assets/glbAsset2/mapbase_onelayer.glb');
+
+        model.traverse((child) => {
+          if (child.isMesh) {
+            // child.material.map = textures.albedo;
+            // child.material.emissiveMap = textures.emissive;
+            child.material.needsUpdate = true;
+          }
+        });
+
+        model.position.set(0, 0, 0);
+        model.scale.set(5, 5, 5);
+
+        if (sceneRef.current) {
+          sceneRef.current.add(model);
+        }
+      },
+      undefined,
+      (error) => {
+        console.error("An error occurred while loading the model:", error);
+      }
+    );
+
+    console.log('xxx = ', xxx);
+
+  }, []);
+
+
+  // selectedImage 에 따라 실행되는 effect
+  useEffect(() => {
+
+    console.log('--------------------2nd useEffect: selectedImage----------------');
+
     // 모델 로딩 함수 정의
-    const loadModel = () => {
+    const loadObjectModel = () => {
       return new Promise((resolve, reject) => {
         if (!selectedImage) {
           return reject("No selected image.");
         }
 
         const modelName = selectedImage.objName;
-        console.log(selectedImage.objName)
+
         const modelPath = assetsMap[modelName];
-        console.log(modelPath)
+
         const gltfLoader = new GLTFLoader();
 
         gltfLoader.load(
@@ -159,17 +242,26 @@ export default function TempLand({ selectedImage }) {
     };
 
     // 모델 로딩 후 scene에 추가
-    loadModel().then(gltf => {
+    Promise.all([loadObjectModel()]).then(async (gltf) => {
       if (sceneRef.current) {
-        const object = gltf.scene;
-        console.log(object)
+        const object = await gltf[0].scene;
+        // console.log(object)
         object.traverse((child) => {
           if (child.isMesh) {
-            // child.material.map = textures.albedo;
-            // child.material.emissiveMap = textures.emissive;
-            // child.material.emissive = new THREE.Color(0xffffff);
-            // child.material.emissiveIntensity = 1;
+            // 텍스쳐 적용
+            console.log('albedo tx = ', __albedoTextures)
+            child.material.map = __albedoTextures; // albedoTextures.albedo;
+            child.material.emissiveMap = __emissiveTextures
+            child.material.emissive = new THREE.Color(0xffffff);
+            child.material.emissiveIntensity = 1;
             child.material.needsUpdate = true;
+            console.log('emissive tx =:', __emissiveTextures);
+            console.log('Texture Image:', child.material.map.image);
+            console.log('Texture Repeat:', child.material.map.repeat);
+            console.log('Texture Offset:', child.material.map.offset);
+            console.log('Texture Rotation:', child.material.map.rotation);
+
+
           }
         });
 
@@ -189,18 +281,8 @@ export default function TempLand({ selectedImage }) {
     });
 
   }, [selectedImage]); // Dependency array includes selectedImage
+  
 
-
-
-
-
-  useEffect(() => {
-    console.log("Model loaded state:", modelLoaded);
-  }, [modelLoaded]);
-
-  useEffect(() => {
-    console.log("Textures loaded state:", texturesLoaded);
-  }, [texturesLoaded]);
 
   const panResponder = useRef(
     PanResponder.create({
@@ -267,6 +349,9 @@ export default function TempLand({ selectedImage }) {
     const renderer = new Renderer({ gl, alpha: true });
     renderer.setSize(width, height);
     renderer.setClearColor(0x000000, 0);
+    renderer.gammaOutput = true;
+    renderer.gammaFactor = 2.2;
+    renderer.outputEncoding = THREE.sRGBEncoding;
 
     if (!renderer.extensions.get('EXT_color_buffer_float')) {
       console.warn('EXT_color_buffer_float not supported. Fallback to alternative methods.');
@@ -290,7 +375,7 @@ export default function TempLand({ selectedImage }) {
       1,
       1000
     );
-    orthoCamera.position.set(0, 5, -5);
+    orthoCamera.position.set(0, 0, 0);
 
     const cameraControls = new CameraControls(orthoCamera, gl.canvas);
     cameraControlsRef.current = cameraControls;
@@ -315,7 +400,7 @@ export default function TempLand({ selectedImage }) {
 
     // 직접 광 (Direct Light) 조정
     const directLight = new THREE.DirectionalLight(0xfff2b2, 0.8); // 부드러운 색상, 강도 0.5
-    directLight.position.set(-3, 5,-3).normalize();
+    directLight.position.set(-3, 5, -3).normalize();
     scene.add(directLight);
 
     // 부드러운 그림자 설정
@@ -328,11 +413,6 @@ export default function TempLand({ selectedImage }) {
     scene.fog = new THREE.FogExp2(0xffffff, 0.002); // 흰색 포그, 밀도 0.002
 
 
-
-
-    console.log(modelLoaded);
-    console.log(textures.albedo);
-    console.log(textures.emissive);
     const direction = new THREE.Vector3();
     orthoCamera.getWorldDirection(direction);
     console.log(direction); // 카메라가 바라보는 방향
@@ -346,6 +426,7 @@ export default function TempLand({ selectedImage }) {
         cameraManagerRef.current.update(delta);
       }
       renderer.render(scene, orthoCamera);
+
       gl.endFrameEXP();
     };
     render();
@@ -370,36 +451,6 @@ export default function TempLand({ selectedImage }) {
   };
 
 
-  const onImageClick = () => {
-    // 이미지 클릭 시 3D 오브젝트를 로드하는 로직을 구현하세요.
-    const loader = new GLTFLoader();
-
-    // 모델 파일의 경로를 설정합니다.
-    const modelPath = "../assets/glbAsset2/table.glb"; // 실제 모델 파일의 경로로 변경해야 합니다.
-
-    loader.load(
-      modelPath,
-      (gltf) => {
-        // 모델 로딩이 완료되었을 때 실행되는 콜백 함수입니다.
-        const model = gltf.scene;
-
-        // 모델의 위치와 크기를 조절합니다.
-        model.position.set(0, 0, 0); // 원하는 위치로 설정
-        model.scale.set(1, 1, 1); // 원하는 크기로 설정
-
-        // Scene에 모델을 추가합니다.
-        scene.add(model);
-
-        // 화면을 다시 렌더링합니다.
-        renderer.render(scene, orthoCamera);
-      },
-      undefined,
-      (error) => {
-        // 모델 로딩 중 에러가 발생했을 때 실행되는 콜백 함수입니다.
-        console.error("An error occurred while loading the model:", error);
-      }
-    );
-  };
 
   return (
     <View style={{ flex: 1 }}>
